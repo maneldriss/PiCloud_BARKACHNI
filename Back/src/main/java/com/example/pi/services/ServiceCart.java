@@ -25,7 +25,12 @@ public class ServiceCart implements IServiceCart {
     public List<cart> retrieveAllcarts() {
         return CartRepository.findAll();
     }
-
+    public List<user> retrieveAllusers() {
+        return UserRepository.findAll();
+    }
+    public List<item> retrieveAllitems() {
+        return itemRepository.findAll();
+    }
     public cart retrievecart(Long cartId) {
         return CartRepository.findById(cartId).get();
     }
@@ -72,5 +77,24 @@ public class ServiceCart implements IServiceCart {
         // Save the updated cart back to the repository
         CartRepository.save(cart);
     }
+    @Override
+    public void removeItemFromCart(Long cartId, Long itemId) {
+        // Fetch the cart from the repository
+        cart cart = CartRepository.findById(cartId).orElseThrow(() ->
+                new RuntimeException("Cart not found with id: " + cartId));
+
+        // Fetch the item from the repository
+        item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new RuntimeException("Item not found with id: " + itemId));
+
+        // Remove the item from the cart
+        if (cart.getItems().remove(item)) {
+            // Save the updated cart back to the repository
+            CartRepository.save(cart);
+        } else {
+            throw new RuntimeException("Item not found in the cart.");
+        }
+    }
+
 
 }

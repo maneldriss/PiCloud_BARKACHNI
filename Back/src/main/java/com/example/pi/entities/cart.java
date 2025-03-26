@@ -21,7 +21,7 @@ public class cart {
     @OneToOne
     private user user;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.PERSIST)
     private Set<item> items;
 
 

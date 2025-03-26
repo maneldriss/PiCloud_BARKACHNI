@@ -1,6 +1,8 @@
 package com.example.pi.controllers;
 
 import com.example.pi.entities.cart;
+import com.example.pi.entities.item;
+import com.example.pi.entities.user;
 import com.example.pi.services.IServiceCart;
 import com.example.pi.services.IServiceCommande;
 import lombok.AllArgsConstructor;
@@ -16,11 +18,22 @@ import java.util.List;
 public class CartRestController {
     @Autowired
     IServiceCart CartService;
+
     // http://localhost:8089/tpfoyer/chambre/retrieve-all-chambres
     @GetMapping("/retrieve-all-carts")
     public List<cart> getcarts() {
         List<cart> listcarts = CartService.retrieveAllcarts();
         return listcarts;
+    }
+    @GetMapping("/retrieve-all-users")
+    public List<user> getusers() {
+        List<user> listusers = CartService.retrieveAllusers();
+        return listusers;
+    }
+    @GetMapping("/retrieve-all-items")
+    public List<item> getitems() {
+        List<item> listitems = CartService.retrieveAllitems();
+        return listitems;
     }
     // http://localhost:8089/tpfoyer/cart/retrieve-cart/8
     @GetMapping("/retrieve-cart/{cart-id}")
@@ -54,4 +67,10 @@ public class CartRestController {
         CartService.addItemToCart(cartId, itemId);
         return ResponseEntity.ok("Item added to cart successfully.");
     }
+    @DeleteMapping("/remove-item-from-cart/{cartId}/{itemId}")
+    public ResponseEntity<String> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long itemId) {
+        CartService.removeItemFromCart(cartId, itemId);
+        return ResponseEntity.ok("Item removed from cart successfully.");
+    }
+
 }
