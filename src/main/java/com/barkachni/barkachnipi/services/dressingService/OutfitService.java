@@ -24,6 +24,7 @@ public class OutfitService implements IOutfitService {
         return outfitRepository.findAll();
     }
 
+
     @Override
     public Outfit retrieveOutfit(long outfitId) {
         return outfitRepository.findById(outfitId)
