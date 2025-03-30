@@ -1,0 +1,15 @@
+.header .spacer {
+  flex: 1 1 auto;
+}
+.header .title {
+  margin-left: 8px;
+}
+.header nav {
+  display: flex;
+}
+.header nav a {
+  margin: 0 4px;
+}
+.header nav a.active {
+  background-color: rgba(255, 255, 255, 0.15);
+}

@@ -1,0 +1,97 @@
+<div class="container">
+  <h1>{{ isEditMode ? 'Edit' : 'Add New' }} Item</h1>
+
+  <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Item Name</mat-label>
+        <input matInput formControlName="itemName" required>
+        <mat-error *ngIf="itemForm.get('itemName')?.hasError('required')">
+          Item name is required
+        </mat-error>
+        <mat-error *ngIf="itemForm.get('itemName')?.hasError('maxlength')">
+          Item name cannot exceed 50 characters
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+        <mat-error *ngIf="itemForm.get('description')?.hasError('maxlength')">
+          Description cannot exceed 500 characters
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row two-columns">
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category" required>
+          <mat-option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="itemForm.get('category')?.hasError('required')">
+          Category is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Brand</mat-label>
+        <input matInput formControlName="brand" required>
+        <mat-error *ngIf="itemForm.get('brand')?.hasError('required')">
+          Brand is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row three-columns">
+      <mat-form-field appearance="outline">
+        <mat-label>Color</mat-label>
+        <input matInput formControlName="color" required>
+        <mat-error *ngIf="itemForm.get('color')?.hasError('required')">
+          Color is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Size</mat-label>
+        <input matInput formControlName="size" required>
+        <mat-error *ngIf="itemForm.get('size')?.hasError('required')">
+          Size is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Price</mat-label>
+        <input matInput type="number" formControlName="price" required>
+        <span matTextPrefix>$&nbsp;</span>
+        <mat-error *ngIf="itemForm.get('price')?.hasError('required')">
+          Price is required
+        </mat-error>
+        <mat-error *ngIf="itemForm.get('price')?.hasError('min')">
+          Price must be zero or positive
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Image URL</mat-label>
+        <input matInput formControlName="imageUrl">
+        <mat-error *ngIf="itemForm.get('imageUrl')?.hasError('maxlength')">
+          Image URL is too long
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <button mat-button type="button" routerLink="/items">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="itemForm.invalid">
+        {{ isEditMode ? 'Update' : 'Save' }} Item
+      </button>
+    </div>
+  </form>
+</div>

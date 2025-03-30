@@ -1,0 +1,51 @@
+<div class="container">
+  <div class="hero-section">
+    <h1>Welcome to Your Wardrobe Manager</h1>
+    <p>Organize your clothes, create outfits, and manage your style with ease.</p>
+
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" routerLink="/items">
+        <mat-icon>checkroom</mat-icon>
+        View Your Items
+      </button>
+      <button mat-raised-button color="accent" routerLink="/items/new">
+        <mat-icon>add</mat-icon>
+        Add New Item
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <mat-card class="stat-card">
+      <mat-icon color="primary">checkroom</mat-icon>
+      <h2>{{recentItems.length}} Items</h2>
+      <p>in your wardrobe</p>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon color="accent">style</mat-icon>
+      <h2>{{recentOutfits.length}} Outfits</h2>
+      <p>created</p>
+    </mat-card>
+  </div>
+
+  <h2>Recent Items</h2>
+  <div class="items-grid" *ngIf="recentItems.length > 0">
+    <mat-card *ngFor="let item of recentItems" class="item-card">
+      <img mat-card-image [src]="item.imageUrl || 'assets/images/placeholder.jpg'" alt="{{ item.itemName }}">
+      <mat-card-header>
+        <mat-card-title>{{ item.itemName }}</mat-card-title>
+        <mat-card-subtitle>{{ item.brand }} - {{ item.category }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-button color="primary" [routerLink]="['/items', item.itemID]">View Details</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+  <div *ngIf="recentItems.length === 0" class="no-items">
+    <p>No items added yet. Start building your wardrobe!</p>
+    <button mat-raised-button color="primary" routerLink="/items/new">
+      Add Your First Item
+    </button>
+  </div>
+</div>

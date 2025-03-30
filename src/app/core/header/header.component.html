@@ -1,0 +1,25 @@
+<mat-toolbar color="primary" class="header">
+  <button mat-icon-button class="menu-icon" aria-label="Example icon-button with menu icon">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="title">{{ title }}</span>
+  <span class="spacer"></span>
+  <nav>
+    <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <mat-icon>home</mat-icon> Home
+    </a>
+    <a mat-button routerLink="/items" routerLinkActive="active">
+      <mat-icon>checkroom</mat-icon> Items
+    </a>
+    <a mat-button routerLink="/outfits" routerLinkActive="active">
+      <mat-icon>style</mat-icon> Outfits
+    </a>
+    <a mat-button routerLink="/dressing" routerLinkActive="active">
+      <mat-icon>grid_view</mat-icon> Wardrobe
+    </a>
+  </nav>
+  <span class="spacer"></span>
+  <button mat-icon-button aria-label="User profile">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</mat-toolbar>

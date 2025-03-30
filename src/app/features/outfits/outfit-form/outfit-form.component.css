@@ -1,0 +1,193 @@
+.outfit-creator {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+  min-height: 500px;
+}
+@media (max-width: 1024px) {
+  .outfit-creator {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+}
+.category-selector {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 16px;
+}
+.category-selector h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+.category-selector .categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.category-selector .categories-list .category-button {
+  text-align: left;
+  justify-content: flex-start;
+}
+.selected-items {
+  background-color: #ffffff;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.selected-items h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.selected-items .outfit-preview {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  max-height: 450px;
+}
+.selected-items .outfit-preview .selected-item {
+  position: relative;
+}
+.selected-items .outfit-preview .selected-item .item-card {
+  display: flex;
+  align-items: center;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+}
+.selected-items .outfit-preview .selected-item .item-card .item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 12px;
+}
+.selected-items .outfit-preview .selected-item .item-card .item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.selected-items .outfit-preview .selected-item .item-card .item-info {
+  flex-grow: 1;
+}
+.selected-items .outfit-preview .selected-item .item-card .item-info .item-name {
+  font-weight: 500;
+}
+.selected-items .outfit-preview .selected-item .item-card .item-info .item-category {
+  font-size: 12px;
+  color: #666;
+}
+.selected-items .outfit-preview .selected-item .item-card .remove-button {
+  opacity: 0.7;
+}
+.selected-items .outfit-preview .selected-item .item-card .remove-button:hover {
+  opacity: 1;
+}
+.selected-items .empty-state {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}
+.selected-items .empty-state p {
+  margin: 4px 0;
+}
+.selected-items .empty-state .hint {
+  font-size: 12px;
+  max-width: 200px;
+  text-align: center;
+}
+.items-picker {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 16px;
+}
+.items-picker h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+.items-picker .items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  max-height: 450px;
+  overflow-y: auto;
+}
+.items-picker .items-grid .item-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+.items-picker .items-grid .item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.items-picker .items-grid .item-card.selected {
+  border-color: #3f51b5;
+  background-color: rgba(63, 81, 181, 0.05);
+}
+.items-picker .items-grid .item-card .item-image {
+  width: 100%;
+  height: 120px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.items-picker .items-grid .item-card .item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.items-picker .items-grid .item-card .item-info .item-name {
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.items-picker .items-grid .item-card .item-info .item-details {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.items-picker .items-grid .item-card .select-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: #3f51b5;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+}
+.items-picker .items-grid .item-card .select-indicator mat-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+.items-picker .no-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #888;
+}
+.items-picker .no-items p {
+  margin-bottom: 16px;
+}
+.form-actions {
+  margin-top: 24px;
+}

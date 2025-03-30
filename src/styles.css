@@ -1,1 +1,86 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.full-width {
+  width: 100%;
+}
+.form-row {
+  margin-bottom: 16px;
+}
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.three-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.item-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.item-card .mat-card-image {
+  height: 200px;
+  object-fit: cover;
+}
+.item-card .mat-card-content {
+  flex-grow: 1;
+}
+.filters {
+  margin: 16px 0;
+}
+.no-items {
+  text-align: center;
+  margin-top: 40px;
+  color: #757575;
+  font-style: italic;
+}
+.main-content {
+  min-height: calc(100vh - 64px - 64px);
+  /* Subtract header and footer heights */
+  padding-bottom: 24px;
+}
+.footer {
+  padding: 16px;
+  text-align: center;
+  background-color: #f5f5f5;
+  color: #757575;
+}
+/* Responsive styles */
+@media (max-width: 768px) {
+  .two-columns, .three-columns {
+    grid-template-columns: 1fr;
+  }
+  .items-grid {
+    grid-template-columns: 1fr;
+  }
+}
