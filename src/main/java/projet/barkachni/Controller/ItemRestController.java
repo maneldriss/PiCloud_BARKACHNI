@@ -41,6 +41,7 @@ public class ItemRestController {
                     .body("Error adding item: " + e.getMessage());
         }
     }
+
     @DeleteMapping("/remove-item/{item-id}")
     public ResponseEntity<?> removeItem(@PathVariable("item-id") Long iId) {
         try {
@@ -68,4 +69,5 @@ public class ItemRestController {
                     .body("Error updating item: " + e.getMessage());
         }
     }
+
 }
