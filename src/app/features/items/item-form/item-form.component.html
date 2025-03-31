@@ -78,18 +78,38 @@
     </div>
 
     <div class="form-row">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Image URL</mat-label>
-        <input matInput formControlName="imageUrl">
-        <mat-error *ngIf="itemForm.get('imageUrl')?.hasError('maxlength')">
-          Image URL is too long
-        </mat-error>
-      </mat-form-field>
+      <div class="image-upload-container">
+        <div class="image-upload-area" (click)="fileInput.click()" [class.has-preview]="imagePreview">
+          <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none">
+          <div *ngIf="!imagePreview" class="upload-prompt">
+            <mat-icon>cloud_upload</mat-icon>
+            <p>Click to upload image</p>
+            <small>or drag and drop (JPG, PNG)</small>
+          </div>
+          <div *ngIf="imagePreview" class="image-preview-container">
+            <img [src]="imagePreview" alt="Image preview">
+            <div class="image-actions">
+              <button mat-icon-button type="button" color="warn" (click)="removeImage($event)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="processingImage" class="processing-indicator">
+          <mat-spinner diameter="30"></mat-spinner>
+          <span>Processing image...</span>
+        </div>
+        <div *ngIf="imageProcessed" class="image-preview-processed">
+          <h4>Background Removed</h4>
+          <img [src]="processedImageUrl" alt="Processed image">
+        </div>
+      </div>
+      <mat-error *ngIf="uploadError">{{ uploadError }}</mat-error>
     </div>
 
     <div class="form-actions">
       <button mat-button type="button" routerLink="/items">Cancel</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="itemForm.invalid">
+      <button mat-raised-button color="primary" type="submit" [disabled]="itemForm.invalid || processingImage">
         {{ isEditMode ? 'Update' : 'Save' }} Item
       </button>
     </div>
