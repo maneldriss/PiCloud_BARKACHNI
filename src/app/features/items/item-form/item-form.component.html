@@ -47,36 +47,6 @@
       </mat-form-field>
     </div>
 
-    <div class="form-row three-columns">
-      <mat-form-field appearance="outline">
-        <mat-label>Color</mat-label>
-        <input matInput formControlName="color" required>
-        <mat-error *ngIf="itemForm.get('color')?.hasError('required')">
-          Color is required
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Size</mat-label>
-        <input matInput formControlName="size" required>
-        <mat-error *ngIf="itemForm.get('size')?.hasError('required')">
-          Size is required
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Price</mat-label>
-        <input matInput type="number" formControlName="price" required>
-        <span matTextPrefix>$&nbsp;</span>
-        <mat-error *ngIf="itemForm.get('price')?.hasError('required')">
-          Price is required
-        </mat-error>
-        <mat-error *ngIf="itemForm.get('price')?.hasError('min')">
-          Price must be zero or positive
-        </mat-error>
-      </mat-form-field>
-    </div>
-
     <div class="form-row">
       <div class="image-upload-container">
         <div class="image-upload-area" (click)="fileInput.click()" [class.has-preview]="imagePreview">
@@ -87,7 +57,7 @@
             <small>or drag and drop (JPG, PNG)</small>
           </div>
           <div *ngIf="imagePreview" class="image-preview-container">
-            <img [src]="imagePreview" alt="Image preview">
+            <img #imagePreviewElem [src]="imagePreview" alt="Image preview">
             <div class="image-actions">
               <button mat-icon-button type="button" color="warn" (click)="removeImage($event)">
                 <mat-icon>delete</mat-icon>
@@ -105,6 +75,76 @@
         </div>
       </div>
       <mat-error *ngIf="uploadError">{{ uploadError }}</mat-error>
+    </div>
+
+    <div class="form-row two-columns">
+      <!-- Color selection -->
+      <div class="color-selection">
+        <h3>Color</h3>
+        <div class="color-picker">
+          <div class="extracted-colors" *ngIf="extractedColors.length > 0">
+            <p class="color-label">Colors from image:</p>
+            <div class="color-options">
+              <div *ngFor="let color of extractedColors"
+                   class="color-swatch"
+                   [style.background-color]="color"
+                   [class.selected]="selectedColor === color"
+                   (click)="selectColor(color)">
+                <span [style.color]="getContrastColor(color)" *ngIf="selectedColor === color">✓</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="predefined-colors">
+            <p class="color-label">Common colors:</p>
+            <div class="color-options">
+              <div *ngFor="let color of predefinedColors"
+                   class="color-swatch"
+                   [style.background-color]="color"
+                   [class.selected]="selectedColor === color"
+                   (click)="selectColor(color)">
+                <span [style.color]="getContrastColor(color)" *ngIf="selectedColor === color">✓</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="color-input">
+            <input type="color" [(ngModel)]="selectedColor" [ngModelOptions]="{standalone: true}"
+                   (change)="selectColor(selectedColor)">
+            <span class="color-hex">{{selectedColor}}</span>
+          </div>
+        </div>
+        <mat-error *ngIf="itemForm.get('color')?.hasError('required') && itemForm.get('color')?.touched">
+          Color is required
+        </mat-error>
+      </div>
+
+      <!-- Size selection -->
+      <mat-form-field appearance="outline">
+        <mat-label>Size</mat-label>
+        <mat-select formControlName="size" required>
+          <mat-option *ngFor="let size of sizeOptions" [value]="size.value">
+            {{ size.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="itemForm.get('size')?.hasError('required')">
+          Size is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Price</mat-label>
+        <input matInput type="number" formControlName="price" required>
+        <span matTextPrefix>$&nbsp;</span>
+        <mat-error *ngIf="itemForm.get('price')?.hasError('required')">
+          Price is required
+        </mat-error>
+        <mat-error *ngIf="itemForm.get('price')?.hasError('min')">
+          Price must be zero or positive
+        </mat-error>
+      </mat-form-field>
     </div>
 
     <div class="form-actions">
