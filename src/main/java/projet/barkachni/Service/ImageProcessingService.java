@@ -32,6 +32,9 @@
         @Value("${app.base.url:http://localhost:8080}")
         private String baseUrl;
 
+        @Value("${server.servlet.context-path:/}")
+        private String contextPath;
+
         private final RestTemplate restTemplate = new RestTemplate();
 
         public String processAndStoreImage(MultipartFile imageFile) throws IOException {
@@ -60,7 +63,7 @@
 
             tempFile.delete();
 
-            return baseUrl + "/api/images/serve/" + processedFileName;
+            return baseUrl + contextPath + "/images/serve/" + processedFileName;
         }
 
         private byte[] removeImageBackground(File imageFile) throws IOException {
