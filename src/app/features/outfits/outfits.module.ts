@@ -7,6 +7,7 @@ import { OutfitDetailComponent } from './outfit-detail/outfit-detail.component';
 import { OutfitFormComponent } from './outfit-form/outfit-form.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {SharedModule} from "../../shared/shared.module";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 @NgModule({
@@ -15,11 +16,12 @@ import {SharedModule} from "../../shared/shared.module";
     OutfitDetailComponent,
     OutfitFormComponent
   ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    OutfitsRoutingModule,
-    SharedModule
-  ]
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        OutfitsRoutingModule,
+        SharedModule,
+        MatTooltipModule
+    ]
 })
 export class OutfitsModule { }

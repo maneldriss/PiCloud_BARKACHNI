@@ -1,1 +1,100 @@
-<p>outfit-detail works!</p>
+<div class="container">
+  <div class="header">
+    <a routerLink="/outfits" class="back-link">
+      <mat-icon>arrow_back</mat-icon> Back to Outfits
+    </a>
+    <h1 *ngIf="outfit">{{ outfit.name }}</h1>
+    <p *ngIf="outfit?.description" class="outfit-description">{{ outfit?.description }}</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && !outfit" class="not-found">
+    <h2>Outfit not found</h2>
+    <p>The outfit you're looking for doesn't exist or has been removed.</p>
+    <button mat-raised-button color="primary" routerLink="/outfits">Back to Outfits</button>
+  </div>
+
+  <div *ngIf="!loading && outfit" class="outfit-detail-layout">
+    <!-- Category selector on the left -->
+    <div class="category-panel">
+      <h3>Categories</h3>
+      <div class="category-list">
+        <button
+          *ngFor="let category of categories"
+          mat-raised-button
+          [color]="selectedCategory === category ? 'primary' : undefined"
+          (click)="selectCategory(category)"
+          class="category-button">
+          {{ category }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Outfit showcase in the middle -->
+    <div class="outfit-showcase">
+      <h3>Outfit Look</h3>
+      <div class="outfit-items">
+        <div *ngFor="let item of outfitItems" class="outfit-item">
+          <div class="item-card" [class.locked]="isItemLocked(item.itemID || 0)">
+            <div class="item-image">
+              <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+            </div>
+            <div class="item-info">
+              <div class="item-name">{{ item.itemName }}</div>
+              <div class="item-category">{{ item.category }}</div>
+            </div>
+            <button
+              mat-icon-button
+              [color]="isItemLocked(item.itemID || 0) ? 'accent' : undefined"
+              (click)="toggleLockItem(item)"
+              class="lock-button"
+              matTooltip="{{ isItemLocked(item.itemID || 0) ? 'Unlock item' : 'Lock item' }}">
+              <mat-icon>{{ isItemLocked(item.itemID || 0) ? 'lock' : 'lock_open' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="outfit-actions">
+        <button mat-raised-button color="primary" (click)="saveOutfit()">
+          <mat-icon>save</mat-icon> Save Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- Alternative items on the right -->
+    <div class="alternatives-panel">
+      <h3>{{ selectedCategory }} Alternatives</h3>
+      <div class="alternatives-grid">
+        <div *ngFor="let item of alternativeItems" class="alternative-item">
+          <div class="item-card">
+            <div class="item-image">
+              <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+            </div>
+            <div class="item-info">
+              <div class="item-name">{{ item.itemName }}</div>
+              <div class="item-details">{{ item.brand }} · {{ item.color }}</div>
+            </div>
+            <button
+              mat-mini-fab
+              color="primary"
+              *ngFor="let categoryItem of getCategoryItems()"
+              (click)="replaceItem(categoryItem, item)"
+              class="replace-button"
+              matTooltip="Replace with this item">
+              <mat-icon>swap_horiz</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="alternativeItems.length === 0" class="no-alternatives">
+          <p>No alternative {{ selectedCategory }} found</p>
+          <button mat-stroked-button color="primary" [routerLink]="['/items/new']" [queryParams]="{category: selectedCategory}">
+            <mat-icon>add</mat-icon> Add {{ selectedCategory }} Item
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
