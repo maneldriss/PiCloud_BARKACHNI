@@ -10,4 +10,6 @@ public interface IServiceCommande {
     commande addcommande(commande commande);
     void removecommande(Long commandeId);
     commande modifycommande(commande commande);
+    commande assignCartToCommande(Long commandeId, Long cartId);
+    public double getCommandeTotal(Long commandeId);
 }

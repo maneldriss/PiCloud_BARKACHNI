@@ -1,0 +1,15 @@
+<div *ngIf="commandes.length > 0">
+  <h3>List of Commandes</h3>
+  <ul>
+    <li *ngFor="let commande of commandes">
+      <p>Commande ID: {{ commande.commandeID }}</p>
+      <p>Shipping Address: {{ commande.shippingAddress }}</p>
+      <p>Status: {{ commande.status }}</p>
+      <!-- Add more details if necessary -->
+    </li>
+  </ul>
+</div>
+
+<div *ngIf="total">
+  <h3>Total for Commande #{{ selectedCommandeId }}: ${{ total | currency }}</h3>
+</div>

@@ -17,8 +17,7 @@ public class commande {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long commandeID;
-    @ManyToOne
-    private user user;
+
     private String shippingAddress;
 
     private String status;
@@ -43,13 +42,7 @@ public class commande {
         this.commandeID = commandeID;
     }
 
-    public user getUser() {
-        return user;
-    }
 
-    public void setUser(user user) {
-        this.user = user;
-    }
 
     public String getShippingAddress() {
         return shippingAddress;
@@ -111,7 +104,7 @@ public class commande {
     public String toString() {
         return "commande{" +
                 "commandeID=" + commandeID +
-                ", user=" + user +
+
                 ", shippingAddress='" + shippingAddress + '\'' +
                 ", status='" + status + '\'' +
                 ", paymentStatus='" + paymentStatus + '\'' +

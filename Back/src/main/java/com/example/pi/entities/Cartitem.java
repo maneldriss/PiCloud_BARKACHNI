@@ -1,9 +1,6 @@
 package com.example.pi.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,13 +11,14 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level= AccessLevel.PRIVATE)
 @Entity
-public class item {
+public class Cartitem {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long itemID;
     String name;
-    Double price;
     int quantity;
+    @ManyToOne
+    private Product product;
 
 
     public Long getItemID() {
@@ -39,13 +37,8 @@ public class item {
         this.name = name;
     }
 
-    public Double getPrice() {
-        return price;
-    }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
+
 
     public int getQuantity() {
         return quantity;
@@ -54,13 +47,20 @@ public class item {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
     @Override
     public String toString() {
         return "item{" +
                 "itemID=" + itemID +
                 ", name='" + name + '\'' +
-                ", price=" + price +
+
                 ", quantity=" + quantity +
                 '}';
     }

@@ -1,10 +1,9 @@
 package com.example.pi.controllers;
 
+import com.example.pi.entities.Cartitem;
 import com.example.pi.entities.cart;
-import com.example.pi.entities.item;
 import com.example.pi.entities.user;
 import com.example.pi.services.IServiceCart;
-import com.example.pi.services.IServiceCommande;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,65 +11,90 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/cart")
 public class CartRestController {
+
     @Autowired
-    IServiceCart CartService;
+    private IServiceCart cartService;
 
-    // http://localhost:8089/tpfoyer/chambre/retrieve-all-chambres
     @GetMapping("/retrieve-all-carts")
-    public List<cart> getcarts() {
-        List<cart> listcarts = CartService.retrieveAllcarts();
-        return listcarts;
+    public List<cart> getCarts() {
+        return cartService.retrieveAllcarts();
     }
+
     @GetMapping("/retrieve-all-users")
-    public List<user> getusers() {
-        List<user> listusers = CartService.retrieveAllusers();
-        return listusers;
+    public List<user> getUsers() {
+        return cartService.retrieveAllusers();
     }
+
     @GetMapping("/retrieve-all-items")
-    public List<item> getitems() {
-        List<item> listitems = CartService.retrieveAllitems();
-        return listitems;
+    public List<Cartitem> getItems() {
+        return cartService.retrieveAllitems();
     }
-    // http://localhost:8089/tpfoyer/cart/retrieve-cart/8
+
     @GetMapping("/retrieve-cart/{cart-id}")
-    public cart retrievecart(@PathVariable("cart-id") Long chId) {
-        cart cart = CartService.retrievecart(chId);
-        return cart;
+    public cart retrieveCart(@PathVariable("cart-id") Long cartId) {
+        return cartService.retrievecart(cartId);
     }
+
     @PostMapping("/add-cart")
-    public cart addcart(@RequestBody cart c) {
-        cart cart = CartService.addcart(c);
-        return cart;
+    public cart addCart(@RequestBody cart c) {
+        return cartService.addcart(c);
     }
-    // http://localhost:8089/tpfoyer/cart/remove-cart/{cart-id}
+
     @DeleteMapping("/remove-cart/{cart-id}")
-    public void removecart(@PathVariable("cart-id") Long chId) {
-        CartService.removecart(chId);
+    public void removeCart(@PathVariable("cart-id") Long cartId) {
+        cartService.removecart(cartId);
     }
-    // http://localhost:8089/tpfoyer/cart/modify-cart
+
     @PutMapping("/modify-cart")
-    public cart modifycart(@RequestBody cart c) {
-        return  CartService.modifycart(c);
-
+    public cart modifyCart(@RequestBody cart c) {
+        return cartService.modifycart(c);
     }
-    @PutMapping("/affecter-user-a-cart/{cart-id}/{user-id}")
+
+    @PutMapping("/assign-user-to-cart/{cart-id}/{user-id}")
     public void assignUserToCart(@PathVariable("cart-id") Long cartId,
-                                                 @PathVariable("user-id") Long userId) {
-        CartService.assignUserToCart(cartId,userId);
-    }
-    @PutMapping("/add-item-to-cart/{cartId}/{itemId}")
-    public ResponseEntity<String> addItemToCart(@PathVariable Long cartId, @PathVariable Long itemId) {
-        CartService.addItemToCart(cartId, itemId);
-        return ResponseEntity.ok("Item added to cart successfully.");
-    }
-    @DeleteMapping("/remove-item-from-cart/{cartId}/{itemId}")
-    public ResponseEntity<String> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long itemId) {
-        CartService.removeItemFromCart(cartId, itemId);
-        return ResponseEntity.ok("Item removed from cart successfully.");
+                                 @PathVariable("user-id") Long userId) {
+        cartService.assignUserToCart(cartId, userId);
     }
 
+    // Add existing Cartitem to cart
+    @PutMapping("/add-item-to-cart/{cartId}/{itemId}")
+    public ResponseEntity<cart> addItemToCart(@PathVariable Long cartId, @PathVariable Long itemId) {
+        cartService.addItemToCart(cartId, itemId);
+        return ResponseEntity.ok(cartService.retrievecart(cartId));
+    }
+
+    // Add product directly to cart (and create Cartitem)
+    @PostMapping("/add-product-to-cart/{cartId}/{productId}/{quantity}")
+    public ResponseEntity<cart> addProductToCart(@PathVariable Long cartId,
+                                                 @PathVariable Long productId,
+                                                 @PathVariable int quantity) {
+        cartService.addProductToCart(cartId, productId, quantity);
+        return ResponseEntity.ok(cartService.retrievecart(cartId));
+    }
+
+    // Update item quantity in cart
+    @PutMapping("/update-item-quantity/{cartId}/{itemId}/{quantity}")
+    public ResponseEntity<cart> updateItemQuantity(@PathVariable Long cartId,
+                                                   @PathVariable Long itemId,
+                                                   @PathVariable int quantity) {
+        cartService.updateItemQuantity(cartId, itemId, quantity);
+        return ResponseEntity.ok(cartService.retrievecart(cartId));
+    }
+
+    @DeleteMapping("/remove-item-from-cart/{cartId}/{itemId}")
+    public ResponseEntity<cart> removeItemFromCart(@PathVariable Long cartId,
+                                                   @PathVariable Long itemId) {
+        cartService.removeItemFromCart(cartId, itemId);
+        return ResponseEntity.ok(cartService.retrievecart(cartId));
+    }
+
+    @GetMapping("/total/{cartId}")
+    public double getCartTotal(@PathVariable Long cartId) {
+        return cartService.getCartTotal(cartId);
+    }
 }

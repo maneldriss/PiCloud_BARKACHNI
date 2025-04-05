@@ -17,12 +17,12 @@ public class cart {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long cartID;
-
+    private double total;
     @OneToOne
     private user user;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    private Set<item> items;
+    private Set<Cartitem> Cartitems;
 
 
     // Getters and Setters
@@ -43,13 +43,21 @@ public class cart {
         this.user = user;
     }
 
-    public Set<item> getItems() {
-        return items;
+    public Set<Cartitem> getCartitems() {
+        return Cartitems;
     }
 
-    public void setItems(Set<item> items) {
-        this.items = items;
+    public void setCartitems(Set<Cartitem> Cartitems) {
+        this.Cartitems = Cartitems;
+    }
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 }
+
 
 
