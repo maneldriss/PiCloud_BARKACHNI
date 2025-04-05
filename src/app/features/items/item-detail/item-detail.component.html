@@ -25,8 +25,8 @@
           <h2>Item Details</h2>
 
           <div class="info-row">
-            <span class="info-label">Category:</span>
-            <span class="info-value">{{ item.category }}</span>
+            <span class="info-label">Category & Size:</span>
+            <span class="info-value">{{ item.category }} - {{ item.size }}</span>
           </div>
 
           <div class="info-row">
@@ -37,16 +37,6 @@
           <div class="info-row">
             <span class="info-label">Color:</span>
             <span class="info-value">{{ item.color }}</span>
-          </div>
-
-          <div class="info-row">
-            <span class="info-label">Size:</span>
-            <span class="info-value">{{ item.size }}</span>
-          </div>
-
-          <div class="info-row">
-            <span class="info-label">Price:</span>
-            <span class="info-value">${{ item.price.toFixed(2) }}</span>
           </div>
 
           <div class="info-row" *ngIf="item.dateAdded">

@@ -13,6 +13,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {SharedModule} from "../../shared/shared.module";
 import {MatIconModule} from "@angular/material/icon";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 
 @NgModule({
@@ -21,15 +22,16 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     ItemDetailComponent,
     ItemFormComponent
   ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ItemsRoutingModule,
-    SharedModule,
-    MatIconModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        ItemsRoutingModule,
+        SharedModule,
+        MatIconModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatButtonModule,
+        MatPaginatorModule
+    ]
 })
 export class ItemsModule { }

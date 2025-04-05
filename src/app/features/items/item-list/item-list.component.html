@@ -7,20 +7,85 @@
     </button>
   </div>
 
-  <div class="filters">
-    <mat-form-field appearance="fill">
-      <mat-label>Filter by Category</mat-label>
-      <mat-select [(value)]="selectedCategory" (selectionChange)="applyFilter()">
-        <mat-option value="ALL">All Categories</mat-option>
-        <mat-option *ngFor="let category of categories" [value]="category">
-          {{ category }}
-        </mat-option>
-      </mat-select>
+  <div class="search-bar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search items</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by name or description">
+      <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-icon matPrefix>search</mat-icon>
     </mat-form-field>
   </div>
 
-  <div class="items-grid">
-    <mat-card *ngFor="let item of filteredItems" class="item-card">
+  <div class="filters">
+    <button mat-button color="primary" (click)="toggleAdvancedFilters()">
+      <mat-icon>filter_list</mat-icon>
+      {{ showAdvancedFilters ? 'Hide Advanced Filters' : 'Show Advanced Filters' }}
+    </button>
+
+    <div *ngIf="showAdvancedFilters" class="advanced-filters">
+      <mat-form-field appearance="fill">
+        <mat-label>Category</mat-label>
+        <mat-select [(value)]="selectedCategory" (selectionChange)="onFilterChange('category', $event.value)">
+          <mat-option value="ALL">All Categories</mat-option>
+          <mat-option *ngFor="let category of allCategories" [value]="category"
+                      [disabled]="selectedBrand !== 'ALL' || selectedColor !== 'ALL' || selectedSize !== 'ALL' ? !availableCategories.includes(category) : false">
+            {{ category }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Brand</mat-label>
+        <mat-select [(value)]="selectedBrand" (selectionChange)="onFilterChange('brand', $event.value)">
+          <mat-option value="ALL">All Brands</mat-option>
+          <mat-option *ngFor="let brand of allBrands" [value]="brand"
+                      [disabled]="selectedCategory !== 'ALL' || selectedColor !== 'ALL' || selectedSize !== 'ALL' ? !availableBrands.includes(brand) : false">
+            {{ brand }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Color</mat-label>
+        <mat-select [(value)]="selectedColor" (selectionChange)="onFilterChange('color', $event.value)">
+          <mat-option value="ALL">All Colors</mat-option>
+          <mat-option *ngFor="let color of allColors" [value]="color"
+                      [disabled]="selectedCategory !== 'ALL' || selectedBrand !== 'ALL' || selectedSize !== 'ALL' ? !availableColors.includes(color) : false">
+            {{ color }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Size</mat-label>
+        <mat-select [(value)]="selectedSize" (selectionChange)="onFilterChange('size', $event.value)">
+          <mat-option value="ALL">All Sizes</mat-option>
+          <mat-option *ngFor="let size of allSizes" [value]="size"
+                      [disabled]="selectedCategory !== 'ALL' || selectedBrand !== 'ALL' || selectedColor !== 'ALL' ? !availableSizes.includes(size) : false">
+            {{ size }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="filters-actions">
+        <button mat-raised-button color="accent" (click)="resetFilters()">
+          <mat-icon>refresh</mat-icon> Reset Filters
+        </button>
+        <div class="filter-count" *ngIf="filteredItems.length > 0">
+          {{ filteredItems.length }} item{{ filteredItems.length !== 1 ? 's' : '' }} found
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="items-grid">
+    <mat-card *ngFor="let item of paginatedItems" class="item-card">
       <img mat-card-image [src]="item.imageUrl || 'assets/images/placeholder.jpg'" alt="{{ item.itemName }}">
       <mat-card-header>
         <mat-card-title>{{ item.itemName }}</mat-card-title>
@@ -29,7 +94,6 @@
       <mat-card-content>
         <p><strong>Color:</strong> {{ item.color }}</p>
         <p><strong>Size:</strong> {{ item.size }}</p>
-        <p><strong>Price:</strong> ${{ item.price.toFixed(2) }}</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-button color="primary" [routerLink]="['/items', item.itemID]">
@@ -45,7 +109,23 @@
     </mat-card>
   </div>
 
-  <div *ngIf="filteredItems.length === 0" class="no-items">
-    <p>No items found. Add some items to your wardrobe!</p>
+  <div *ngIf="!loading && filteredItems.length === 0" class="no-items">
+    <div class="empty-state">
+      <mat-icon>search_off</mat-icon>
+      <h2>No items found</h2>
+      <p>Try adjusting your filters or add new items to your wardrobe</p>
+      <button mat-raised-button color="primary" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon> Reset Filters
+      </button>
+    </div>
   </div>
+
+  <mat-paginator
+    *ngIf="!loading && filteredItems.length > 0"
+    [length]="filteredItems.length"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20, 50]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
 </div>

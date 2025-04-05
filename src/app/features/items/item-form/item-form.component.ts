@@ -163,7 +163,6 @@ export class ItemFormComponent implements OnInit {
       color: ['', Validators.required],
       size: ['', Validators.required],
       brand: ['', Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]],
       imageUrl: ['']
     });
   }

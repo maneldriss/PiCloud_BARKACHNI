@@ -6,10 +6,9 @@ export interface Item {
   itemName: string;
   description?: string;
   category: Category;
-  color: string;
   size: string;
+  color: string;
   brand: string;
-  price: number;
   imageUrl?: string;
   dateAdded?: Date;
   user?: User;

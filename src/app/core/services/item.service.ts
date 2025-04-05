@@ -16,7 +16,6 @@ export class ItemService {
       color: 'Blue',
       size: 'M',
       brand: 'Levi\'s',
-      price: 59.99,
       imageUrl: 'assets/images/blue-jeans.jpg',
       dateAdded: new Date()
     },
@@ -28,7 +27,6 @@ export class ItemService {
       color: 'White',
       size: 'L',
       brand: 'H&M',
-      price: 19.99,
       imageUrl: 'assets/images/white-tshirt.jpg',
       dateAdded: new Date()
     },
@@ -40,7 +38,6 @@ export class ItemService {
       color: 'Black',
       size: '42',
       brand: 'Nike',
-      price: 89.99,
       imageUrl: 'assets/images/black-sneakers.jpg',
       dateAdded: new Date()
     }
