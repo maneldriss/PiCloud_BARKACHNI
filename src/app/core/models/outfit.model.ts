@@ -7,4 +7,6 @@ export interface Outfit {
   description?: string;
   items?: Item[];
   dressing?: Dressing;
+  season?: string;
+  occasion?: string;
 }

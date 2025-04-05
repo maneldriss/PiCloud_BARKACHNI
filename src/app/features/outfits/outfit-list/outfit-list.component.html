@@ -7,28 +7,80 @@
     </button>
   </div>
 
+  <div class="search-bar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search outfits</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by name or description">
+      <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="filters">
+    <button mat-button color="primary" (click)="toggleAdvancedFilters()">
+      <mat-icon>filter_list</mat-icon>
+      {{ showAdvancedFilters ? 'Hide Advanced Filters' : 'Show Advanced Filters' }}
+    </button>
+
+    <div *ngIf="showAdvancedFilters" class="advanced-filters">
+      <mat-form-field appearance="fill">
+        <mat-label>Season</mat-label>
+        <mat-select [(value)]="selectedSeason" (selectionChange)="onFilterChange('season', $event.value)">
+          <mat-option value="ALL">All Seasons</mat-option>
+          <mat-option *ngFor="let season of allSeasons" [value]="season"
+                      [disabled]="selectedOccasion !== 'ALL' ? !availableSeasons.includes(season) : false">
+            {{ season }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Occasion</mat-label>
+        <mat-select [(value)]="selectedOccasion" (selectionChange)="onFilterChange('occasion', $event.value)">
+          <mat-option value="ALL">All Occasions</mat-option>
+          <mat-option *ngFor="let occasion of allOccasions" [value]="occasion"
+                      [disabled]="selectedSeason !== 'ALL' ? !availableOccasions.includes(occasion) : false">
+            {{ occasion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="filters-actions">
+        <button mat-raised-button color="accent" (click)="resetFilters()">
+          <mat-icon>refresh</mat-icon> Reset Filters
+        </button>
+        <div class="filter-count" *ngIf="filteredOutfits.length > 0">
+          {{ filteredOutfits.length }} outfit{{ filteredOutfits.length !== 1 ? 's' : '' }} found
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div *ngIf="loading" class="loading-container">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
-  <div *ngIf="!loading && outfits.length === 0" class="no-outfits">
+  <div *ngIf="!loading && filteredOutfits.length === 0" class="no-outfits">
     <div class="empty-state">
       <mat-icon>style</mat-icon>
-      <h2>No Outfits Yet</h2>
-      <p>Create your first outfit to start organizing your wardrobe</p>
-      <button mat-raised-button color="primary" routerLink="/outfits/new">
-        <mat-icon>add</mat-icon>
-        Create Your First Outfit
+      <h2>No Outfits Found</h2>
+      <p>Try adjusting your filters or create new outfits</p>
+      <button mat-raised-button color="primary" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon> Reset Filters
       </button>
     </div>
   </div>
 
-  <div *ngIf="!loading && outfits.length > 0" class="outfits-grid">
-    <mat-card *ngFor="let outfit of outfits" class="outfit-card">
+  <div *ngIf="!loading && filteredOutfits.length > 0" class="outfits-grid">
+    <mat-card *ngFor="let outfit of paginatedOutfits" class="outfit-card">
       <mat-card-header>
         <mat-card-title>{{ outfit.name }}</mat-card-title>
-        <mat-card-subtitle *ngIf="outfit.items">
-          {{ outfit.items.length }} items
+        <mat-card-subtitle>
+          <span *ngIf="outfit.items">{{ outfit.items.length }} items</span>
+          <span *ngIf="outfit.season"> • {{ outfit.season }}</span>
+          <span *ngIf="outfit.occasion"> • {{ outfit.occasion }}</span>
         </mat-card-subtitle>
       </mat-card-header>
 
@@ -58,4 +110,13 @@
       </mat-card-actions>
     </mat-card>
   </div>
+
+  <mat-paginator
+    *ngIf="!loading && filteredOutfits.length > 0"
+    [length]="filteredOutfits.length"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20, 50]"
+    (page)="onPageChange($event)"
+    aria-label="Select page">
+  </mat-paginator>
 </div>

@@ -11,12 +11,30 @@ export class OutfitService {
     {
       outfitID: 1,
       name: 'Casual Friday',
-      description: 'Comfortable outfit for casual Fridays at work'
+      description: 'Comfortable outfit for casual Fridays at work',
+      season: 'Fall',
+      occasion: 'Work'
     },
     {
       outfitID: 2,
       name: 'Night Out',
-      description: 'Stylish outfit for a night out with friends'
+      description: 'Stylish outfit for a night out with friends',
+      season: 'Summer',
+      occasion: 'Evening'
+    },
+    {
+      outfitID: 3,
+      name: 'Weekend Brunch',
+      description: 'Relaxed outfit for weekend brunches',
+      season: 'Spring',
+      occasion: 'Casual'
+    },
+    {
+      outfitID: 4,
+      name: 'Winter Formal',
+      description: 'Elegant outfit for winter formal events',
+      season: 'Winter',
+      occasion: 'Formal'
     }
   ];
 

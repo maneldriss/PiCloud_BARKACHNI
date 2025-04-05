@@ -3,6 +3,7 @@ import {Outfit} from "../../../core/models/outfit.model";
 import {OutfitService} from "../../../core/services/outfit.service";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-outfit-list',
@@ -11,7 +12,24 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 })
 export class OutfitListComponent implements OnInit {
   outfits: Outfit[] = [];
+  filteredOutfits: Outfit[] = [];
+  paginatedOutfits: Outfit[] = [];
   loading = true;
+
+  searchTerm: string = '';
+  showAdvancedFilters: boolean = false;
+
+  pageSize: number = 10;
+  currentPage: number = 0;
+
+  allSeasons: string[] = ['Spring', 'Summer', 'Fall', 'Winter'];
+  allOccasions: string[] = [];
+
+  selectedSeason: string = 'ALL';
+  selectedOccasion: string = 'ALL';
+
+  availableSeasons: string[] = [];
+  availableOccasions: string[] = [];
 
   constructor(
     private outfitService: OutfitService,
@@ -28,6 +46,9 @@ export class OutfitListComponent implements OnInit {
     this.outfitService.getOutfits().subscribe({
       next: (outfits) => {
         this.outfits = outfits;
+        this.extractAllFilterOptions();
+        this.updateAvailableFilterOptions();
+        this.applyFilters();
         this.loading = false;
       },
       error: () => {
@@ -37,6 +58,98 @@ export class OutfitListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  extractAllFilterOptions() {
+    this.allOccasions = [...new Set(this.outfits
+      .map(outfit => outfit.occasion)
+      .filter(occasion => occasion))] as string[];
+  }
+
+  updateAvailableFilterOptions() {
+    let filteredSubset = [...this.outfits];
+
+    if (this.selectedSeason !== 'ALL') {
+      filteredSubset = filteredSubset.filter(outfit => outfit.season === this.selectedSeason);
+    }
+
+    if (this.selectedOccasion !== 'ALL') {
+      filteredSubset = filteredSubset.filter(outfit => outfit.occasion === this.selectedOccasion);
+    }
+
+    this.availableSeasons = [...new Set(filteredSubset
+      .map(outfit => outfit.season)
+      .filter(season => season))] as string[];
+
+    this.availableOccasions = [...new Set(filteredSubset
+      .map(outfit => outfit.occasion)
+      .filter(occasion => occasion))] as string[];
+  }
+
+  applyFilters() {
+    let result = [...this.outfits];
+
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      result = result.filter(outfit =>
+        outfit.name.toLowerCase().includes(term) ||
+        (outfit.description && outfit.description.toLowerCase().includes(term))
+      );
+    }
+
+    if (this.selectedSeason !== 'ALL') {
+      result = result.filter(outfit => outfit.season === this.selectedSeason);
+    }
+
+    if (this.selectedOccasion !== 'ALL') {
+      result = result.filter(outfit => outfit.occasion === this.selectedOccasion);
+    }
+
+    this.filteredOutfits = result;
+    this.updatePaginatedOutfits();
+    this.updateAvailableFilterOptions();
+  }
+
+  updatePaginatedOutfits() {
+    const startIndex = this.currentPage * this.pageSize;
+    this.paginatedOutfits = this.filteredOutfits.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePaginatedOutfits();
+  }
+
+  toggleAdvancedFilters() {
+    this.showAdvancedFilters = !this.showAdvancedFilters;
+  }
+
+  onFilterChange(filterType: string, value: any) {
+    switch(filterType) {
+      case 'season':
+        this.selectedSeason = value;
+        break;
+      case 'occasion':
+        this.selectedOccasion = value;
+        break;
+    }
+
+    this.applyFilters();
+    this.currentPage = 0;
+  }
+
+  resetFilters() {
+    this.selectedSeason = 'ALL';
+    this.selectedOccasion = 'ALL';
+    this.searchTerm = '';
+    this.applyFilters();
+    this.currentPage = 0;
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.applyFilters();
   }
 
   deleteOutfit(id: number): void {

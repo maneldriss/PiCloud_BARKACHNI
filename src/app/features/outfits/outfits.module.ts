@@ -8,6 +8,7 @@ import { OutfitFormComponent } from './outfit-form/outfit-form.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {SharedModule} from "../../shared/shared.module";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
         ReactiveFormsModule,
         OutfitsRoutingModule,
         SharedModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatPaginatorModule
     ]
 })
 export class OutfitsModule { }
