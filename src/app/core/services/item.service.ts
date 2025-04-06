@@ -1,85 +1,57 @@
 import { Injectable } from '@angular/core';
 import {Item} from "../models/item.model";
-import {Category} from "../models/category.enum";
-import {of} from "rxjs";
+import {catchError, throwError} from "rxjs";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ItemService {
-  private items: Item[] = [
-    {
-      itemID: 1,
-      itemName: 'Blue Jeans',
-      description: 'Classic blue denim jeans',
-      category: Category.PANTS,
-      color: 'Blue',
-      size: 'M',
-      brand: 'Levi\'s',
-      imageUrl: 'assets/images/blue-jeans.jpg',
-      dateAdded: new Date()
-    },
-    {
-      itemID: 2,
-      itemName: 'White T-Shirt',
-      description: 'Basic white cotton t-shirt',
-      category: Category.TOPS,
-      color: 'White',
-      size: 'L',
-      brand: 'H&M',
-      imageUrl: 'assets/images/white-tshirt.jpg',
-      dateAdded: new Date()
-    },
-    {
-      itemID: 3,
-      itemName: 'Black Sneakers',
-      description: 'Casual black sneakers',
-      category: Category.SHOES,
-      color: 'Black',
-      size: '42',
-      brand: 'Nike',
-      imageUrl: 'assets/images/black-sneakers.jpg',
-      dateAdded: new Date()
-    }
-  ];
+  private apiUrl = 'http://localhost:8080/barkachni/item';
 
-  constructor() {
+  constructor(private http: HttpClient) {
   }
 
-  getItems(){
-    return of(this.items)
+  getItems() {
+    return this.http.get<Item[]>(`${this.apiUrl}/retrieve-all-items`)
+      .pipe(catchError(this.handleError));
   }
 
   getItemById(id: number) {
-    const item = this.items.find(i => i.itemID === id);
-    return of(item);
+    return this.http.get<Item>(`${this.apiUrl}/retrieve-item/${id}`)
+      .pipe(catchError(this.handleError));
   }
 
-  addItem(item: Item){
-    const newItem = {
-      ...item,
-      itemID: this.items.length + 1,
-      dateAdded: new Date()
-    };
-    this.items.push(newItem);
-    return of(newItem);
+  addItem(item: Item) {
+    return this.http.post<Item>(`${this.apiUrl}/add-item`, item)
+      .pipe(catchError(this.handleError));
   }
 
-  updateItem(item: Item){
-    const index = this.items.findIndex(i => i.itemID === item.itemID);
-    if (index !== -1) {
-      this.items[index] = item;
-      return of(item);
+  updateItem(item: Item) {
+    console.log('Sending update request to:', `${this.apiUrl}/update-item`);
+    console.log('With data:', JSON.stringify(item));
+
+    return this.http.put<Item>(`${this.apiUrl}/update-item`, item)
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteItem(id: number) {
+    return this.http.delete(`${this.apiUrl}/remove-item/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('API Error:', error);
+
+    if (error.error instanceof ErrorEvent) {
+      console.error('Client-side error:', error.error.message);
+    } else {
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${JSON.stringify(error.error)}`
+      );
     }
-    return of(item);
-  }
 
-  deleteItem(id:number){
-    const index = this.items.findIndex(i => i.itemID === id);
-    if (index !== -1) {
-      this.items.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+    return throwError(() => new Error('Something went wrong. Please try again later.'));
   }
 }

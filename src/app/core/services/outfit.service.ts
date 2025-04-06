@@ -1,79 +1,56 @@
 import { Injectable } from '@angular/core';
 import {Outfit} from "../models/outfit.model";
-import {of} from "rxjs";
+import {catchError, of, throwError} from "rxjs";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class OutfitService {
+  private apiUrl = 'http://localhost:8080/barkachni/outfit';
 
-  private outfits: Outfit[] = [
-    {
-      outfitID: 1,
-      name: 'Casual Friday',
-      description: 'Comfortable outfit for casual Fridays at work',
-      season: 'Fall',
-      occasion: 'Work'
-    },
-    {
-      outfitID: 2,
-      name: 'Night Out',
-      description: 'Stylish outfit for a night out with friends',
-      season: 'Summer',
-      occasion: 'Evening'
-    },
-    {
-      outfitID: 3,
-      name: 'Weekend Brunch',
-      description: 'Relaxed outfit for weekend brunches',
-      season: 'Spring',
-      occasion: 'Casual'
-    },
-    {
-      outfitID: 4,
-      name: 'Winter Formal',
-      description: 'Elegant outfit for winter formal events',
-      season: 'Winter',
-      occasion: 'Formal'
-    }
-  ];
-
-  constructor() {
+  constructor(private http: HttpClient) {
   }
 
   getOutfits() {
-    return of(this.outfits);
+    return this.http.get<Outfit[]>(`${this.apiUrl}/retrieve-all-outfits`)
+      .pipe(catchError(this.handleError));
   }
 
   getOutfitById(id: number) {
-    const outfit = this.outfits.find(o => o.outfitID === id);
-    return of(outfit);
+    return this.http.get<Outfit>(`${this.apiUrl}/retrieve-outfit/${id}`)
+      .pipe(catchError(this.handleError));
   }
 
   addOutfit(outfit: Outfit) {
-    const newOutfit = {
-      ...outfit,
-      outfitID: this.outfits.length + 1
-    };
-    this.outfits.push(newOutfit);
-    return of(newOutfit);
+    return this.http.post<Outfit>(`${this.apiUrl}/add-outfit`, outfit)
+      .pipe(catchError(this.handleError));
   }
 
   updateOutfit(outfit: Outfit) {
-    const index = this.outfits.findIndex(o => o.outfitID === outfit.outfitID);
-    if (index !== -1) {
-      this.outfits[index] = outfit;
-      return of(outfit);
-    }
-    return of(outfit);
+    console.log('Sending update request to:', `${this.apiUrl}/update-outfit`);
+    console.log('With data:', JSON.stringify(outfit));
+
+    return this.http.put<Outfit>(`${this.apiUrl}/update-outfit`, outfit)
+      .pipe(catchError(this.handleError));
   }
 
   deleteOutfit(id: number) {
-    const index = this.outfits.findIndex(o => o.outfitID === id);
-    if (index !== -1) {
-      this.outfits.splice(index, 1);
-      return of(true);
+    return this.http.delete(`${this.apiUrl}/remove-outfit/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+  private handleError(error: HttpErrorResponse) {
+    console.error('API Error:', error);
+
+    if (error.error instanceof ErrorEvent) {
+      console.error('Client-side error:', error.error.message);
+    } else {
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${JSON.stringify(error.error)}`
+      );
     }
-    return of(false);
+
+    return throwError(() => new Error('Something went wrong. Please try again later.'));
   }
 }

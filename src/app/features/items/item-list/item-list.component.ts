@@ -9,7 +9,7 @@ import {PageEvent} from "@angular/material/paginator";
   templateUrl: './item-list.component.html',
   styleUrls: ['./item-list.component.css']
 })
-export class ItemListComponent implements OnInit{
+export class ItemListComponent implements OnInit {
   items: Item[] = [];
   filteredItems: Item[] = [];
   paginatedItems: Item[] = [];
@@ -38,11 +38,11 @@ export class ItemListComponent implements OnInit{
 
 
   constructor(private itemService: ItemService) {
-    }
+  }
 
-    ngOnInit() {
-      this.loadItems();
-    }
+  ngOnInit() {
+    this.loadItems();
+  }
 
   loadItems() {
     this.loading = true;
@@ -131,7 +131,7 @@ export class ItemListComponent implements OnInit{
   }
 
   onFilterChange(filterType: string, value: any) {
-    switch(filterType) {
+    switch (filterType) {
       case 'category':
         this.selectedCategory = value;
         break;
@@ -166,9 +166,14 @@ export class ItemListComponent implements OnInit{
   }
 
   deleteItem(id: number) {
-    if (confirm('Are you sure you want to delete this item?')) {
-      this.itemService.deleteItem(id).subscribe(() => {
-        this.loadItems();
+    if (confirm('Are you sure you want to delete this outfit?')) {
+      this.itemService.deleteItem(id).subscribe({
+        next: () => {
+          this.loadItems(); // Make sure this function correctly updates this.items
+        },
+        error: (error) => {
+          console.error('Error deleting item:', error);
+        }
       });
     }
   }
