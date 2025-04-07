@@ -69,5 +69,20 @@ public class ItemRestController {
                     .body("Error updating item: " + e.getMessage());
         }
     }
+    @PutMapping("/toggle-favorite/{itemId}")
+    public ResponseEntity<Item> toggleFavorite(@PathVariable Long itemId, @RequestParam boolean favorite) {
+        try {
+            Item item = itemService.retrieveItem(itemId);
+            if (item == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            item.setFavorite(favorite);
+            Item updatedItem = itemService.updateItem(item);
+            return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

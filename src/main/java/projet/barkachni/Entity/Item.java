@@ -3,7 +3,6 @@ package projet.barkachni.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,13 +42,12 @@ public class Item {
     @NotBlank(message = "Brand cannot be blank")
     private String brand;
 
-    @PositiveOrZero(message = "Price must be a positive value or zero")
-    private float price;
-
     @Size(max = 1000, message = "Image URL is too long")
     private String imageUrl;
 
     private LocalDateTime dateAdded;
+
+    private boolean favorite = false;
 
     @ManyToOne
     @JoinColumn(name = "userID")

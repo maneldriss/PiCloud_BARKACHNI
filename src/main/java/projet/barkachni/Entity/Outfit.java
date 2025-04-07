@@ -33,6 +33,10 @@ public class Outfit {
 
     private LocalDateTime dateCreated;
 
+    private String season;
+
+    private String occasion;
+
     @ManyToMany
     @JoinTable(
             name = "outfit_item",
