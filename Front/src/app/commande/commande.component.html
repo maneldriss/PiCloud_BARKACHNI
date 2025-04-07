@@ -6,6 +6,12 @@
       <p>Shipping Address: {{ commande.shippingAddress }}</p>
       <p>Status: {{ commande.status }}</p>
       <!-- Add more details if necessary -->
+      <button
+        (click)="cancelCommande(commande.commandeID)"
+        class="btn btn-danger"
+      >
+        Annuler Commande
+      </button>
     </li>
   </ul>
 </div>

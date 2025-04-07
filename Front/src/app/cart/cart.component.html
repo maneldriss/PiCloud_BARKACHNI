@@ -106,6 +106,13 @@
             <span>{{ total }} TND</span>
           </p>
         </div>
+        <!-- Order Now Button -->
+        <button
+          class="btn btn-success btn-lg"
+          (click)="redirectToOrderForm(cart?.cartID)"
+        >
+          Order Now
+        </button>
 
         <div class="product-add mb-4">
           <div class="input-group">

@@ -9,6 +9,7 @@ import { LayoutComponent } from './shared/layout/layout.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { FormsModule } from '@angular/forms';
 import { CommandeComponent } from './commande/commande.component';
+import { OrderFormComponent } from './order-form/order-form.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { CommandeComponent } from './commande/commande.component';
     CartComponent,
     LayoutComponent,
     ProductListComponent,
-    CommandeComponent
+    CommandeComponent,
+    OrderFormComponent
   ],
   imports: [
     BrowserModule,

@@ -60,4 +60,8 @@ export class CartComponent implements OnInit {
       this.getTotal();
     });
   }
+  redirectToOrderForm(cartId: any): void {
+    this.router.navigate(['/order-form', cartId]); // Include cart ID in the URL
+  }
+  
 }

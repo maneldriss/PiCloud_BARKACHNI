@@ -44,4 +44,17 @@ export class CommandeComponent implements OnInit {
       }
     );
   }
+   // Cancel a commande (remove it)
+   cancelCommande(commandeId: any): void {
+    this.commandeService.removeCommande(commandeId).subscribe(
+      () => {
+        console.log(`Commande ${commandeId} canceled successfully`);
+        // After cancelling, refresh the list of commandes
+        this.getAllCommandes();
+      },
+      (error) => {
+        console.error('Error cancelling commande:', error);
+      }
+    );
+  }
 }
