@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Category} from "../../../core/models/category.enum";
 import {ItemService} from "../../../core/services/item.service";
@@ -17,9 +17,11 @@ interface SizeOption {
   templateUrl: './item-form.component.html',
   styleUrls: ['./item-form.component.css']
 })
-export class ItemFormComponent implements OnInit {
+export class ItemFormComponent implements OnInit,OnDestroy {
   @ViewChild('canvas', {static: false}) canvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('imagePreviewElem', {static: false}) imagePreviewElem!: ElementRef<HTMLImageElement>;
+
+  @Input() eyedropperTolerance = 4
 
   itemForm!: FormGroup;
   categories = Object.values(Category);
@@ -132,6 +134,9 @@ export class ItemFormComponent implements OnInit {
     '#FFD700'
   ];
 
+  eyedropperActive = false;
+  sampleRadius = this.eyedropperTolerance;
+
   constructor(
     private fb: FormBuilder,
     private itemService: ItemService,
@@ -166,6 +171,139 @@ export class ItemFormComponent implements OnInit {
       brand: ['', Validators.required],
       imageUrl: ['']
     });
+  }
+
+  toggleEyedropper(event: Event): void {
+    event.stopPropagation();
+    this.eyedropperActive = !this.eyedropperActive;
+
+    if (this.eyedropperActive) {
+      document.body.classList.add('eyedropper-mode');
+
+      let targetContainer: HTMLElement | null = null;
+      if (this.imageProcessed && this.processedImageUrl) {
+        targetContainer = document.querySelector('.image-preview-processed');
+      } else if (this.imagePreview) {
+        targetContainer = document.querySelector('.image-preview-container');
+      }
+
+      if (targetContainer) {
+        targetContainer.classList.add('eyedropper-active');
+      }
+
+      document.addEventListener('click', this.handleDocumentClick, { once: true });
+    } else {
+      this.deactivateEyedropper();
+    }
+  }
+
+  handleDocumentClick = (event: MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const clickedElement = event.target as HTMLElement;
+    let targetImg: HTMLImageElement | null = null;
+
+    if (clickedElement.tagName === 'IMG') {
+      targetImg = clickedElement as HTMLImageElement;
+    } else {
+      const nearestImg = clickedElement.querySelector('img') ||
+        clickedElement.closest('.image-preview-container img, .image-preview-processed img');
+      if (nearestImg) {
+        targetImg = nearestImg as HTMLImageElement;
+      }
+    }
+
+    if (!targetImg) {
+      this.deactivateEyedropper();
+      return;
+    }
+
+    const rect = targetImg.getBoundingClientRect();
+
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+
+    const ratioX = clickX / rect.width;
+    const ratioY = clickY / rect.height;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', {willReadFrequently: true});
+
+    if (!ctx) {
+      this.deactivateEyedropper();
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      ctx.drawImage(img, 0, 0);
+
+      const x = Math.floor(ratioX * img.width);
+      const y = Math.floor(ratioY * img.height);
+
+      try {
+        const sampleSize = this.sampleRadius * 2 + 1; // width and height of sample area
+        const imageData = ctx.getImageData(
+          Math.max(0, x - this.sampleRadius),
+          Math.max(0, y - this.sampleRadius),
+          Math.min(sampleSize, img.width - x + this.sampleRadius),
+          Math.min(sampleSize, img.height - y + this.sampleRadius)
+        );
+
+        let r = 0, g = 0, b = 0;
+        const pixels = imageData.data;
+        const numPixels = pixels.length / 4; // each pixel has 4 values (r,g,b,a)
+
+        for (let i = 0; i < pixels.length; i += 4) {
+          r += pixels[i];
+          g += pixels[i + 1];
+          b += pixels[i + 2];
+        }
+
+        r = Math.round(r / numPixels);
+        g = Math.round(g / numPixels);
+        b = Math.round(b / numPixels);
+
+        const hex = '#' +
+          ('0' + r.toString(16)).slice(-2) +
+          ('0' + g.toString(16)).slice(-2) +
+          ('0' + b.toString(16)).slice(-2);
+
+        this.selectColor(hex);
+        console.log('Selected color:', hex, 'at position:', x, y, 'with radius:', this.sampleRadius);
+      } catch (e) {
+        console.error('Error sampling color:', e);
+      } finally {
+        this.deactivateEyedropper();
+      }
+    };
+
+    img.onerror = () => {
+      console.error('Failed to load image for color sampling');
+      this.deactivateEyedropper();
+    };
+
+    img.src = targetImg.src;
+  }
+
+  deactivateEyedropper(): void {
+    this.eyedropperActive = false;
+    document.body.classList.remove('eyedropper-mode');
+
+    const containers = document.querySelectorAll('.eyedropper-active');
+    containers.forEach(container => container.classList.remove('eyedropper-active'));
+
+    document.removeEventListener('click', this.handleDocumentClick);
+  }
+
+
+  ngOnDestroy(): void {
+    this.deactivateEyedropper();
   }
 
   updateSizeOptions(category: Category): void {

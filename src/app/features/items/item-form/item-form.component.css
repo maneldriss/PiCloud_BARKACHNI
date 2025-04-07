@@ -195,3 +195,46 @@
   gap: 16px;
   margin-top: 32px;
 }
+
+/* Add these styles to your component's CSS */
+body.eyedropper-mode {
+  cursor: crosshair !important;
+}
+
+body.eyedropper-mode .image-preview-container img,
+body.eyedropper-mode .image-preview-processed img {
+  cursor: crosshair !important;
+}
+
+.eyedropper-active {
+  position: relative;
+  z-index: 10;
+}
+
+.eyedropper-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 3px dashed #3f51b5;
+  pointer-events: none;
+  background-color: rgba(63, 81, 181, 0.1);
+  z-index: 1;
+}
+
+.color-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+button.active {
+  background-color: rgba(63, 81, 181, 0.2);
+}
+
+/* Prevent text selection during eyedropper mode */
+body.eyedropper-mode {
+  user-select: none;
+}

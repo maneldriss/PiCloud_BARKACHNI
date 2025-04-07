@@ -1,15 +1,54 @@
-.header .spacer {
-  flex: 1 1 auto;
+.top-bar {
+  background-color: #111;
+  color: white;
+  font-size: 12px;
+  padding: 0 16px;
+  height: 32px;
 }
-.header .title {
+
+.top-bar .top-link {
+  color: white;
+  font-size: 12px;
+  margin-left: 12px;
+}
+
+.main-header {
+  background-color: white;
+  color: black;
+  padding: 0 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  height: 64px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  font-family: 'Arial Black', sans-serif;
+}
+
+.logo .dot {
+  color: red;
+  font-size: 24px;
+}
+
+nav a {
+  margin: 0 12px;
+  font-weight: 500;
+  font-size: 14px;
+  color: black;
+}
+
+nav a.active {
+  border-bottom: 2px solid red;
+  color: red;
+}
+
+.cart-price {
+  font-weight: bold;
   margin-left: 8px;
+  font-size: 14px;
 }
-.header nav {
-  display: flex;
-}
-.header nav a {
-  margin: 0 4px;
-}
-.header nav a.active {
-  background-color: rgba(255, 255, 255, 0.15);
+
+.spacer {
+  flex: 1 1 auto;
 }

@@ -1,25 +1,28 @@
-<mat-toolbar color="primary" class="header">
-  <button mat-icon-button class="menu-icon" aria-label="Example icon-button with menu icon">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <span class="title">{{ title }}</span>
+<!-- Top Black Bar -->
+<mat-toolbar color="primary" class="top-bar">
+  <span class="shipping-info">Free shipping, 30-day return or refund guarantee.</span>
   <span class="spacer"></span>
+  <a mat-button class="top-link">Sign In</a>
+  <a mat-button class="top-link">FAQs</a>
+  <a mat-button class="top-link">USD <mat-icon>arrow_drop_down</mat-icon></a>
+</mat-toolbar>
+
+<mat-toolbar class="main-header">
+  <img src="assets/img/logo-white.png" alt="Barkachni" class="logo-img" />
+
+  <span class="spacer"></span>
+
   <nav>
-    <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-      <mat-icon>home</mat-icon> Home
-    </a>
-    <a mat-button routerLink="/items" routerLinkActive="active">
-      <mat-icon>checkroom</mat-icon> Items
-    </a>
-    <a mat-button routerLink="/outfits" routerLinkActive="active">
-      <mat-icon>style</mat-icon> Outfits
-    </a>
-    <a mat-button routerLink="/dressing" routerLinkActive="active">
-      <mat-icon>grid_view</mat-icon> Wardrobe
-    </a>
+    <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a mat-button routerLink="/items" routerLinkActive="active">My Items</a>
+    <a mat-button routerLink="/outfits" routerLinkActive="active">My Outfits</a>
+    <a mat-button routerLink="/dressing" routerLinkActive="active">My Dressing</a>
   </nav>
+
   <span class="spacer"></span>
-  <button mat-icon-button aria-label="User profile">
-    <mat-icon>account_circle</mat-icon>
-  </button>
+
+  <button mat-icon-button><mat-icon>search</mat-icon></button>
+  <button mat-icon-button><mat-icon>favorite_border</mat-icon></button>
+  <button mat-icon-button><mat-icon>shopping_bag</mat-icon></button>
+  <span class="cart-price">$0.00</span>
 </mat-toolbar>

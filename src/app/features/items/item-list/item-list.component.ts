@@ -36,6 +36,8 @@ export class ItemListComponent implements OnInit {
   currentPage: number = 0;
   loading: boolean = true;
 
+  showOnlyFavorites: boolean = false;
+
 
   constructor(private itemService: ItemService) {
   }
@@ -109,10 +111,13 @@ export class ItemListComponent implements OnInit {
       result = result.filter(item => item.size === this.selectedSize);
     }
 
+    if (this.showOnlyFavorites) {
+      result = result.filter(item => item.favorite);
+    }
+
     this.filteredItems = result;
     this.updatePaginatedItems();
     this.updateAvailableFilterOptions();
-
   }
 
   updatePaginatedItems() {
@@ -156,6 +161,7 @@ export class ItemListComponent implements OnInit {
     this.selectedColor = 'ALL';
     this.selectedSize = 'ALL';
     this.searchTerm = '';
+    this.showOnlyFavorites = false;
     this.applyFilters();
     this.currentPage = 0;
   }
@@ -177,4 +183,27 @@ export class ItemListComponent implements OnInit {
       });
     }
   }
+
+  toggleFavorite(item: Item) {
+    const newStatus = !item.favorite;
+    this.itemService.toggleFavorite(item.itemID || 0, newStatus).subscribe({
+      next: (updatedItem) => {
+        item.favorite = newStatus;
+
+        const itemIndex = this.items.findIndex(i => i.itemID === item.itemID);
+        if (itemIndex !== -1) {
+          this.items[itemIndex].favorite = newStatus;
+        }
+
+        if (this.showOnlyFavorites) {
+          this.applyFilters();
+        }
+      },
+      error: (error) => {
+        console.error('Error toggling favorite status:', error);
+      }
+    });
+  }
+
+
 }

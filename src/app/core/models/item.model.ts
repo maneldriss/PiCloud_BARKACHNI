@@ -12,4 +12,5 @@ export interface Item {
   imageUrl?: string;
   dateAdded?: Date;
   user?: User;
+  favorite?: boolean;
 }

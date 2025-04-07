@@ -1,5 +1,60 @@
 <footer class="footer">
   <div class="container">
-    <p>&copy; {{ currentYear }} Wardrobe Manager App. All rights reserved.</p>
+    <div class="footer__content">
+      <!-- Brand column -->
+      <div class="footer__column">
+        <div class="footer__logo">
+          <a routerLink="/">
+            <img src="assets/img/logo-white.png" alt="Barkachni">
+          </a>
+        </div>
+        <p class="footer__text">
+          The customer is at the heart of our unique business model, which includes design.
+        </p>
+        <div class="footer__payment">
+          <img src="assets/img/payment-methods.png" alt="Payment Methods">
+        </div>
+      </div>
+
+      <!-- First shopping column -->
+      <div class="footer__column">
+        <h4 class="footer__title">SHOPPING</h4>
+        <ul class="footer__links">
+          <li><a href="#">Clothing Store</a></li>
+          <li><a href="#">Trending Shoes</a></li>
+          <li><a href="#">Accessories</a></li>
+          <li><a href="#">Sale</a></li>
+        </ul>
+      </div>
+
+      <!-- Support column -->
+      <div class="footer__column">
+        <h4 class="footer__title">SHOPPING</h4>
+        <ul class="footer__links">
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Payment Methods</a></li>
+          <li><a href="#">Delivery</a></li>
+          <li><a href="#">Return & Exchanges</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter column -->
+      <div class="footer__column">
+        <h4 class="footer__title">NEWSLETTER</h4>
+        <p class="footer__text">
+          Be the first to know about new arrivals, look books, sales & promos!
+        </p>
+        <form class="footer__form">
+          <input type="email" placeholder="Your email" class="footer__input">
+          <button type="submit" class="footer__submit">
+            <i class="fas fa-envelope"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer__copyright">
+      <p>© Barkachni. All rights reserved.</p>
+    </div>
   </div>
 </footer>

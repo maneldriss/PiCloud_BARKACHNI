@@ -54,4 +54,9 @@ export class ItemService {
 
     return throwError(() => new Error('Something went wrong. Please try again later.'));
   }
+
+  toggleFavorite(itemId: number, isFavorite: boolean) {
+    return this.http.put<Item>(`${this.apiUrl}/toggle-favorite/${itemId}?favorite=${isFavorite}`, {})
+      .pipe(catchError(this.handleError));
+  }
 }

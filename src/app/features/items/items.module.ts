@@ -14,6 +14,8 @@ import {SharedModule} from "../../shared/shared.module";
 import {MatIconModule} from "@angular/material/icon";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 @NgModule({
@@ -22,16 +24,18 @@ import {MatPaginatorModule} from "@angular/material/paginator";
     ItemDetailComponent,
     ItemFormComponent
   ],
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        ItemsRoutingModule,
-        SharedModule,
-        MatIconModule,
-        MatCardModule,
-        MatProgressSpinnerModule,
-        MatButtonModule,
-        MatPaginatorModule
-    ]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ItemsRoutingModule,
+    SharedModule,
+    MatIconModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatPaginatorModule,
+    MatCheckboxModule,
+    MatTooltipModule
+  ]
 })
 export class ItemsModule { }

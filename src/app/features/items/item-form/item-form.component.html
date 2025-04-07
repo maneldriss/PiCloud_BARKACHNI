@@ -108,8 +108,9 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="predefined-colors">
+        <div class="predefined-colors">
             <p class="color-label">Common colors:</p>
             <div class="color-options">
               <div *ngFor="let color of predefinedColors"
@@ -122,11 +123,19 @@
             </div>
           </div>
 
-          <div class="color-input">
+        <div class="color-input">
+          <div class="color-tools">
+            <button type="button" mat-icon-button
+                    [class.active]="eyedropperActive"
+                    (click)="toggleEyedropper($event)"
+                    [disabled]="!imagePreview"
+                    matTooltip="Pick color from image">
+              <mat-icon>colorize</mat-icon>
+            </button>
             <input type="color" [(ngModel)]="selectedColor" [ngModelOptions]="{standalone: true}"
                    (change)="selectColor(selectedColor)">
-            <span class="color-hex">{{selectedColor}}</span>
           </div>
+          <span class="color-hex">{{selectedColor}}</span>
         </div>
         <mat-error *ngIf="itemForm.get('color')?.hasError('required') && itemForm.get('color')?.touched">
           Color is required
