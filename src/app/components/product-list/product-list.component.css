@@ -1,0 +1,31 @@
+.btn-pink {
+    background-color: #ff69b4;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-pink:hover {
+    background-color: #ff85c1;
+  }
+  
+  .product-card {
+    width: 18rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-img-top {
+    border-radius: 15px;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .card-title, .card-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  
