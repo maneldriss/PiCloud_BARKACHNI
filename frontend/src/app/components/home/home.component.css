@@ -1,0 +1,62 @@
+/* home.component.css */
+.hero {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    padding: 100px 0;
+  }
+  
+  .step-card {
+    background: white;
+    border-radius: 15px;
+    transition: transform 0.3s;
+  }
+  
+  .step-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  .step-number {
+    width: 40px;
+    height: 40px;
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+    margin: -30px auto 20px;
+    font-weight: bold;
+  }
+  
+  .donation-card .card-header {
+    border-radius: 10px 10px 0 0 !important;
+  }
+  
+  .bg-MONEY { background: #27ae60 !important; }
+  .bg-CLOTHING { background: #e67e22 !important; }
+  
+  .fa-hand-holding-heart,
+  .fa-users,
+  .fa-tshirt {
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+  }
+  .max-w-800 {
+    max-width: 800px;
+  }
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .border-2 {
+    border-width: 2px!important;
+  }
+  
+  .bg-opacity-10 {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+  }
+  
+  .bg-opacity-25 {
+    background-color: rgba(var(--bs-primary-rgb), 0.25);
+  }

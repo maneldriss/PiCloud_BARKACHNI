@@ -1,0 +1,108 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0" style="color: #59886b;">Donations</h2>
+    <a routerLink="/donations/add" class="btn text-white" style="background-color: #59886b;">Add New Donation</a>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <div class="input-group">
+        <select class="form-select" [(ngModel)]="searchType" (change)="applyFilters()" style="border-color: #59886b;">
+          <option value="">All Types</option>
+          <option *ngFor="let type of donationTypes" [value]="type">{{ type }}</option>
+        </select>
+        <button class="btn btn-outline-secondary" type="button" (click)="toggleSort('amount')" style="border-color: #59886b; color: #59886b;">
+          Sort by Amount <i class="fas" [class.fa-sort-amount-up]="sortField === 'amount' && !sortDesc" 
+          [class.fa-sort-amount-down]="sortField === 'amount' && sortDesc"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border" style="color: #59886b;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <!-- Affichage en cartes flottantes -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col" *ngFor="let donation of paginatedDonations">
+        <div class="card h-100 shadow-sm" style="border: none; border-radius: 10px; transition: all 0.3s ease;">
+          <div class="card-header text-white" style="background-color: #59886b; border-radius: 10px 10px 0 0;">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0">{{ getDonationTypeDisplay(donation.donationType) }}</h5>
+              <i class="fas {{ getDonationIcon(donation.donationType) }}"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+             
+            </div>
+            <p class="card-text">
+              <strong style="color: #59886b;">Amount:</strong> 
+              <span *ngIf="donation.donationType === 'MONEY'">{{ donation.amount || 'X' }} DT</span>
+              <span *ngIf="donation.donationType !== 'MONEY'">N/A</span>
+              <br>
+              <strong style="color: #59886b;">Item:</strong> 
+              {{ donation.itemDressing?.itemName || donation.itemDressing?.itemID || '_' }}
+            </p>
+            <div *ngIf="donation.donor" class="mt-2">
+              <small class="text-muted">Donated by: {{ donation.donor.name }}</small>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent" style="border-top: 1px solid #e6e4d8;">
+            <div class="d-flex justify-content-between">
+              <a [routerLink]="['/donations', donation.donationId]" class="btn btn-sm" style="background-color: #59886b; color: white;">View</a>
+              <a [routerLink]="['/donations/edit', donation.donationId]" class="btn btn-sm" style="background-color: #e6e4d8; color: #59886b;">Edit</a>
+              <button (click)="deleteDonation(donation.donationId)" class="btn btn-sm" style="background-color: #f8f8f8; color: #dc3545; border: 1px solid #f1f1f1;">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <div class="text-muted small">
+        Page {{ currentPage }} of {{ totalPages }} • 
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+        {{ Math.min(currentPage * itemsPerPage, filteredDonations.length) }} of 
+        {{ filteredDonations.length }} donations
+      </div>
+      <nav>
+        <ul class="pagination pagination-sm">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="previousPage()" style="color: #59886b;">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of getPages()" [class.active]="page === currentPage">
+            <a class="page-link" 
+               (click)="goToPage(page)" 
+               [style.backgroundColor]="page === currentPage ? '#59886b' : 'transparent'" 
+               [style.color]="page === currentPage ? 'white' : '#59886b'"
+               [style.borderColor]="page === currentPage ? '#59886b' : '#dee2e6'">
+              {{ page }}
+            </a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="nextPage()" style="color: #59886b;">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div *ngIf="donations.length === 0" class="alert alert-info mt-4" style="background-color: #e6e4d8; border-color: #59886b; color: #59886b;">
+      <i class="fas fa-info-circle me-2"></i>No donations found. Add a new donation to get started.
+    </div>
+  </div>
+</div>

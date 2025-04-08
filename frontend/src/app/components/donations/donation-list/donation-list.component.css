@@ -1,0 +1,35 @@
+/* donation-list.component.css */
+.pagination {
+    margin-bottom: 0;
+  }
+  
+  .page-link {
+    cursor: pointer;
+  }
+  
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  .fa-sort-amount-up, .fa-sort-amount-down {
+    margin-left: 5px;
+  }
+  /* donation-list.component.css */
+.pagination {
+    margin-bottom: 0;
+  }
+  
+  .page-link {
+    cursor: pointer;
+    min-width: 38px;
+    text-align: center;
+  }
+  
+  .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+  
+  .page-item:not(.active) .page-link:hover {
+    background-color: #f8f9fa;
+  }

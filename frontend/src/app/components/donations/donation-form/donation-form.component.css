@@ -1,0 +1,56 @@
+/* Styles globaux pour le formulaire */
+.donation-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .header-accent-line {
+    height: 4px;
+    width: 80px;
+    margin-top: 8px;
+  }
+  
+  .form-card {
+    transition: all 0.3s ease;
+  }
+  
+  .form-card:hover {
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1) !important;
+  }
+  
+  .btn-action-submit {
+    background-color: #59886b;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-action-submit:hover {
+    background-color: #4a7760;
+    transform: translateY(-2px);
+  }
+  
+  .btn-action-submit:disabled {
+    background-color: #cccccc;
+  }
+  
+  .btn-action-cancel {
+    background-color: white;
+    color: #5a5a5a;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-action-cancel:hover {
+    background-color: #f5f5f5;
+    border-color: #d0d0d0;
+  }
+  
+  .form-select-lg, .form-control-lg {
+    padding: 12px 16px;
+    font-size: 1rem;
+  }
+  
+  .dynamic-fields-section {
+    transition: all 0.3s ease;
+  }
