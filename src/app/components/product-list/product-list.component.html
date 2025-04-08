@@ -1,0 +1,82 @@
+<div class="container mt-4">
+  <h2 class="text-center mb-4"><strong>Products</strong></h2>
+
+  <div class="text-center mb-4">
+    <a routerLink="/products/add" class="btn btn-pink">Add New Product</a>
+  </div>
+
+  <div *ngIf="loading" class="text-center">
+    <p>Loading products...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div class="row justify-content-center">
+    <div *ngFor="let product of products" class="card product-card m-3 p-3">
+      <img [src]="product.productImageURL" alt="Product Image" class="card-img-top" />
+      <div class="card-body text-center">
+        <h4 class="card-title"><strong>{{ product.nameProduct | uppercase }}</strong> </h4>
+        <p class="card-text"><strong>Category:</strong> {{ product.categoryProduct }}</p>
+        <p class="card-text"><strong>Description:</strong> {{ product.productDescription }}</p>
+        <p class="card-text"><strong>Price:</strong> {{ product.productPrice }} DT</p>
+
+        <div class="d-flex justify-content-center gap-2 mt-3">
+          <a [routerLink]="['/products', product.productId]" class="btn btn-info btn-sm">View</a>
+          <a [routerLink]="['/products/edit', product.productId]" class="btn btn-warning btn-sm">Edit</a>
+          <button (click)="deleteProduct(product.productId)" class="btn btn-danger btn-sm">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="products.length === 0" class="alert alert-info text-center mt-4">
+    No products found. Add a new product to get started.
+  </div>
+</div>
+
+    <!--AFFICHAGE EN MODE TABLEAU CAN BE USED F DASHBOARD-->
+    <!--<div *ngIf="!loading && !error">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name Product</th>
+            <th>Product Category</th>
+            <th>User Name </th>
+            <th>Date Added</th>
+            <th>Product Image </th>
+            <th>Product Description</th>
+            <th>Product Price</th>
+            <th>Product State</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of products">
+            <td>{{ product.productId }}</td>
+            <td>{{ product.nameProduct }}</td>
+            <td>{{ product.categoryProduct }}</td>
+            <td>{{ product.productSeller?.nameUser }}</td>
+            <td>{{ product.dateProductAdded }}</td>
+            <td>{{ product.productImageURL }}</td>
+            <td>{{ product.productDescription }}</td>
+            <td>{{ product.productPrice }}</td>
+            <td>{{ product.productState }}</td>
+            <td>
+              <a [routerLink]="['/products', product.productId]" class="btn btn-info btn-sm me-2">View</a>
+              <a [routerLink]="['/products/edit', product.productId]" class="btn btn-warning btn-sm me-2">Edit</a>
+              <button (click)="deleteProduct(product.productId)" class="btn btn-danger btn-sm">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div *ngIf="products.length === 0" class="alert alert-info">
+        No products found. Add a new product to get started.
+      </div>
+    </div>
+  </div>-->
+  
+  
+  

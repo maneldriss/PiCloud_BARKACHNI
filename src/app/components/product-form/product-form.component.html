@@ -1,0 +1,78 @@
+
+<div class="container product-form-container">
+  <h2 class="form-title">{{ isEditMode ? 'Edit' : 'Add' }} Product</h2>
+
+  <div *ngIf="loading" class="text-center">
+    <p>Loading...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" *ngIf="!loading" novalidate>
+    <div class="form-group">
+      <label for="nameProduct">Product Name</label>
+      <input type="text" id="nameProduct" class="form-control rounded-input" formControlName="nameProduct" />
+      <small class="text-danger" *ngIf="productForm.get('nameProduct')?.invalid && productForm.get('nameProduct')?.touched">
+        Name must start with an uppercase letter.
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="categoryProduct">Product Category</label>
+      <input type="text" id="categoryProduct" class="form-control rounded-input" formControlName="categoryProduct" />
+    </div>
+
+    <div class="mb-3">
+      <label for="productSeller" class="form-label">Seller</label>
+      <select formControlName="productSeller" class="form-control rounded-input" >
+        <option *ngFor="let user of users" [ngValue]="user">{{ user.idUser }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="dateProductAdded">Date</label>
+      <input type="datetime-local" id="dateProductAdded" class="form-control rounded-input" formControlName="dateProductAdded" />
+    </div>
+
+    <div class="form-group">
+      <label for="productDescription">Description</label>
+      <input type="text" id="productDescription" class="form-control rounded-input" formControlName="productDescription" />
+    </div>
+
+    <div class="form-group">
+      <label>Product Image</label>
+      <input type="file" class="form-control-file" (change)="onFileSelected($event)" id="imageUpload" />
+    </div>
+
+    <div class="form-group">
+      <label for="productPrice">Price</label>
+      <input type="number" id="productPrice" class="form-control rounded-input" formControlName="productPrice" />
+      <small class="text-danger" *ngIf="productForm.get('productPrice')?.invalid && productForm.get('productPrice')?.touched">
+        Price must be greater than 0.
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="productState">State</label>
+      <select id="productState" class="form-control rounded-input" formControlName="productState">
+        <option value="AVAILABLE">Available</option>
+        <option value="SOLD">Sold</option>
+      </select>
+    </div>
+
+    <div class="form-buttons">
+      <button type="submit" class="btn btn-primary rounded-button" [disabled]="productForm.invalid">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+      <a routerLink="/products" class="btn btn-secondary rounded-button ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+
+      
+  
+    
+
+     
