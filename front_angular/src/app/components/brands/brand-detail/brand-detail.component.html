@@ -1,0 +1,98 @@
+<div class="container mt-4" *ngIf="!loading; else loadingIndicator">
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+  
+    <div *ngIf="brand" class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>{{ brand.name }}</h2>
+        <div>
+          <button (click)="navigateToEdit()" class="btn btn-warning me-2">Edit Brand</button>
+          <a routerLink="/brands" class="btn btn-secondary">Back to List</a>
+        </div>
+      </div>
+  
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <img [src]="brand.logo" 
+                 [alt]="brand.name"
+                 class="img-fluid"
+                 (error)="handleImageError($event)"
+                 *ngIf="brand?.logo">
+
+            <!-- Fallback image -->
+            <img [src]="defaultLogo" 
+                 [alt]="brand.name + ' default logo'"
+                 class="img-fluid"
+                 *ngIf="!brand?.logo || imageError">
+            <div *ngIf="!brand.logo" class="text-muted mb-3">No logo available</div>
+            
+            <div class="mb-3">
+              <h5>Rating</h5>
+              <div class="rating">
+                <span *ngFor="let star of [1,2,3,4,5]">
+                    <i class="bi" [ngClass]="getStarClass(star)"></i>
+                </span>
+                ({{ brand.rating | number:'1.1-1' }})
+              </div>
+            </div>
+          </div>
+  
+          <div class="col-md-8">
+            <div class="mb-3">
+              <h5>Description</h5>
+              <p>{{ brand.description || 'No description available' }}</p>
+            </div>
+  
+            <div class="row">
+              <div class="col-md-6">
+                <h5>Contact Information</h5>
+                <p *ngIf="brand.email"><strong>Email:</strong> {{ brand.email }}</p>
+                <p *ngIf="brand.address"><strong>Address:</strong> {{ brand.address }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <hr>
+  
+        <h3 class="mt-4">Associated Ads</h3>
+        <a [routerLink]="['/ads/add']" [queryParams]="{brandId: brand.id}" class="btn btn-success mb-3">
+          Add New Ad for This Brand
+        </a>
+  
+        <div *ngIf="ads.length === 0" class="alert alert-info">
+          No ads found for this brand.
+        </div>
+  
+        <div class="row">
+          <div *ngFor="let ad of ads" class="col-md-4 mb-4">
+            <div class="card h-100">
+              <img *ngIf="ad.image" [src]="ad.image" class="card-img-top" [alt]="ad.title">
+              <div class="card-body">
+                <h5 class="card-title">{{ ad.title }}</h5>
+                <p class="card-text">{{ ad.description || 'No description' }}</p>
+                <p class="text-muted">Clicks: {{ ad.nbClicks }}</p>
+                <p class="text-muted">Expires: {{ ad.expDate | date }}</p>
+              </div>
+              <div class="card-footer bg-transparent">
+                <a [href]="ad.link" target="_blank" class="btn btn-primary btn-sm me-2">Visit</a>
+                <a [routerLink]="['/ads/edit', ad.id]" class="btn btn-warning btn-sm me-2">Edit</a>
+                <button (click)="deleteAd(ad.id)" class="btn btn-danger btn-sm">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #loadingIndicator>
+    <div class="text-center mt-5">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading brand details...</p>
+    </div>
+  </ng-template>
