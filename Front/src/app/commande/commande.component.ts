@@ -44,6 +44,7 @@ export class CommandeComponent implements OnInit {
       }
     );
   }
+ 
    // Cancel a commande (remove it)
    cancelCommande(commandeId: any): void {
     this.commandeService.removeCommande(commandeId).subscribe(

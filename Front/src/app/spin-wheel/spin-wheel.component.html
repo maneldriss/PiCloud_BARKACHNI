@@ -1,5 +1,5 @@
 <!-- Spin-the-Wheel Popup -->
-<div *ngIf="showWheel" class="wheel-popup">
+<div class="wheel-popup">
   <div class="wheel-container">
     <!-- Pointer is now outside the wheel div -->
     <div class="pointer"></div>
@@ -23,7 +23,7 @@
     [isVisible]="showRewardModal"
     [rewardMessage]="rewardMessage"
     (close)="onModalClose()"
-  >
-  </app-rewardmodal>
+  ></app-rewardmodal>
 </div>
+
 <!-- Add this at the bottom of your spin-wheel.component.html -->

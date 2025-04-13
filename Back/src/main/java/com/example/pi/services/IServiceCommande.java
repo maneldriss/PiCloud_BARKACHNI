@@ -1,6 +1,7 @@
 package com.example.pi.services;
 
 import com.example.pi.entities.commande;
+import com.example.pi.entities.user;
 
 import java.util.List;
 
@@ -14,5 +15,9 @@ public interface IServiceCommande {
     public double getCommandeTotal(Long commandeId);
 
 
-    commande placeOrder(Long cartId, String shippingAddress, String shippingMethod, String paymentMethod);
+
+
+    commande placeOrder(Long cartId, String shippingAddress,
+                        String shippingMethod, String paymentMethod,
+                        Double discountApplied, String discountType);
 }

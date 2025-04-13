@@ -4,7 +4,8 @@ import { CommandeService } from '../services/commande.service';
 import { Commande } from '../models/commande';
 import { Cart } from '../models/cart';
 import { CartService } from '../services/cart.service';
-import { PlaceOrderRequest } from '../models/place-order-request'; // Import DTO
+import { PlaceOrderRequest } from '../models/place-order-request';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-order-form',
@@ -14,27 +15,28 @@ import { PlaceOrderRequest } from '../models/place-order-request'; // Import DTO
 export class OrderFormComponent implements OnInit {
   commande: Commande = {
     commandeID: null,
-    cart: null, // This will be populated dynamically
+    cart: null,
     shippingAddress: '',
     status: 'Pending',
     paymentStatus: 'Unpaid',
     paymentMethod: '',
     shippingMethod: '',
     shippingCost: 0,
-    commandeitems: [] ,
-    total:0,
-   
+    commandeitems: [],
+    total: 0,
   };
 
   shippingAddress: string = '';
   shippingMethod: string = '';
   paymentMethod: string = '';
+  showWheel: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private commandeService: CommandeService,
     private router: Router,
-    private cartService: CartService
+    private cartService: CartService,
+    private userService: UserService,
   ) {}
 
   ngOnInit(): void {
@@ -42,7 +44,10 @@ export class OrderFormComponent implements OnInit {
     if (cartId) {
       this.cartService.getCartById(parseInt(cartId, 10)).subscribe({
         next: (cart) => {
-          this.commande.cart = cart; // Assign the retrieved cart details to the commande
+          this.commande.cart = cart;
+          if (cart?.total) {
+            this.commande.total = cart.total;
+          }
         },
         error: (err) => console.error('Failed to fetch cart:', err),
       });
@@ -51,54 +56,79 @@ export class OrderFormComponent implements OnInit {
 
   submitCommande(): void {
     console.log('Commande before submission:', this.commande);
-    // Log the values before submitting to check if they are correct
-    console.log('Shipping Address:', this.shippingAddress);
-    console.log('Shipping Method:', this.shippingMethod);
-    console.log('Payment Method:', this.paymentMethod);
+    const cart = this.commande.cart;
   
-    // Prepare the PlaceOrderRequest DTO
+    if (cart && cart.cartitems && cart.cartitems.length >= 2) {
+      this.showWheel = true;
+    } else {
+      this.proceedWithOrder();
+    }
+  }
+
+  applyRewardAndProceed(reward: string): void {
+    console.log('Applying reward:', reward);
+    let discountValue = 0;
+    let discountType = '';
+
+    // Handle the match() potentially returning null
+    const discountMatch = reward.match(/\d+/);
+    if (reward.includes('% Discount') && discountMatch) {
+      discountValue = parseInt(discountMatch[0], 10);
+      discountType = 'percentage';
+      this.commande.total = this.commande.total * (1 - discountValue/100);
+    } else if (reward === 'Free Shipping') {
+      this.commande.shippingCost = 0;
+    }
+
+   
+    this.proceedWithOrder(discountValue, discountType);
+  }
+
+  proceedWithOrder(discountValue: number = 0, discountType: string = ''): void {
     const placeOrderRequest: PlaceOrderRequest = {
       shippingAddress: this.shippingAddress,
       shippingMethod: this.shippingMethod,
       paymentMethod: this.paymentMethod,
+      discountApplied: discountValue,
+      discountType: discountType
     };
-  
-    // Log the PlaceOrderRequest DTO before sending it
-    console.log('PlaceOrderRequest:', placeOrderRequest);
-  
-    const cartId = this.commande.cart?.cartID; // Get the cart ID dynamically
+
+    const cartId = this.commande.cart?.cartID;
     if (cartId) {
-      console.log('Cart ID:', cartId);
-      // Send the order request
       this.commandeService.placeOrder(placeOrderRequest, cartId).subscribe({
         next: (response) => {
           console.log('Order created successfully:', response);
-          alert('Order placed successfully!');
-          if (response && response.commandeID) {
-            this.commande.commandeID = response.commandeID; // Set the commandeID from the response
-            this.getTotal(response.commandeID); // Pass the commandeID to getTotal
+          if (response.commandeID) {
+            this.commande.commandeID = response.commandeID;
+            this.getTotal(response.commandeID);
           } else {
-            console.error('Order response does not include commandeID.');
+            console.error('Order response does not include commandeID');
           }
         },
-        error: (err) => {
-          console.error('Failed to create order:', err);
-          alert('An error occurred while placing the order.');
-        },
+        error: (err) => console.error('Failed to create order:', err)
       });
-    } else {
-      console.error('No cart ID found.');
     }
   }
   
-getTotal(commandeID: number): void {
-  this.commandeService.getCommandeTotal(commandeID).subscribe({
-    next: (total) => {
-      console.log('Total fetched successfully:', total);
-      this.commande.total = total; // Update the total in the commande object
-    },
-    error: (err) => {
-      console.error('Failed to fetch total:', err);
-    },
-  });
-}}
+  closeWheel(): void {
+    this.showWheel = false;
+    console.log('Spin wheel modal closed');
+  }
+  
+  getTotal(commandeID: number): void {
+    if (!commandeID) {
+      console.error('Invalid commandeID');
+      return;
+    }
+    
+    this.commandeService.getCommandeTotal(commandeID).subscribe({
+      next: (total) => {
+        console.log('Total fetched successfully:', total);
+        this.commande.total = total;
+      },
+      error: (err) => {
+        console.error('Failed to fetch total:', err);
+      },
+    });
+  }
+}

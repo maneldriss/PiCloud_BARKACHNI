@@ -2,6 +2,7 @@ package com.example.pi.controllers;
 
 import com.example.pi.dto.PlaceOrderRequest;
 import com.example.pi.entities.commande;
+import com.example.pi.entities.user;
 import com.example.pi.services.IServiceCommande;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,12 +64,27 @@ public class CommandeRestController {
     public ResponseEntity<commande> placeOrder(
             @PathVariable Long cartId,
             @RequestBody PlaceOrderRequest request) {
+
+        // Validate discount if provided
+        if (request.getDiscountApplied() != null && request.getDiscountType() != null) {
+            if ("percentage".equals(request.getDiscountType()) &&
+                    (request.getDiscountApplied() < 0 || request.getDiscountApplied() > 100)) {
+                return ResponseEntity.badRequest().build();
+            }
+            if ("fixed".equals(request.getDiscountType()) && request.getDiscountApplied() < 0) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
         commande commande = CommandeService.placeOrder(
                 cartId,
                 request.getShippingAddress(),
                 request.getShippingMethod(),
-                request.getPaymentMethod()
+                request.getPaymentMethod(),
+                request.getDiscountApplied(),
+                request.getDiscountType()
         );
+
         return ResponseEntity.ok(commande);
     }
 

@@ -33,6 +33,8 @@ public class commande {
     private double total;
     @OneToOne
     private user user;
+    private Double discountApplied;  // New field
+    private String discountType;     // New field (percentage/fixed)
 
     @OneToMany(cascade = CascadeType.PERSIST)
     private Set<Cartitem> Commandeitems;
@@ -125,6 +127,21 @@ public class commande {
     public void setTotal(double total) {
         this.total = total;
     }
+    public Double getDiscountApplied() {
+        return discountApplied;
+    }
+
+    public void setDiscountApplied(Double discountApplied) {
+        this.discountApplied = discountApplied;
+    }
+
+    public String getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
     @Override
     public String toString() {
         return "commande{" +
@@ -140,5 +157,20 @@ public class commande {
                 '}';
     }
 
+    public void calculateTotal() {
+        double subtotal = this.Commandeitems.stream()
+                .mapToDouble(item -> item.getProduct().getProductPrice() * item.getQuantity())
+                .sum();
 
+        // Apply discount if exists
+        if (discountApplied != null && discountApplied > 0) {
+            if ("percentage".equals(discountType)) {
+                subtotal -= subtotal * (discountApplied / 100);
+            } else if ("fixed".equals(discountType)) {
+                subtotal -= discountApplied;
+            }
+        }
+
+        this.total = subtotal + this.shippingCost;
+    }
 }

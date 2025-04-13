@@ -47,3 +47,14 @@
     </div>
   </form>
 </div>
+<!-- Spin-the-Wheel Popup -->
+<!-- In order-form.component.html -->
+<div *ngIf="showWheel" class="spin-wheel-overlay" (click)="closeWheel()">
+  <div class="spin-wheel-popup" (click)="$event.stopPropagation()">
+    <app-spin-wheel
+      (rewardSelected)="applyRewardAndProceed($event)"
+      (closeWheel)="closeWheel()"
+    ></app-spin-wheel>
+    <button class="close-btn" (click)="closeWheel()">Close</button>
+  </div>
+</div>

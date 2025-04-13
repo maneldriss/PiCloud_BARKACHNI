@@ -1,13 +1,14 @@
 package com.example.pi.dto;
 
 
-
 public class PlaceOrderRequest {
     private String shippingAddress;
     private String shippingMethod;
     private String paymentMethod;
+    private Double discountApplied;
+    private String discountType;
 
-    // Getters and Setters
+    // Getters and setters
     public String getShippingAddress() {
         return shippingAddress;
     }
@@ -30,5 +31,21 @@ public class PlaceOrderRequest {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public Double getDiscountApplied() {
+        return discountApplied;
+    }
+
+    public void setDiscountApplied(Double discountApplied) {
+        this.discountApplied = discountApplied;
+    }
+
+    public String getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
     }
 }

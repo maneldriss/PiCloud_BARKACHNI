@@ -4,6 +4,7 @@ import com.example.pi.entities.commande;
 import com.example.pi.entities.cart;
 import com.example.pi.repositories.ICommandeRepository;
 import com.example.pi.repositories.ICartRepository;
+import com.example.pi.repositories.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class ServiceCommande implements IServiceCommande {
 
     @Autowired
     private ICartRepository cartRepository;
+    @Autowired
+    private IUserRepository userRepository;
+
 
     // Get all commandes
     @Override
@@ -76,12 +80,10 @@ public class ServiceCommande implements IServiceCommande {
     }
 
     public void updateCommandeTotal(commande commande) {
-        double total = commande.getCommandeItems().stream()
-                .mapToDouble(item -> item.getProduct().getProductPrice() * item.getQuantity())
-                .sum();
-        commande.setTotal(total);
+        commande.calculateTotal();
     }
-    @Override
+
+        @Override
     // Public method to get total if needed from controller
     public double getCommandeTotal(Long commandeId) {
         commande c = retrievecommande(commandeId);
@@ -90,7 +92,9 @@ public class ServiceCommande implements IServiceCommande {
     }// Get total for a specific commande
 
     @Override
-    public commande placeOrder(Long cartId, String shippingAddress, String shippingMethod, String paymentMethod) {
+    public commande placeOrder(Long cartId, String shippingAddress,
+                               String shippingMethod, String paymentMethod,
+                               Double discountApplied, String discountType) {
         // Step 1: Fetch the cart
         cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
@@ -101,19 +105,21 @@ public class ServiceCommande implements IServiceCommande {
 
         // Step 2: Create a new Commande
         commande commande = new commande();
-        commande.setShippingAddress(shippingAddress); // Example
+        commande.setShippingAddress(shippingAddress);
         commande.setStatus("Pending");
         commande.setPaymentStatus("Unpaid");
-        commande.setPaymentMethod(paymentMethod); // Use client-provided payment method
-        commande.setShippingMethod(shippingMethod);// Example
+        commande.setPaymentMethod(paymentMethod);
+        commande.setShippingMethod(shippingMethod);
         commande.setShippingCost(10.0); // Example flat shipping cost
 
+        // Set discount fields
+        commande.setDiscountApplied(discountApplied);
+        commande.setDiscountType(discountType);
 
         commande.setCommandeItems(new HashSet<>(cart.getCartitems()));
-        updateCommandeTotal(commande);
+        commande.calculateTotal(); // Use the new calculateTotal method
 
         commandeRepository.save(commande);
-
 
         cart.getCartitems().clear();
         cartRepository.save(cart);
