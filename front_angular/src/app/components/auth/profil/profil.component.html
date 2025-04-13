@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Main Profile Content -->
+  <div *ngIf="!isLoading" class="profile-container">
+    <!-- Cover Photo -->
+    <div class="cover-photo">
+      <div class="cover-overlay">
+        <h1>{{user.firstname || 'User'}} {{user.lastname || 'Profile'}}</h1>
+        <p>{{user.bio || 'Welcome to my profile!'}}</p>
+      </div>
+      <button class="edit-cover-btn">
+        <i class="fas fa-camera"></i> Edit Cover
+      </button>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content">
+      <!-- Profile Sidebar -->
+      <div class="profile-sidebar">
+        <div class="profile-card">
+          <!-- Avatar Container with Camera Options -->
+          <div class="avatar-container" (click)="showCameraOptions()">
+            <img [src]="user.profilePicture || defaultImage" 
+                 alt="Profile Image" class="profile-avatar"/>
+            <div class="avatar-overlay">
+              <i class="fas fa-camera"></i>
+            </div>
+            <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+          </div>
+          
+          <!-- Profile Info -->
+          <div class="profile-info">
+            <div class="name-age-container">
+              <h2 class="profile-name">
+                {{user.firstname || 'User'}} {{user.lastname || 'Name'}},
+                <span *ngIf="user.dateOfBirth" class="user-age">{{calculateAge(user.dateOfBirth)}}</span>
+              </h2>
+            </div>
+            <p class="profile-title">{{ user.bio || 'No bio available' }}</p>
+            <p class="profile-location">
+              <i class="fas fa-map-marker-alt"></i> San Francisco, CA
+            </p>
+            
+            <div class="profile-stats">
+              <div class="stat-item">
+                <span class="stat-number">4,073</span>
+                <span class="stat-label">Followers</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">322</span>
+                <span class="stat-label">Following</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">200</span>
+                <span class="stat-label">Posts</span>
+              </div>
+            </div>
+            
+            <button class="follow-btn">Follow</button>
+          </div>
+          
+          <!-- About Section -->
+          <div class="profile-about">
+            <h3>Contact</h3>
+            <p>{{user.email || 'No email available'}}</p>
+            
+            <div class="about-details">
+              <div class="detail-item">
+                <i class="fas fa-briefcase"></i>
+                <span>Works at Tech Solutions Inc.</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Studied at Stanford University</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-home"></i>
+                <span>Lives in San Francisco, CA</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-heart"></i>
+                <span>Single</span>
+              </div>
+              <div *ngIf="user.dateOfBirth" class="detail-item">
+                <i class="fas fa-birthday-cake"></i>
+                <span>Born on {{user.dateOfBirth | date:'mediumDate'}}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Social Links -->
+          <div class="social-links">
+            <h3>Connect</h3>
+            <div class="social-icons">
+              <a href="#" class="social-icon twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="social-icon linkedin"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#" class="social-icon github"><i class="fab fa-github"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Main Content Area -->
+      <div class="profile-main">
+        <nav class="profile-nav">
+          <ul>
+            <li class="active"><a href="#"><i class="fas fa-th-large"></i> Posts</a></li>
+            <li><a href="#"><i class="fas fa-images"></i> Photos</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Groups</a></li>
+            <li><a href="#"><i class="fas fa-bookmark"></i> Saved</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+          </ul>
+        </nav>
+        
+        <!-- Posts Section -->
+        <div class="posts-section">
+          <div class="create-post">
+            <div class="post-avatar">
+              <img [src]="user.profilePicture || defaultImage" alt="User">
+            </div>
+            <input type="text" placeholder="What's on your mind?">
+            <div class="post-actions">
+              <button><i class="fas fa-image"></i> Photo</button>
+              <button><i class="fas fa-video"></i> Video</button>
+              <button><i class="fas fa-map-marker-alt"></i> Location</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Photos Section -->
+        <div class="photos-section">
+          <h3>Photos</h3>
+          <div class="photo-grid">
+            <!-- Photo items here -->
+          </div>
+          <button class="view-all-btn">View All Photos</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo Options Modal - Style Instagram -->
+  <div class="photo-options-modal" *ngIf="showCameraOptionsModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>Update Profile Picture</h3>
+        <button class="close-btn" (click)="closeCameraOptions()">&times;</button>
+      </div>
+      <div class="options-container">
+        <button class="option-btn camera-option" (click)="openCamera()">
+          <i class="fas fa-camera"></i>
+          <span>Take Photo</span>
+        </button>
+        <button class="option-btn gallery-option" (click)="openFileSelector()">
+          <i class="fas fa-images"></i>
+          <span>Choose from Gallery</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera Preview -->
+  <div class="camera-preview" *ngIf="showCameraPreview">
+    <video #videoElement autoplay playsinline class="camera-view"></video>
+    <div class="camera-controls">
+      <button class="capture-btn" (click)="capturePhoto()">
+        <i class="fas fa-camera"></i>
+      </button>
+      <button class="camera-cancel-btn" (click)="closeCamera()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-circle"></i> {{errorMessage}}
+  </div>
+</body>
+</html>
