@@ -1,0 +1,27 @@
+<!-- reward-modal.component.html -->
+<div class="reward-modal" *ngIf="isVisible">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>
+        {{
+          rewardType === "none" ? "Better Luck Next Time!" : "Congratulations!"
+        }}
+      </h2>
+      <button class="close-btn" (click)="onClose()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="reward-icon">
+        <ng-container [ngSwitch]="rewardType">
+          <span *ngSwitchCase="'discount'" class="discount-icon">%</span>
+          <span *ngSwitchCase="'shipping'" class="shipping-icon">🚚</span>
+          <span *ngSwitchCase="'gift'" class="gift-icon">🎁</span>
+          <span *ngSwitchDefault class="no-reward-icon">😢</span>
+        </ng-container>
+      </div>
+      <p class="reward-text">{{ rewardMessage }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="claim-btn" (click)="onClose()">OK</button>
+    </div>
+  </div>
+</div>

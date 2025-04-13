@@ -1,9 +1,6 @@
 package com.example.pi.services;
 
-import com.example.pi.entities.Cartitem;
-import com.example.pi.entities.Product;
-import com.example.pi.entities.cart;
-import com.example.pi.entities.user;
+import com.example.pi.entities.*;
 import com.example.pi.repositories.IitemRepository;
 import com.example.pi.repositories.ICartRepository;
 import com.example.pi.repositories.IProductRepository;
@@ -151,4 +148,7 @@ public class ServiceCart implements IServiceCart {
         updateCartTotal(c);
         return c.getTotal();
     }
+
+
+
 }

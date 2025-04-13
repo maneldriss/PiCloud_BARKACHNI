@@ -10,6 +10,8 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { FormsModule } from '@angular/forms';
 import { CommandeComponent } from './commande/commande.component';
 import { OrderFormComponent } from './order-form/order-form.component';
+import { SpinWheelComponent } from './spin-wheel/spin-wheel.component';
+import { RewardmodalComponent } from './rewardmodal/rewardmodal.component';
 
 
 @NgModule({
@@ -19,7 +21,9 @@ import { OrderFormComponent } from './order-form/order-form.component';
     LayoutComponent,
     ProductListComponent,
     CommandeComponent,
-    OrderFormComponent
+    OrderFormComponent,
+    SpinWheelComponent,
+    RewardmodalComponent
   ],
   imports: [
     BrowserModule,

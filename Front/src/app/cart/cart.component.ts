@@ -16,6 +16,7 @@ export class CartComponent implements OnInit {
   total: number = 0;
   productId: number = 0;
   quantity: number = 1;
+  showWheel: boolean = false;
 
   constructor(private cartService: CartService ,   private router: Router) {}
 
@@ -27,6 +28,9 @@ export class CartComponent implements OnInit {
   loadCart(): void {
     this.cartService.getCartById(this.cartId).subscribe((cart) => {
       this.cart = cart;
+      
+    this.checkWheelDisplay();
+   
     });
   }
 
@@ -42,8 +46,11 @@ export class CartComponent implements OnInit {
         .subscribe(updatedCart => {
           this.cart = updatedCart;
           this.getTotal();
+          
           this.router.navigate(['/cart']);
+          this.checkWheelDisplay();
         });
+        
     }
   }
 
@@ -63,5 +70,16 @@ export class CartComponent implements OnInit {
   redirectToOrderForm(cartId: any): void {
     this.router.navigate(['/order-form', cartId]); // Include cart ID in the URL
   }
+  checkWheelDisplay() {
+    if (this.cart && this.cart.cartitems.length >= 3) {
+      this.showWheel = true;
+    } else {
+      this.showWheel = false;
+    }
+  }
+  closeWheel(): void {
+    this.showWheel = false;
+  }
+  
   
 }

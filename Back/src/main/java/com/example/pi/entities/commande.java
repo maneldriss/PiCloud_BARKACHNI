@@ -1,5 +1,6 @@
 package com.example.pi.entities;
 
+import com.example.pi.repositories.ICartRepository;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -29,8 +30,12 @@ public class commande {
     private String shippingMethod;
 
     private double shippingCost;
+    private double total;
+    @OneToOne
+    private user user;
 
-
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private Set<Cartitem> Commandeitems;
 
     @OneToOne
     private cart cart;
@@ -99,7 +104,27 @@ public class commande {
     public void setCart(cart cart) {
         this.cart = cart;
     }
+    public Set<Cartitem> getCommandeItems() {
+        return Commandeitems;
+    }
 
+    public void setCommandeItems(Set<Cartitem> commandeItems) {
+        this.Commandeitems = commandeItems;
+    }
+    public user getUser() {
+        return user;
+    }
+
+    public void setUser(user user) {
+        this.user = user;
+    }
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
     @Override
     public String toString() {
         return "commande{" +
@@ -114,4 +139,6 @@ public class commande {
                 ", cart=" + cart +
                 '}';
     }
+
+
 }

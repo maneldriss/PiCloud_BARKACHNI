@@ -1,52 +1,198 @@
-.cart-container {
-  width: 600px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  background: #fdfdfd;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 10px;
-}
-
-.cart-item {
-  padding: 1rem;
-  border-bottom: 1px solid #ddd;
-}
-
-.product-add input {
-  margin: 0 5px;
-  padding: 5px;
-  width: 120px;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 5px;
-}
-
-button {
-  padding: 5px 10px;
-  cursor: pointer;
-  border: none;
-  background-color: #0099cc;
+/* Hero Section */
+.hero-wrap {
+  background-color: rgba(0, 0, 0, 0.5);
+  background-size: cover;
+  background-position: center;
+  padding: 80px 0;
   color: white;
-  border-radius: 4px;
 }
 
-button:hover {
-  background-color: #0077aa;
+.hero-wrap .breadcrumbs a {
+  color: #f2a365;
 }
 
-button.remove {
+.hero-wrap h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+/* Cart Table */
+.cart-list {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+  padding: 15px;
+  vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.thead-light {
+  background-color: #f2a365;
+  color: white;
+}
+
+.product-remove button {
   background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
 }
 
-button.remove:hover {
+.product-remove button:hover {
   background-color: #c0392b;
 }
 
+.image-prod {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 5px;
+}
+
+.product-name h3 {
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.price {
+  color: #f2a365;
+  font-weight: bold;
+}
+
+.quantity .input-group .btn {
+  border-radius: 5px;
+  background-color: #f2a365;
+  color: white;
+}
+
+.quantity .input-group .form-control {
+  border-radius: 5px;
+  text-align: center;
+  width: 60px;
+}
+
 .total {
-  text-align: right;
-  margin-top: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+/* Cart Total Section */
+.cart-total {
+  background: #f2f2f2;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.cart-total h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.cart-total hr {
+  border: 1px solid #e4e4e4;
+}
+
+.total-price span {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Order Now Button */
+.btn-gradient {
+  background: linear-gradient(45deg, #f2a365, #f25c5c);
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  transition: all 0.3s;
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(45deg, #f25c5c, #f2a365);
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+/* Empty Cart Message */
+.text-center {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.cart-wrap {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+/* Overlay for the background */
+.spin-wheel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);  /* Dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;  /* Ensure it's above other content */
+}
+
+/* The popup container for the spin wheel */
+.spin-wheel-popup {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;  /* Adjust the width */
+  max-width: 500px;  /* Limit the max width */
+  text-align: center;
+  animation: popupAnim 0.3s ease-out;  /* Smooth animation */
+}
+
+/* Add a fun spinning effect for the wheel (optional) */
+@keyframes popupAnim {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Close button */
+.close-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 15px;
+}
+
+.close-btn:hover  {
+  background-color: darkred;
 }

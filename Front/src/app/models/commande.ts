@@ -1,4 +1,5 @@
 import { Cart } from './cart';
+import { CartItem } from './cartitem';
 import { User } from './user';
 
 export interface Commande {
@@ -10,6 +11,9 @@ export interface Commande {
   paymentMethod: string;
   shippingMethod: string;
   shippingCost: number;
+  commandeitems: CartItem[];
+  total: number;
+
 }
 
 

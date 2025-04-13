@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -41,7 +42,7 @@ public class ServiceCommande implements IServiceCommande {
             cart cart = c.getCart();
             cartRepository.save(cart); // Save the associated cart
         }
-
+        updateCommandeTotal(c);
         return commandeRepository.save(c);
     }
 
@@ -59,7 +60,7 @@ public class ServiceCommande implements IServiceCommande {
             cart cart = c.getCart();
             cartRepository.save(cart); // Save the associated cart
         }
-
+        updateCommandeTotal(c);
         return commandeRepository.save(c);
     }
 
@@ -74,14 +75,50 @@ public class ServiceCommande implements IServiceCommande {
         return commandeRepository.save(c);
     }
 
-    // Get total for a specific commande
+    public void updateCommandeTotal(commande commande) {
+        double total = commande.getCommandeItems().stream()
+                .mapToDouble(item -> item.getProduct().getProductPrice() * item.getQuantity())
+                .sum();
+        commande.setTotal(total);
+    }
     @Override
+    // Public method to get total if needed from controller
     public double getCommandeTotal(Long commandeId) {
         commande c = retrievecommande(commandeId);
-        cart cart = c.getCart();
-        if (cart != null) {
-            return cart.getTotal(); // Fetch the total from the associated cart
+        updateCommandeTotal(c);
+        return c.getTotal();
+    }// Get total for a specific commande
+
+    @Override
+    public commande placeOrder(Long cartId, String shippingAddress, String shippingMethod, String paymentMethod) {
+        // Step 1: Fetch the cart
+        cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        if (cart.getCartitems().isEmpty()) {
+            throw new RuntimeException("Cart is empty");
         }
-        throw new RuntimeException("Commande has no cart associated with it");
+
+        // Step 2: Create a new Commande
+        commande commande = new commande();
+        commande.setShippingAddress(shippingAddress); // Example
+        commande.setStatus("Pending");
+        commande.setPaymentStatus("Unpaid");
+        commande.setPaymentMethod(paymentMethod); // Use client-provided payment method
+        commande.setShippingMethod(shippingMethod);// Example
+        commande.setShippingCost(10.0); // Example flat shipping cost
+
+
+        commande.setCommandeItems(new HashSet<>(cart.getCartitems()));
+        updateCommandeTotal(commande);
+
+        commandeRepository.save(commande);
+
+
+        cart.getCartitems().clear();
+        cartRepository.save(cart);
+
+        return commande;
     }
+
 }

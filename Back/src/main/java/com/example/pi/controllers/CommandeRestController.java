@@ -1,9 +1,11 @@
 package com.example.pi.controllers;
 
+import com.example.pi.dto.PlaceOrderRequest;
 import com.example.pi.entities.commande;
 import com.example.pi.services.IServiceCommande;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,4 +59,17 @@ public class CommandeRestController {
     public commande assignCartToCommande(@PathVariable("commande-id") Long commandeId, @PathVariable("cart-id") Long cartId) {
         return CommandeService.assignCartToCommande(commandeId, cartId);
     }
+    @PostMapping("/place-order/{cartId}")
+    public ResponseEntity<commande> placeOrder(
+            @PathVariable Long cartId,
+            @RequestBody PlaceOrderRequest request) {
+        commande commande = CommandeService.placeOrder(
+                cartId,
+                request.getShippingAddress(),
+                request.getShippingMethod(),
+                request.getPaymentMethod()
+        );
+        return ResponseEntity.ok(commande);
+    }
+
 }

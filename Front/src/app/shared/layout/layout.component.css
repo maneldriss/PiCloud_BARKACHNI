@@ -31,4 +31,10 @@
   .cart-link i {
     margin-left: 5px;
   }
-  
+ 
+  header.header {
+    background-color: #f3d5bc; /* Pastel Orange */
+  }
+  main {
+    background-color: #f3d5bc; /* Pastel Orange */
+  }

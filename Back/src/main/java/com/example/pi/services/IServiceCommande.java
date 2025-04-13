@@ -12,4 +12,7 @@ public interface IServiceCommande {
     commande modifycommande(commande commande);
     commande assignCartToCommande(Long commandeId, Long cartId);
     public double getCommandeTotal(Long commandeId);
+
+
+    commande placeOrder(Long cartId, String shippingAddress, String shippingMethod, String paymentMethod);
 }

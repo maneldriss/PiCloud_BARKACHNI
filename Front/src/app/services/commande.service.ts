@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-// Adjust the path if needed
 import { Commande } from '../models/commande'; // Assuming you have a model for 'commande'
+import { PlaceOrderRequest } from '../models/place-order-request';
+ // Import DTO
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommandeService {
-
   private baseUrl: string = 'http://localhost:8089/pi/commande';  // Set base API URL from environment
 
   constructor(private http: HttpClient) {}
@@ -23,9 +23,9 @@ export class CommandeService {
     return this.http.get<Commande>(`${this.baseUrl}/retrieve-commande/${commandeId}`);
   }
 
-  // Add a new commande
-  addCommande(commande: Commande): Observable<Commande> {
-    return this.http.post<Commande>(`${this.baseUrl}/add-commande`, commande);
+  // Add a new commande using the DTO
+  placeOrder(commandeRequest: PlaceOrderRequest, cartId: number): Observable<Commande> {
+    return this.http.post<Commande>(`${this.baseUrl}/place-order/${cartId}`, commandeRequest);
   }
 
   // Remove a commande by ID

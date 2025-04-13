@@ -1,6 +1,6 @@
 <div
   class="hero-wrap hero-bread"
-  style="background-image: url('images/bg_6.jpg')"
+  style="background-image: url('assets/images/bg_6.jpg')"
 >
   <div class="container">
     <div
@@ -22,10 +22,10 @@
     <div class="row">
       <div class="col-md-12 ftco-animate">
         <div class="cart-list">
-          <table class="table">
-            <thead class="thead-primary">
+          <table class="table table-striped">
+            <thead class="thead-light">
               <tr class="text-center">
-                <th>Remove</th>
+                <th></th>
                 <th>Image</th>
                 <th>Product</th>
                 <th>Price</th>
@@ -45,10 +45,11 @@
                 </td>
 
                 <td class="image-prod">
-                  <div
-                    class="img"
-                    style="background-image: url(images/product-3.jpg)"
-                  ></div>
+                  <img
+                    [src]="item.product.productImageURL"
+                    alt="{{ item.product.nameProduct }}"
+                    class="product-image"
+                  />
                 </td>
 
                 <td class="product-name">
@@ -106,35 +107,23 @@
             <span>{{ total }} TND</span>
           </p>
         </div>
-        <!-- Order Now Button -->
         <button
-          class="btn btn-success btn-lg"
+          class="btn btn-gradient btn-lg"
           (click)="redirectToOrderForm(cart?.cartID)"
         >
           Order Now
         </button>
-
-        <div class="product-add mb-4">
-          <div class="input-group">
-            <input
-              type="number"
-              [(ngModel)]="productId"
-              class="form-control"
-              placeholder="Product ID"
-            />
-            <input
-              type="number"
-              [(ngModel)]="quantity"
-              class="form-control"
-              placeholder="Quantity"
-              min="1"
-            />
-            <button class="btn btn-primary" (click)="addProductToCart()">
-              Add Product
-            </button>
-          </div>
-        </div>
       </div>
+    </div>
+  </div>
+  <p>Total Items: {{ cart?.cartitems?.length || 0 }}</p>
+  <p>{{ showWheel }}</p>
+  <!-- Spin-the-Wheel Popup -->
+  <div *ngIf="showWheel" class="spin-wheel-overlay" (click)="closeWheel()">
+    <div class="spin-wheel-popup" (click)="$event.stopPropagation()">
+      <!-- Prevents the overlay from being clicked -->
+      <app-spin-wheel></app-spin-wheel>
+      <button class="close-btn" (click)="closeWheel()">Close</button>
     </div>
   </div>
 </section>
