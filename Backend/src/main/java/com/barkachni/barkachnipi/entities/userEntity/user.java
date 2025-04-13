@@ -13,7 +13,8 @@ public class user {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUser;
-
+    @Column(unique = true, nullable = true) // nullable=true si l'email est optionnel
+    private String email;
     @OneToMany(cascade = CascadeType.ALL, mappedBy="productSeller")
     private Set<Product> products;
 
@@ -26,6 +27,12 @@ public class user {
     // Getters et Setters manuels
     public Long getIdUser() {
         return idUser;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setIdUser(Long idUser) {

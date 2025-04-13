@@ -1,7 +1,7 @@
 // item-dressing.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { ItemDressing } from '../models/item-dressing';
 
 @Injectable({
@@ -15,4 +15,14 @@ export class ItemDressingService {
   getAvailableItems(): Observable<ItemDressing[]> {
     return this.http.get<ItemDressing[]>(`${this.apiUrl}/retrieve-all-items`);
   }
-}
+  uploadImage(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('image', file);
+  
+    return this.http.post<string>(`${this.apiUrl}/upload`, formData).pipe(
+      catchError(err => {
+        console.error('Upload error:', err);
+        return throwError(err);
+      })
+    );
+}}

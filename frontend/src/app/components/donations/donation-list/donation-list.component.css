@@ -33,3 +33,19 @@
   .page-item:not(.active) .page-link:hover {
     background-color: #f8f9fa;
   }
+  /* donation-list.component.css */
+.card-img-container {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+
+.card-img-container img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}

@@ -1,13 +1,10 @@
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Donation, DonationType } from '../../../models/donation';
+import { Donation, DonationStatus, DonationType } from '../../../models/donation';
 import { DonationService } from '../../../services/donation.service';
-import { ItemDressing } from '../../../models/item-dressing';
 import { ItemDressingService } from '../../../services/item-dressing.service';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { ItemDressing } from 'src/app/models/item-dressing';
 
 @Component({
   selector: 'app-donation-form',
@@ -22,6 +19,8 @@ export class DonationFormComponent implements OnInit {
   error = '';
   donationTypes = Object.values(DonationType);
   availableItems: ItemDressing[] = [];
+  userId = 1;
+  selectedItem: ItemDressing | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -32,41 +31,63 @@ export class DonationFormComponent implements OnInit {
   ) {
     this.donationForm = this.fb.group({
       donationType: ['', Validators.required],
-      amount: [0, [Validators.min(0.01)]],
-      itemDressing: [null]
+      amount: [0, [Validators.min(0.01), Validators.max(999999)]],      itemDressing: [null]
     });
   }
 
- 
-ngOnInit(): void {
-  const idParam = this.route.snapshot.params['id'];
-  this.donationId = idParam ? Number(idParam) : undefined;
-  this.isEditMode = !!this.donationId;
+  ngOnInit(): void {
+    const idParam = this.route.snapshot.params['id'];
+    this.donationId = idParam ? Number(idParam) : undefined;
+    this.isEditMode = !!this.donationId;
 
-  if (this.isEditMode) {
-    if (typeof this.donationId !== 'number' || isNaN(this.donationId)) {
+    if (this.isEditMode && isNaN(this.donationId!)) {
       this.error = "Invalid donation ID";
       return;
     }
+
+    this.loadAvailableItems(() => {
+      if (this.isEditMode) this.loadDonationDetails();
+    });
+
+    this.donationForm.get('donationType')?.valueChanges.subscribe(type => {
+      this.updateFormValidation(type);
+      if (type !== DonationType.CLOTHING) this.selectedItem = null;
+    });
   }
 
-  this.loadAvailableItems(() => {
-    if (this.isEditMode) {
-      this.loadDonationDetails();
+  // Méthodes pour la galerie d'images
+  selectItem(item: ItemDressing): void {
+    this.selectedItem = item;
+    this.donationForm.patchValue({ itemDressing: item });
+  }
+
+  getItemImage(item: ItemDressing): string {
+    if (!item?.imageUrl) return 'assets/images/default-item.jpg';
+    
+    if (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('assets/')) {
+      return item.imageUrl;
     }
-  });
+    
+    if (item.imageUrl.includes('\\')) {
+      const filename = item.imageUrl.split('\\').pop();
+      return `assets/images/${filename}`;
+    }
+    
+    return `assets/images/${item.imageUrl}`;
+  }
 
-  this.donationForm.get('donationType')?.valueChanges.subscribe(type => {
-    this.updateFormValidation(type);
-  });
-}
+  isItemSelected(item: ItemDressing): boolean {
+    return this.selectedItem?.itemID === item.itemID;
+  }
 
+  // Méthodes existantes optimisées
   updateFormValidation(type: DonationType): void {
     const amountControl = this.donationForm.get('amount');
     const itemControl = this.donationForm.get('itemDressing');
 
     if (type === DonationType.MONEY) {
-      amountControl?.setValidators([Validators.required, Validators.min(0.01)]);
+      amountControl?.setValidators([Validators.required, Validators.min(0.01),  // Minimum value of 0.01
+        Validators.max(999999)]);
       itemControl?.clearValidators();
     } else {
       amountControl?.clearValidators();
@@ -78,162 +99,107 @@ ngOnInit(): void {
   }
 
   loadAvailableItems(callback?: () => void): void {
-    this.itemService.getAvailableItems().subscribe(items => {
-      this.availableItems = items;
-      if (callback) callback();
+    this.itemService.getAvailableItems().subscribe({
+      next: items => {
+        this.availableItems = items;
+        callback?.();
+      },
+      error: err => this.handleError(err)
     });
   }
 
- /* loadDonationDetails(): void {
+  loadDonationDetails(): void {
     if (!this.donationId) return;
-
+    
     this.loading = true;
     this.donationService.getDonationById(this.donationId).subscribe({
       next: (donation) => {
+        const matchedItem = this.availableItems.find(item => 
+          item.itemID === donation.itemDressing?.itemID
+        );
+  
+        if (matchedItem) {
+          this.selectedItem = {
+            itemID: matchedItem.itemID,
+            itemName: matchedItem.itemName,
+            imageUrl: matchedItem.imageUrl
+          };
+        }
+  
         this.donationForm.patchValue({
           donationType: donation.donationType,
           amount: donation.amount,
-          // Ensure items are loaded before patching
-          itemDressing: this.availableItems.find(item => 
-            item.itemID === donation.itemDressing?.itemID
-          )
+          itemDressing: matchedItem || null
         });
         this.loading = false;
       },
       error: (err) => {
         this.error = 'Failed to load donation details.';
         this.loading = false;
-        console.error(err);
       }
     });
-  }*/
-    loadDonationDetails(): void {
-      if (!this.donationId) return;
-    
-      this.loading = true;
-      this.donationService.getDonationById(this.donationId).subscribe({
-        next: (donation) => {
-          // Trouver l'item correspondant dans availableItems
-          const matchedItem = this.availableItems.find(item => 
-            item.itemID === donation.itemDressing?.itemID
-          );
-    
-          this.donationForm.patchValue({
-            donationType: donation.donationType,
-            amount: donation.amount,
-            itemDressing: matchedItem || null
-          });
-          this.loading = false;
-        },
-        error: (err) => {
-          this.error = 'Failed to load donation details.';
-          this.loading = false;
-        }
-      });
+  }
+  onSubmit(): void {
+    if (this.donationForm.invalid) return;
+  
+    const formData = this.donationForm.value;
+    if (formData.donationType === DonationType.MONEY && formData.amount <= 0) {
+    this.error = 'Amount must be a positive number';
+    return;
+  }
+    // Construction du payload selon les exigences du backend
+    const payload: any = {
+      donationType: formData.donationType,
+      status: DonationStatus.PENDING
+    };
+  
+    if (formData.donationType === DonationType.MONEY) {
+      payload.amount = parseFloat(formData.amount);
+      payload.itemDressing = null; // Explicitement null pour MONEY
+    } 
+    else if (formData.donationType === DonationType.CLOTHING) {
+      if (!this.selectedItem) {
+        this.error = 'Veuillez sélectionner un article';
+        return;
+      }
+  
+      // Structure minimale attendue par le backend
+      payload.itemDressing = {
+        itemID: this.selectedItem.itemID
+        // Ne pas inclure user ici - le backend le gère
+      };
     }
   
-    /*onSubmit(): void {
-      if (this.donationForm.invalid) return;
-    
-      this.loading = true;
-      const formData = this.donationForm.value;
-      const userId = 1;
-    
-      const donationData: Donation = {
-        donationId: this.donationId, // Ajout crucial pour l'édition
-        donationType: formData.donationType,
-        amount: formData.donationType === DonationType.MONEY ? formData.amount : null,
-        itemDressing: formData.donationType === DonationType.CLOTHING 
-          ? this.availableItems.find(item => item.itemID === formData.itemDressing.itemID)
-          : null
-      };
-    
-      if (this.isEditMode) {
-        this.donationService.updateDonation(donationData).subscribe({
-          next: () => {
-            this.router.navigate(['/donations']);
-            this.loading = false;
-          },
-          error: (err) => {
-            console.error('Update Error:', err);
-            this.error = 'Échec de la mise à jour: ' + (err.error?.message || err.message);
-            this.loading = false;
-          }
-        });
-      } else {
-        this.donationService.addDonation(donationData, userId).subscribe({
-          next: () => this.router.navigate(['/donations']),
-          error: (err) => {
-            this.error = 'Échec de la création: ' + err.message;
-            this.loading = false;
-          }
-        });
-      }
-    }*/
-   // donation-form.component.ts
-// donation-form.component.ts
-onSubmit(): void {
-  if (this.donationForm.invalid) return;
-
-  const formData = this.donationForm.value;
-  const payload: Donation = {
-    donationId: this.donationId,
-    donationType: formData.donationType,
-    amount: formData.donationType === DonationType.MONEY 
-      ? parseFloat(formData.amount)
-      : undefined, // Utilisation de undefined au lieu de null
-    itemDressing: formData.donationType === DonationType.CLOTHING
-      ? {
-          itemID: formData.itemDressing.itemID,
-          itemName: formData.itemDressing.itemName
-        }
-      : undefined
-  };
-
-  if (this.isEditMode) {
-    this.donationService.updateDonation(payload).subscribe({
+    console.log("Payload envoyé :", JSON.stringify(payload, null, 2));
+  
+    const operation = this.isEditMode && this.donationId
+      ? this.donationService.updateDonation({ ...payload, donationId: this.donationId })
+      : this.donationService.addDonation(payload, this.userId);
+  
+    operation.subscribe({
       next: () => this.handleSuccess(),
-      error: (err) => this.handleError(err)
-    });
-  } else {
-    this.loading = true;
-    const userId = 1; // Remplacer par l'ID utilisateur réel
-    
-    this.donationService.addDonation(payload, userId).subscribe({
-      next: () => {
-        this.router.navigate(['/donations']);
-        this.loading = false;
-      },
       error: (err) => {
-        this.error = 'Erreur lors de la création : ' + 
-          (err.error?.message || err.message || 'Erreur inconnue');
+        console.error("Erreur complète :", err);
+        this.error = err.error?.message || 
+                   err.error?.error || 
+                   'Erreur lors de l\'envoi du don';
         this.loading = false;
       }
     });
   }
-}
-private handleSuccess(): void {
-  this.router.navigate(['/donations']);
-  this.loading = false;
-}
+  private handleSuccess(): void {
+    this.router.navigate(['/donations'], {
+      state: { donationUpdated: true }
+    });
+  }
 
-private handleError(err: any): void {
-  console.error('Error:', err);
-  this.error = err.error?.message || err.message || 'Unknown error occurred';
-  this.loading = false;
-}
-private sanitizeFormData(formData: any): Donation {
-  return {
-    ...formData,
-    itemDressing: formData.donationType === DonationType.CLOTHING 
-      ? { itemID: formData.itemDressing.itemID }
-      : null,
-    amount: formData.donationType === DonationType.MONEY 
-      ? parseFloat(formData.amount.toFixed(2))
-      : null
-  };
-}
+  private handleError(err: any): void {
+    console.error('Error:', err);
+    this.error = err.error?.message || err.message || 'Operation failed';
+    this.loading = false;
+  }
 
+  // Getters pour les contrôles du formulaire
   get donationTypeControl() { return this.donationForm.get('donationType'); }
   get amountControl() { return this.donationForm.get('amount'); }
   get itemDressingControl() { return this.donationForm.get('itemDressing'); }

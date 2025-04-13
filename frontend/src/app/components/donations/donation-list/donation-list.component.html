@@ -34,35 +34,64 @@
     <!-- Affichage en cartes flottantes -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
       <div class="col" *ngFor="let donation of paginatedDonations">
-        <div class="card h-100 shadow-sm" style="border: none; border-radius: 10px; transition: all 0.3s ease;">
+        <div class="card h-100 shadow-sm" >
           <div class="card-header text-white" style="background-color: #59886b; border-radius: 10px 10px 0 0;">
             <div class="d-flex justify-content-between align-items-center">
               <h5 class="card-title mb-0">{{ getDonationTypeDisplay(donation.donationType) }}</h5>
               <i class="fas {{ getDonationIcon(donation.donationType) }}"></i>
             </div>
           </div>
+
           <div class="card-body">
-            <div class="mb-3">
-             
+            <!-- Section Image - Visible seulement pour CLOTHING -->
+            <div *ngIf="donation.donationType === 'CLOTHING'" class="text-center mb-3">
+              <div class="image-container">
+                <img [src]="donation.itemDressing?.imageUrl" 
+                     class="donation-image"
+                     alt="{{donation.itemDressing?.itemName || 'Don de vêtements'}}"
+                     (error)="handleImageError($event)">
+              </div>
             </div>
-            <p class="card-text">
-              <strong style="color: #59886b;">Amount:</strong> 
-              <span *ngIf="donation.donationType === 'MONEY'">{{ donation.amount || 'X' }} DT</span>
-              <span *ngIf="donation.donationType !== 'MONEY'">N/A</span>
-              <br>
-              <strong style="color: #59886b;">Item:</strong> 
-              {{ donation.itemDressing?.itemName || donation.itemDressing?.itemID || '_' }}
-            </p>
-            <div *ngIf="donation.donor" class="mt-2">
-              <small class="text-muted">Donated by: {{ donation.donor.name }}</small>
+            <div class="donation-details">
+              <p><strong>Type:</strong> {{ getDonationTypeDisplay(donation.donationType) }}</p>
+              <p><strong>Amount:</strong> 
+                <span *ngIf="donation.donationType === 'MONEY'">{{ donation.amount }} DT</span>
+                <span *ngIf="donation.donationType !== 'MONEY'">N/A</span>
+              </p>
+              <p><strong>Item:</strong> {{ donation.itemDressing?.itemName || 'Non spécifié' }}</p>
+          
+              <!-- Status badge -->
+              <div class="mt-2">
+                <span class="badge" 
+                      [ngClass]="{
+                        'bg-warning': donation.status === 'PENDING',
+                        'bg-success': donation.status === 'APPROVED',
+                        'bg-danger': donation.status === 'REJECTED'
+                      }">
+                  {{ donation.status }}
+                </span>
+              </div>
+          
+              <div *ngIf="donation.donor?.name" class="mt-2">
+                <small class="text-muted">Donated by: {{ donation.donor.name }}</small>
+              </div>
             </div>
           </div>
-          <div class="card-footer bg-transparent" style="border-top: 1px solid #e6e4d8;">
-            <div class="d-flex justify-content-between">
-              <a [routerLink]="['/donations', donation.donationId]" class="btn btn-sm" style="background-color: #59886b; color: white;">View</a>
-              <a [routerLink]="['/donations/edit', donation.donationId]" class="btn btn-sm" style="background-color: #e6e4d8; color: #59886b;">Edit</a>
-              <button (click)="deleteDonation(donation.donationId)" class="btn btn-sm" style="background-color: #f8f8f8; color: #dc3545; border: 1px solid #f1f1f1;">Delete</button>
-            </div>
+          
+          <!-- Card footer - actions -->
+         
+          <div class="card-footer d-flex justify-content-between">
+            <a [routerLink]="['/donations', donation.donationId]" class="btn btn-sm" style="background-color: #59886b; color: white;">
+              <i class="fas fa-eye me-1"></i> View
+            </a>
+          
+            <a [routerLink]="['/donations/edit', donation.donationId]" class="btn btn-sm" style="background-color: #e6e4d8; color: #59886b;">
+              <i class="fas fa-edit me-1"></i> Edit
+            </a>
+          
+            <button (click)="deleteDonation(donation.donationId)" class="btn btn-sm" style="background-color: #f8f8f8; color: #dc3545; border: 1px solid #f1f1f1;">
+              <i class="fas fa-trash me-1"></i> Delete
+            </button>
           </div>
         </div>
       </div>

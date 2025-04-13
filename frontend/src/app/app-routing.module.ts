@@ -5,6 +5,7 @@ import { DonationListComponent } from './components/donations/donation-list/dona
 import { DonationFormComponent } from './components/donations/donation-form/donation-form.component';
 import { DonationDetailComponent } from './components/donations/donation-detail/donation-detail.component';
 import { LayoutComponent } from './shared/layout/layout.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
 const routes: Routes = [
   { 
@@ -16,10 +17,15 @@ const routes: Routes = [
       { path: 'donations/add', component: DonationFormComponent },
       { path: 'donations/edit/:id', component: DonationFormComponent },
       { path: 'donations/:id', component: DonationDetailComponent },
-      
     ]
   },
-  
+  {
+    path: 'admin',
+    component: AdminDashboardComponent, // Utilisez Dashboard comme layout
+    children: [
+      { path: 'dashboard', component: AdminDashboardComponent }
+    ]
+  },
   
   
   { path: '**', redirectTo: '' } 

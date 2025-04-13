@@ -1,0 +1,153 @@
+<div class="admin-container">
+  <!-- Sidebar minimaliste -->
+  <div class="admin-sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-hand-holding-heart"></i>
+      <h3>BARKACHNI</h3>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item" routerLinkActive="active">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/dashboard" class="nav-item" routerLinkActive="active">
+        <i class="fas fa-donate"></i>
+        <span>Donations</span>
+      </a>
+      <a routerLink="#" class="nav-item" routerLinkActive="active">
+        <i class="fas fa-donate"></i>
+        <span>Marketplace</span>
+      </a>
+      <a routerLink="/admin/reports" class="nav-item" routerLinkActive="active">
+        <i class="fas fa-chart-bar"></i>
+        <span>Rapports</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="admin-content">
+    <div class="donations-section">
+      <div class="section-header">
+        <h2><i class="fas fa-donate"></i>Donations</h2>
+        <div class="header-actions">
+          <!-- Filtres -->
+          <div class="filters">
+            <select [(ngModel)]="selectedType" (change)="applyFilters()">
+              <option *ngFor="let type of typeOptions" [value]="type.value">{{type.label}}</option>
+            </select>
+            
+            <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+              <option *ngFor="let status of statusOptions" [value]="status.value">{{status.label}}</option>
+            </select>
+            <button class="btn btn-export" (click)="generatePdf()">
+              <i class="fas fa-file-pdf"></i> Export PDF
+            </button>
+          </div>
+        </div>
+      </div>
+ <!-- Boutons d'action -->
+
+  <!-- État de chargement -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des données...</p>
+  </div>
+      <!-- Tableau professionnel -->
+      <div class="donation-table-container">
+        <table class="donation-table">
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement des données...</p>
+      </div>
+
+      <div *ngIf="!loading" class="donation-table-container">
+        <table class="donation-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th (click)="sortByType()">Type <i class="fas fa-sort"></i></th>
+            
+              <th>Value</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let donation of paginatedDonations">
+              <td class="donation-id">#{{ donation.donationId }}</td>
+              <td class="donation-type">
+                <span class="type-badge" [ngClass]="{
+                  'money': donation.donationType === DonationType.MONEY,
+                  'item': donation.donationType === DonationType.CLOTHING
+                }">
+                  {{ getDonationTypeLabel(donation.donationType) }}
+                </span>
+              </td>
+              <td class="donation-value">
+                <span *ngIf="donation.donationType === DonationType.MONEY">
+                  {{ donation.amount }} DT
+                </span>
+                <span *ngIf="donation.donationType === DonationType.CLOTHING && donation.itemDressing">
+                  {{ donation.itemDressing.itemName }} <span class="item-id">(ID: {{ donation.itemDressing.itemID }})</span>
+                </span>
+              </td>
+              <td class="donation-status">
+                <span class="status-badge" [ngClass]="{
+                  'pending': donation.status === DonationStatus.PENDING,
+                  'approved': donation.status === DonationStatus.APPROVED,
+                  'rejected': donation.status === DonationStatus.REJECTED
+                }">
+                  {{ getStatusLabel(donation?.status) }}
+                </span>
+              </td>
+              <td class="donation-actions">
+                <button class="btn-action approve" 
+                        (click)="approveDonation(donation.donationId)" 
+                        *ngIf="donation.status === DonationStatus.PENDING"
+                        title="Approuver">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn-action reject" 
+                        (click)="rejectDonation(donation.donationId)" 
+                        *ngIf="donation.status === DonationStatus.PENDING"
+                        title="Rejeter">
+                  <i class="fas fa-times"></i>
+                </button>
+                <button class="btn-action details" (click)="viewDetails(donation)">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button (click)="changePage(1)" [disabled]="currentPage === 1">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        
+        <span *ngFor="let page of getPages()" 
+              [class.active]="page === currentPage"
+              (click)="changePage(page)">
+          {{page}}
+        </span>
+        
+        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        
+        <span class="page-info">
+          Page {{currentPage}} sur {{totalPages}} ({{totalItems}} éléments)
+        </span>
+      </div>
+
+  <!-- Footer -->

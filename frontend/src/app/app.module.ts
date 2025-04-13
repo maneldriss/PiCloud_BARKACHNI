@@ -12,6 +12,9 @@ import { DonationDetailComponent } from './components/donations/donation-detail/
 import { SharedModule } from './shared/shared.module';
 import { faHandHoldingHeart } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -19,7 +22,8 @@ import { library } from '@fortawesome/fontawesome-svg-core';
     HomeComponent,
     DonationListComponent,
     DonationFormComponent,
-    DonationDetailComponent
+    DonationDetailComponent,
+    AdminDashboardComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,8 +31,9 @@ import { library } from '@fortawesome/fontawesome-svg-core';
     HttpClientModule,
     FormsModule,
     SharedModule,
-    ReactiveFormsModule
-    
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

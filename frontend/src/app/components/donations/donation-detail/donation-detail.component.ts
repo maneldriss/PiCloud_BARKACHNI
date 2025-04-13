@@ -16,30 +16,14 @@ export class DonationDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private donationService: DonationService
+    private donationService: DonationService,
+    private location: Location,
   ) {}
 
   ngOnInit(): void {
     this.loadDonation();
   }
 
- /* loadDonation(): void {
-    this.loading = true;
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    
-    this.donationService.getDonationById(id).subscribe({
-      next: (data) => {
-        this.donation = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load donation details';
-        this.loading = false;
-        console.error(err);
-      }
-    });
-  }*/
-    // donation-detail.component.ts
 loadDonation(): void {
   this.loading = true;
   const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -62,4 +46,27 @@ loadDonation(): void {
   goBack(): void {
     this.router.navigate(['/donations']);
   }
+  
+  refreshDonation(): void {
+    this.loadDonation();
+  }
+ 
+updateDonation(): void {
+  if (!this.donation) return;
+
+  this.loading = true;
+  this.donationService.updateDonation(this.donation).subscribe({
+    next: () => {
+      this.donationService.notifyUpdates();
+      
+      this.router.navigate(['/donations'], {
+        state: { refreshed: true }
+      });
+    },
+    error: (err) => {
+      this.error = 'Échec de la mise à jour';
+      this.loading = false;
+    }
+  });
+}
 }

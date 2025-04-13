@@ -1,6 +1,7 @@
 package com.barkachni.barkachnipi.services.donationService;
 
 import com.barkachni.barkachnipi.entities.donationEntity.Donation;
+import com.barkachni.barkachnipi.entities.donationEntity.DonationStatus;
 import com.barkachni.barkachnipi.repositories.donationRepository.DonationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class DonationService implements IDonationService {
     DonationRepository donationRepository;
     @Override
     public Optional<Donation> getDonationById(int id) {
-        return donationRepository.findById(id); // Utilisez le repository directement
+        return donationRepository.findById(id);
     }
     @Override
     public List<Donation> retrieveAllDonation() {
@@ -42,7 +43,10 @@ public class DonationService implements IDonationService {
     public Donation modifyDonation(Donation donation) {
         return donationRepository.save(donation);
     }
-
+    @Override
+    public List<Donation> getDonationsByStatus(DonationStatus status) {
+        return donationRepository.findByStatus(status);
+    }
 
 
 }

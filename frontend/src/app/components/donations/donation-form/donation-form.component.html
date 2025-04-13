@@ -56,24 +56,51 @@
           <i class="fas fa-exclamation-circle me-2"></i>
           Amount is required
         </div>
+        <div *ngIf="amountControl?.errors?.['min']" class="invalid-feedback d-flex align-items-center mt-2">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          Amount must be at least 0.01 DT
+        </div>
+        <div *ngIf="amountControl?.errors?.['max']" class="invalid-feedback d-flex align-items-center mt-2">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          Amount is too large
+        </div>
       </div>
 
-      <!-- Item Field (for CLOTHING) -->
-      <div *ngIf="donationTypeControl?.value === 'CLOTHING'">
-        <label for="itemDressing" class="form-label fw-bold" style="color: #2c3e50;">Clothing Item</label>
-        <select class="form-select form-select-lg" id="itemDressing" formControlName="itemDressing"
-                [ngClass]="{ 'is-invalid': itemDressingControl?.invalid && (itemDressingControl?.dirty || itemDressingControl?.touched) }">
-          <option [ngValue]="null" disabled selected>Select an item</option>
-          <option *ngFor="let item of availableItems" [ngValue]="item">
-            {{ item.itemName }} (ID: {{ item.itemID }})
-          </option>
-        </select>
-        <div *ngIf="itemDressingControl?.errors?.['required']" class="invalid-feedback d-flex align-items-center mt-2">
-          <i class="fas fa-exclamation-circle me-2"></i>
-          Please select a clothing item
+   <!-- Remplacez le select par cette galerie d'images -->
+   <div *ngIf="donationTypeControl?.value === 'CLOTHING'" class="mt-4">
+    <h5 class="fw-bold mb-3">Select Clothing Item</h5>
+    
+    <div class="row row-cols-2 row-cols-md-3 g-3">
+      <div class="col" *ngFor="let item of availableItems">
+        <div class="card h-100 item-card" 
+             [class.border-primary]="isItemSelected(item)"
+             (click)="selectItem(item)">
+          <img [src]="getItemImage(item)" 
+               class="card-img-top p-2" 
+               alt="{{item.itemName}}"
+               onerror="this.src='assets/default-item.jpg'">
+          <div class="card-body text-center p-2">
+            <h6 class="card-title mb-0">{{item.itemName}}</h6>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Selected Item Display -->
+    <div *ngIf="selectedItem" class="selected-item mt-3 p-3 bg-light rounded">
+      <div class="d-flex align-items-center">
+        <img [src]="getItemImage(selectedItem)" 
+             class="img-thumbnail me-3" 
+             style="width: 80px; height: 80px;"
+             onerror="this.src='assets/images/default-item.jpg'">
+             >
+        <div>
+          <h6 class="mb-1">{{selectedItem.itemName}}</h6>
+          <small class="text-muted">Selected for donation</small>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <!-- Form Actions -->
     <div class="d-flex justify-content-between mt-5 pt-3">
@@ -84,5 +111,5 @@
         <i class="fas fa-save me-2"></i>{{ isEditMode ? 'Update Donation' : 'Create Donation' }}
       </button>
     </div>
-  </form>
+   <!-- Cette balise doit fermer le form ouvert plus haut -->
 </div>

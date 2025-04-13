@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity
@@ -23,6 +22,10 @@ public class Donation {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Le type de donation ne peut pas être null")
     private DonationType donationType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DonationStatus status = DonationStatus.PENDING; // Valeur par défaut
 
 
     @Positive(message = "Le montant doit être positif")
@@ -39,7 +42,6 @@ public class Donation {
     @NotNull(message = "Le donateur ne peut pas être null")
     private user donor;
 
-    // Constructeurs
 
     public Donation(int donationId, DonationType donationType, Double amount, ItemDressing itemDressing, user donor) {
         this.donationId = donationId;
@@ -54,6 +56,7 @@ public class Donation {
         this.amount = amount;
         this.itemDressing = itemDressing;
         this.donor = donor;
+        this.status = DonationStatus.PENDING; // Initialisé à PENDING par défaut
 
     }
 
@@ -61,7 +64,7 @@ public class Donation {
 
     }
 
-    // Getters
+
     public int getDonationId() {
         return donationId;
     }
@@ -70,7 +73,13 @@ public class Donation {
         return donationType;
     }
 
+    public DonationStatus getStatus() {
+        return status;
+    }
 
+    public void setStatus(DonationStatus status) {
+        this.status = status;
+    }
 
     public Double getAmount() {
         return amount;
@@ -84,7 +93,6 @@ public class Donation {
         return donor;
     }
 
-    // Setters
     public void setDonationId(int donationId) {
         this.donationId = donationId;
     }
@@ -118,6 +126,7 @@ public class Donation {
                 ", amount=" + amount +
                 ", itemDressing=" + (itemDressing != null ? itemDressing.getItemID() : "null") +
                 ", donor=" + (donor != null ? donor.getIdUser() : "null") +
+                ", status=" + status +
                 '}';
     }
 

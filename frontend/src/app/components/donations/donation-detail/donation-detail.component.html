@@ -47,22 +47,14 @@
                       <p class="text-muted small">N/A</p>
                   </ng-template>
               </div>
-
-              <!-- Donor -->
-              <div class="mb-2">
-                  <h6 class="text-muted mb-2">Donor</h6>
-                  <div class="p-2 bg-light rounded">
-                      <p class="mb-0 small">
-                          {{ donation.donor?.name || 'Anonymous' }}
-                      </p>
-                  </div>
-              </div>
-          </div>
+            </div>
+            
 
           <div class="card-footer bg-transparent border-top py-2">
               <button (click)="goBack()" class="btn btn-outline-secondary btn-sm">
                   <i class="fas fa-arrow-left me-1"></i>Back
               </button>
+              
           </div>
       </div>
   </div>
