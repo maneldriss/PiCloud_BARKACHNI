@@ -43,6 +43,7 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   overflow: hidden;
+  position: relative;
 }
 
 /* En-tête du post avec photo de profil */
@@ -87,7 +88,34 @@ body {
   font-size: 12px;
   color: var(--text-secondary);
   position: absolute;
+  right: 70px; /* Espacé pour les icônes edit/delete */
+}
+
+/* Icônes d'édition/suppression sous la date */
+.post-admin-actions {
+  position: absolute;
   right: 16px;
+  top: 14px; /* Aligné avec la date */
+  display: flex;
+  gap: 15px; /* Plus d'espace entre les icônes */
+}
+
+.edit-icon, .delete-icon {
+  font-size: 14px; /* Plus grand pour meilleure visibilité */
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.edit-icon:hover {
+  color: var(--secondary);
+}
+
+.delete-icon:hover {
+  color: var(--danger);
 }
 
 /* Zone de contenu du post */
@@ -139,15 +167,42 @@ body {
   display: flex;
   padding: 10px 16px;
   border-top: 1px solid var(--border);
-  justify-content: space-around;
+  align-items: center;
 }
 
-/* Boutons d'action transformés en icônes */
-.action-button {
+/* Boutons d'action avec emojis */
+.reaction-buttons {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+}
+
+.like-button, .dislike-button {
   background: none;
   border: none;
   padding: 8px;
-  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  transition: transform 0.2s;
+}
+
+.like-button:hover, .dislike-button:hover {
+  transform: scale(1.2);
+}
+
+.like-button span, .dislike-button span {
+  margin-left: 5px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.comment-button {
+  background: none;
+  border: none;
+  padding: 8px;
   font-size: 14px;
   cursor: pointer;
   display: flex;
@@ -155,23 +210,9 @@ body {
   transition: color 0.2s;
 }
 
-.action-button i {
-  font-size: 20px;
+.comment-button i {
+  font-size: 16px;
   margin-right: 6px;
-}
-
-/* Style des boutons au survol */
-.action-button:hover {
-  color: var(--primary);
-}
-
-/* Styles spécifiques pour les boutons */
-.like-button:hover {
-  color: var(--success);
-}
-
-.dislike-button:hover {
-  color: var(--danger);
 }
 
 .comment-button:hover {
@@ -181,6 +222,10 @@ body {
 /* Style pour la section d'édition */
 .edit-form {
   padding: 16px;
+  background-color: rgba(250, 250, 250, 0.9); /* Fond légèrement différent pour le mode édition */
+  border: 1px solid var(--border);
+  margin: 10px;
+  border-radius: 8px;
 }
 
 /* Inputs et textarea dans le formulaire d'édition */
@@ -206,30 +251,34 @@ body {
   margin-bottom: 10px;
 }
 
-/* Boutons d'action modifier/enregistrer/annuler */
+/* Boutons d'action enregistrer/annuler pour le mode édition */
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
 .btn {
   border: none;
   border-radius: 4px;
-  padding: 8px 12px;
+  padding: 10px 16px; /* Plus grand pour meilleure visibilité */
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn-warning {
-  background: linear-gradient(45deg, var(--gradient-5), var(--gradient-6));
-  color: white;
-}
-
-.btn-danger {
-  background: linear-gradient(45deg, var(--gradient-6), var(--gradient-7));
-  color: white;
+  transition: all 0.2s;
+  text-align: center;
 }
 
 .btn-success {
   background: linear-gradient(45deg, var(--gradient-8), var(--gradient-9));
   color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre pour faire ressortir */
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
@@ -286,15 +335,24 @@ body {
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 10px 16px;
+  padding: 12px 16px; /* Plus grand pour être plus visible */
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.3s;
   width: 100%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Ombre pour faire ressortir */
+  letter-spacing: 0.5px; /* Espacement des lettres pour lisibilité */
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive design pour les appareils mobiles */
@@ -308,11 +366,69 @@ body {
     flex-wrap: wrap;
   }
   
-  .action-button {
-    font-size: 12px;
+  .post-date {
+    right: 60px; /* Ajusté pour mobile */
   }
   
-  .action-button i {
-    font-size: 16px;
+  .post-admin-actions {
+    gap: 12px;
   }
+  /* Styles pour la pagination */
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.page-item {
+  margin: 0 4px;
+}
+
+.page-link {
+  cursor: pointer;
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.page-link:hover {
+  background-color: #f0f0f0;
+}
+
+.page-item.active .page-link {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #ddd;
+}
+
+.pagination-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6c757d;
+}
+.no-results p::before {
+  content: '🔍';
+  display: block;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
 }

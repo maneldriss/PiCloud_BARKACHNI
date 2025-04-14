@@ -17,6 +17,8 @@ export class PostService {
     return this.http.get<Post[]>(`${this.baseUrl}`);
   }
 
+  
+
   getPostById(id: number): Observable<Post> {
     return this.http.get<Post>(`${this.baseUrl}/${id}`);
   }
@@ -48,5 +50,7 @@ export class PostService {
     const userId = 1; // à adapter aussi
     return this.http.post(`/likes/${userId}/post/${postId}/dislike`, {});
   }
-  
+  getPostCounts(postId: number): Observable<{ likes: number, dislikes: number }> {
+    return this.http.get<{ likes: number, dislikes: number }>(`http://localhost:8089/pidevback/likes/count/post/${postId}`);
+  }
 }

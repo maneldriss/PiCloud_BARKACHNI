@@ -11,7 +11,6 @@ export interface Post {
   updatedAt?: string;
   user?: User;
   commentaires?: Commentaire[];
-  likes?: number;      // Nombre total de likes
-  dislikes?: number;   // Nombre total de dislikes
-  commentCount?: number; // Nombre total de commentaires
+  likeCount?: number;
+  dislikeCount?: number;
 }

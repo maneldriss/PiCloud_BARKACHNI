@@ -14,14 +14,33 @@
   </div>
 </div>
 
+<!-- Barre de recherche -->
+<input class="form-control mb-3" type="text" placeholder="Rechercher un titre"
+       [(ngModel)]="searchTerm" (ngModelChange)="currentPage = 1" />
+
+       <div *ngIf="filteredPosts.length === 0" class="no-results">
+        <p>Aucun post trouvé avec ce titre.</p>
+      </div>
+      
+
 <!-- Liste des posts -->
 <div class="post-container" *ngIf="posts.length > 0; else noPosts">
-  <div *ngFor="let post of posts" class="post-card">
+  <div *ngFor="let post of paginatedPosts" class="post-card">
 
     <!-- Métadonnées -->
     <div class="post-metadata">
       <p class="post-user">{{ post.user?.username || 'Utilisateur inconnu' }}</p>
       <p class="post-date">{{ post.createdAt | date:'dd/MM/yyyy' }}</p>
+      
+      <!-- Icônes d'édition sous la date -->
+      <div class="post-admin-actions" *ngIf="editPostId !== post.idPost">
+        <button class="edit-icon" (click)="startEditing(post)" title="Modifier">
+          <i class="fas fa-pencil-alt"></i>
+        </button>
+        <button class="delete-icon" (click)="onDeletePost(post.idPost)" title="Supprimer">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
     </div>
 
     <!-- Contenu principal -->
@@ -43,6 +62,14 @@
         Le contenu doit contenir au moins 5 caractères.
       </small>
       
+      <div class="edit-actions">
+        <button class="btn btn-success"
+          (click)="saveEdit()"
+          [disabled]="editedPost.title.trim().length < 3 || editedPost.content.trim().length < 5">
+          Enregistrer
+        </button>
+        <button class="btn btn-secondary" (click)="cancelEdit()">Annuler</button>
+      </div>
     </div>
 
     <!-- Vidéo -->
@@ -56,41 +83,94 @@
       <img [src]="post.imageUrl" alt="Image du post" class="post-image">
     </div>
 
-    <!-- Boutons -->
-    <div class="post-footer">
+  <!-- Boutons -->
+    <!-- Boutons de réaction -->
+<div class="post-footer">
+  <div class="reaction-buttons">
+    <!-- Bouton Like avec tooltip -->
+    <!-- Bouton Like avec tooltip -->
+<div class="reaction-container">
+  <button class="like-button" 
+          (click)="like(post.idPost)"
+          (mouseenter)="onMouseEnterLike(post.idPost)"
+          (mouseleave)="onMouseLeave()">
+    👍 <span>{{ post.likeCount || 0 }}</span>
+  </button>
+  <div class="reaction-tooltip" 
+       *ngIf="hoveredPostId === post.idPost && hoverType === 'like'">
+    <div *ngIf="likedUsers[post.idPost] && likedUsers[post.idPost].length > 0; else noLikes">
+      <p *ngFor="let user of likedUsers[post.idPost]">{{user}}</p>
+    </div>
+    <ng-template #noLikes>
+      <p>Aucun like pour ce post</p>
+    </ng-template>
+  </div>
+</div>
 
-      <!-- Actions classiques -->
-      <button class="action-button comment-button"
-      [routerLink]="['/post', post.idPost, 'commentaires']">
-<i class="fas fa-comment"></i> Commenter
-</button>
-
-      <button class="action-button like-button">
-        <i class="fas fa-thumbs-up"></i> J'aime
-      </button>
-      <button class="action-button dislike-button">
-        <i class="fas fa-thumbs-down"></i> Je n'aime pas
-      </button>
-
-      <!-- Modifier / Enregistrer / Annuler -->
-      <ng-container *ngIf="editPostId !== post.idPost">
-        <button class="btn btn-warning me-2" (click)="startEditing(post)">Modifier</button>
-        <button class="btn btn-danger" (click)="onDeletePost(post.idPost)">Supprimer</button>
-      </ng-container>
-
-      <ng-container *ngIf="editPostId === post.idPost">
-        <button class="btn btn-success me-2"
-        (click)="saveEdit()"
-        [disabled]="editedPost.title.trim().length < 3 || editedPost.content.trim().length < 5">
-  Enregistrer
-</button>
-
-        <button class="btn btn-secondary" (click)="cancelEdit()">Annuler</button>
-      </ng-container>
+<!-- Bouton Dislike avec tooltip -->
+<div class="reaction-container">
+  <button class="dislike-button" 
+          (click)="dislike(post.idPost)"
+          (mouseenter)="onMouseEnterDislike(post.idPost)"
+          (mouseleave)="onMouseLeave()">
+    👎 <span>{{ post.dislikeCount || 0 }}</span>
+  </button>
+  <div class="reaction-tooltip" 
+       *ngIf="hoveredPostId === post.idPost && hoverType === 'dislike'">
+    <div *ngIf="dislikedUsers[post.idPost] && dislikedUsers[post.idPost].length > 0; else noDislikes">
+      <p *ngFor="let user of dislikedUsers[post.idPost]">{{user}}</p>
+    </div>
+    <ng-template #noDislikes>
+      <p>Aucun dislike pour ce post</p>
+    </ng-template>
+  </div>
+</div>
 
     </div>
+  </div>
+  
+  <!-- Bouton commenter -->
+  <button class="comment-button" [routerLink]="['/post', post.idPost, 'commentaires']">
+    <i class="fas fa-comment"></i> Commenter
+  </button>
+</div>
 
   </div>
+
+
+  <!-- Pagination -->
+<!-- Pagination Footer -->
+<div class="d-flex justify-content-between align-items-center mt-4">
+  <div class="text-muted small">
+    Page {{ currentPage }} of {{ totalPages }} • 
+    Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+    {{ getMinValue(currentPage * itemsPerPage, posts.length) }} of 
+    {{ posts.length }} posts
+  </div>
+
+  <nav>
+    <ul class="pagination pagination-sm">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="previousPage()" style="color: #59886b;">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+      </li>
+      <li class="page-item" *ngFor="let page of getPages()" [class.active]="page === currentPage">
+        <a class="page-link"
+           (click)="goToPage(page)"
+           [style.backgroundColor]="page === currentPage ? '#59886b' : 'transparent'" 
+           [style.color]="page === currentPage ? 'white' : '#59886b'"
+           [style.borderColor]="page === currentPage ? '#59886b' : '#dee2e6'">
+          {{ page }}
+        </a>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="nextPage()" style="color: #59886b;">
+          <i class="fas fa-chevron-right"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
 </div>
 
 <!-- Message s'il n'y a pas de posts -->

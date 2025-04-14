@@ -1,1 +1,313 @@
-/* You can add global styles to this file, and also import other style files */
+/* Thème élégant mauve/bleu/rose sans dégradés sur boutons */
+:root {
+  --primary: #8a2be2;        /* Violet vif */
+  --primary-dark: #6a0dad;   /* Violet foncé */
+  --secondary: #4361ee;      /* Bleu électrique */
+  --accent: #ff3d8b;         /* Rose vif */
+  --accent-light: #ff85a1;   /* Rose clair */
+  --background: #f8f8ff;     /* Fond légèrement bleuté */
+  --card-bg: #ffffff;
+  --text: #2b2d42;
+  --text-light: #8d99ae;
+  --border: 1px solid #e2e8f0;
+  --shadow: 0 4px 15px rgba(138, 43, 226, 0.08);
+  --shadow-hover: 0 8px 25px rgba(138, 43, 226, 0.15);
+  --transition: all 0.3s ease;
+  --border-radius: 12px;
+}
+
+/* Fond de page */
+body {
+  background-color: var(--background);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  padding: 20px;
+}
+
+/* Carte du formulaire */
+.post-creation-form {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  border: var(--border);
+}
+
+.post-creation-form:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* Effet de bordure fine colorée */
+.post-creation-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px; /* Plus fine */
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+}
+
+/* Barre de recherche améliorée - même taille que le bouton "Ajouter un Post" */
+.form-control.mb-3[type="text"][placeholder="Rechercher un titre"] {
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  background-color: white;
+  border: var(--border);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.form-control.mb-3[type="text"][placeholder="Rechercher un titre"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+}
+
+/* Message "Pas de résultats" avec animation */
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin: 2rem auto;
+  max-width: 700px;
+  animation: fadeInDown 0.5s ease-out;
+}
+
+.no-results p {
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+.no-results p::before {
+  content: '😢';
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  animation: pulsate 2s infinite;
+}
+
+/* Animation pour l'emoji qui pleure */
+@keyframes pulsate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeInDown {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Styles pour la carte "Partager votre look" */
+.card {
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+  border: none;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.card-header {
+  padding: 1.25rem;
+  background: var(--primary); /* Couleur unie au lieu d'un dégradé */
+  border: none;
+}
+
+.card-header h5 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+.card-body {
+  padding: 1.5rem;
+  background-color: var(--card-bg);
+}
+
+/* Bouton "Ajouter un Post" - SANS DÉGRADÉ */
+.btn-primary {
+  display: inline-block;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary); /* Couleur unie */
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark); /* Couleur unie plus foncée au survol */
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(138, 43, 226, 0.4);
+}
+
+/* Style des boutons de réaction */
+.like-button, .dislike-button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.like-button {
+  color: var(--secondary);
+}
+
+.dislike-button {
+  color: var(--accent);
+}
+
+.like-button:hover, .dislike-button:hover {
+  transform: scale(1.15);
+  background-color: rgba(248, 248, 255, 0.8);
+}
+
+.like-button span, .dislike-button span {
+  margin-left: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Bouton commenter */
+.comment-button {
+  background: none;
+  border: 1px solid var(--secondary);
+  color: var(--secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comment-button:hover {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.comment-button i {
+  margin-right: 5px;
+}
+
+/* Carte de post */
+.post-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: var(--transition);
+  border: var(--border);
+}
+
+.post-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+/* Pagination avec couleurs assorties au thème */
+.pagination {
+  margin-top: 2rem;
+}
+
+.page-link {
+  color: var(--primary);
+  border-color: #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.page-item.active .page-link {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.page-link:hover {
+  background-color: #f0f4ff;
+  color: var(--primary-dark);
+}
+
+/* Style spécifique pour les flèches de pagination */
+.pagination .fa-chevron-left,
+.pagination .fa-chevron-right {
+  color: var(--primary);
+}
+
+/* Pagination footer */
+.d-flex.justify-content-between.align-items-center.mt-4 {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Messages d'erreur */
+.text-danger {
+  color: var(--accent) !important;
+}
+
+/* Bouton S'abonner sans dégradé */
+.btn-subscribe {
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-subscribe:hover {
+  background-color: #3050d6;
+  transform: translateY(-2px);
+}
+
+/* Tous les autres boutons du thème (pour cohérence) */
+.btn-success {
+  background-color: var(--secondary);
+  border-color: var(--secondary);
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #3050d6;
+}
+
+.btn-secondary {
+  background-color: var(--text-light);
+  border-color: var(--text-light);
+  color: white;
+}

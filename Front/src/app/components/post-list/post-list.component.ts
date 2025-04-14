@@ -2,6 +2,7 @@
 import { PostService } from 'src/app/services/post.service';
 import { Post } from 'src/app/models/post';
 import { Component, OnInit } from '@angular/core';
+import { LikeDislikeService } from 'src/app/services/like-dislike.service';
 
 @Component({
   selector: 'app-post-list',
@@ -11,6 +12,21 @@ import { Component, OnInit } from '@angular/core';
 export class PostListComponent implements OnInit {
 
   posts: Post[] = [];
+  userId: number = 1; 
+
+  // Pagination
+currentPage = 1;
+itemsPerPage = 5;
+searchQuery: string = '';
+searchTerm: string = '';
+
+
+  likedUsers: {[postId: number]: string[]} = {};
+  dislikedUsers: {[postId: number]: string[]} = {};
+  hoveredPostId: number | null = null;
+  hoverType: 'like' | 'dislike' | null = null;
+
+
   editMode: boolean = false;
   selectedPost: Post = {
     idPost: 0,
@@ -33,10 +49,11 @@ editedPost: Post = {
     email: ''
   }
 };
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService, private likeService: LikeDislikeService) {}
 
   ngOnInit(): void {
     this.getAllPosts();
+    this.loadLikes();  
   }
 
   showAddForm: boolean = false;
@@ -52,17 +69,24 @@ onPostAdded(newPost: Post): void {
 
 
 
-  getAllPosts(): void {
-    this.postService.getAllPosts().subscribe({
-      next: (data) => {
-        console.log('Données reçues :', data);  // Vérifie ce que tu reçois
-        this.posts = data;
-      },
-      error: (err) => {
-        console.error('Erreur de récupération des posts', err);
-      }
-    });
-  }
+getAllPosts(): void {
+  this.postService.getAllPosts().subscribe({
+    next: (data) => {
+      console.log('Données reçues :', data);
+      
+      // Tri des posts par date décroissante (plus récent en premier)
+      this.posts = data.sort((a, b) => 
+        new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+      );
+      
+      this.loadLikes();  // Charge les likes après avoir récupéré les posts
+    },
+    error: (err) => {
+      console.error('Erreur de récupération des posts', err);
+    }
+  });
+}
+
   
   
   onDeletePost(postId: number | undefined): void {
@@ -142,6 +166,114 @@ onPostAdded(newPost: Post): void {
       this.cancelEdit();
     });
   }
+  /*************like  */
+  loadPosts() {
+    this.postService.getAllPosts().subscribe((data: Post[]) => {
+      this.posts = data;
+      this.posts.forEach(post => {
+        this.likeService.getCounts(post.idPost).subscribe(counts => {
+          post.likeCount = counts.likes;
+          post.dislikeCount = counts.dislikes;
+        });
+      });
+    });
+  }
+  like(postId: number): void {
+    this.likeService.likePost(this.userId, postId).subscribe(() => {
+      this.loadLikes();  // Recharge les likes après un like
+      this.loadLikedUsers(postId);  // Recharge les utilisateurs qui ont aimé
+    });
+  }
+  
+ dislike(postId: number): void {
+    this.likeService.dislikePost(this.userId, postId).subscribe(() => {
+      this.loadLikes();  // Recharge les likes après un dislike
+      this.loadDislikedUsers(postId);  // Recharge les utilisateurs qui ont disliké
+    });
+  }
+  
+  loadLikes() {
+    this.posts.forEach(post => {
+      this.likeService.getCounts(post.idPost).subscribe(counts => {
+        post.likeCount = counts.likes;
+        post.dislikeCount = counts.dislikes;
+      });
+    });
+  }
+  /***mouse */
+    // Méthodes pour gérer le survol
+  onMouseEnterLike(postId: number): void {
+    this.hoveredPostId = postId;
+    this.hoverType = 'like';
+    this.loadLikedUsers(postId);
+  }
+
+  onMouseEnterDislike(postId: number): void {
+    this.hoveredPostId = postId;
+    this.hoverType = 'dislike';
+    this.loadDislikedUsers(postId);
+  }
+
+  onMouseLeave(): void {
+    this.hoveredPostId = null;
+    this.hoverType = null;
+  }
+
+  loadLikedUsers(postId: number): void {
+    if (!this.likedUsers[postId]) {
+      this.likeService.getUsersWhoLiked(postId).subscribe(users => {
+        this.likedUsers[postId] = users;
+      });
+    }
+  }
+
+  loadDislikedUsers(postId: number): void {
+    if (!this.dislikedUsers[postId]) {
+      this.likeService.getUsersWhoDisliked(postId).subscribe(users => {
+        this.dislikedUsers[postId] = users;
+      });
+    }
+  }
+  //pagination
+  getMinValue(a: number, b: number): number {
+    return Math.min(a, b);
+  }
+  get filteredPosts(): Post[] {
+    return this.posts.filter(post =>
+      post.title.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+  
+  get totalPages(): number {
+    return Math.ceil(this.filteredPosts.length / this.itemsPerPage);
+  }
   
   
+ 
+  get paginatedPosts(): Post[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.filteredPosts.slice(start, end);
+  }
+  
+  
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+  
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+  
+  goToPage(page: number): void {
+    this.currentPage = page;
+  }
+  
+  getPages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
 }
