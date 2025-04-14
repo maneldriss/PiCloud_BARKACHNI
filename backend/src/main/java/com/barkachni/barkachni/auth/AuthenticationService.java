@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -70,12 +71,19 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        System.out.println(request.getEmail());
+
+        var user = (User) auth.getPrincipal();
         var claims = new HashMap<String, Object>();
-        var user = ((User) auth.getPrincipal());
         claims.put("fullName", user.getUsername());
 
-        var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
+        // Ajouter les rôles (on suppose que c'est une liste, on peut prendre le premier pour simplifier)
+        claims.put("roles", user.getRoles().stream()
+                .map(role -> role.getName().name()) // Convert RoleName enum to String
+                .collect(Collectors.toList())
+        );
+
+        var jwtToken = jwtService.generateToken(claims, user);
+
         return AuthenticationResponse.builder()
                 .user(user)
                 .token(jwtToken)

@@ -18,8 +18,9 @@ public class Role_user {
     @GeneratedValue
     private Integer id;
 
+    @Enumerated(EnumType.STRING) // Sauvegarde la valeur de l'enum en tant que String
     @Column(unique = true)
-    private String name;
+    private RoleName name;
 
     @ManyToMany(mappedBy = "roles") // Corrected the mappedBy attribute
     @JsonIgnore

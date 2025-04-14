@@ -137,10 +137,9 @@ public class User implements UserDetails, Principal // Implements Spring Securit
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles
                 .stream()
-                .map(r -> new SimpleGrantedAuthority(r.getName()))
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName().name()))
                 .collect(Collectors.toList());
     }
-
     @Override
     public String getPassword() {
         return password;
