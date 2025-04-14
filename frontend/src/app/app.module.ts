@@ -15,7 +15,9 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-
+import  { MatPaginatorModule } from '@angular/material/paginator';
+import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
+import { MatTableModule } from '@angular/material/table';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,6 +26,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     DonationFormComponent,
     DonationDetailComponent,
     AdminDashboardComponent,
+    LeaderboardComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,7 +36,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     SharedModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

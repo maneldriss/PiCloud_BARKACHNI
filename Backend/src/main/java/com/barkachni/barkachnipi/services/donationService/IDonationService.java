@@ -4,6 +4,7 @@ import com.barkachni.barkachnipi.entities.donationEntity.Donation;
 import com.barkachni.barkachnipi.entities.donationEntity.DonationStatus;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IDonationService {

@@ -24,6 +24,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   selectedStatus: string = 'all';
   filteredDonations: Donation[] = [];
   sortAscending: boolean = true;
+  showDetailsModal = false;
   DonationStatus = DonationStatus;
   DonationType = DonationType;
   statusOptions = [
@@ -139,7 +140,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
   approveDonation(donationId: number): void {
     this.donationService.approveDonation(donationId).subscribe({
-      next: () => this.loadDonations(),
+      next: () => {this.loadDonations(),
+      this.closeDetailsModal();
+      },
       error: (err) => console.error(err)
     });
   }
@@ -157,6 +160,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         if (donation) {
           donation.status = DonationStatus.REJECTED;
         }
+        this.closeDetailsModal(); 
         this.loading = false;
       },
       error: (err) => {
@@ -167,7 +171,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   viewDetails(donation: Donation): void {
-    // Implémentez la logique pour voir les détails
+    this.currentDonation = donation;
+    this.showDetailsModal = true;
+  }
+  
+  // Ajoutez cette méthode pour fermer la modale
+  closeDetailsModal(): void {
+    this.showDetailsModal = false;
+    this.currentDonation = null;
   }
 
   private updateStatus(id: number, status: DonationStatus): void {
@@ -223,7 +234,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     });
     this.sortAscending = !this.sortAscending;
   }
-  
+  getImageUrl(imagePath: string): string {
+    // Si c'est une URL complète, retournez-la directement
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    // Sinon, supposez que c'est un chemin relatif dans assets
+    return `assets/images/${imagePath}`;
+  } 
  
   
 }

@@ -6,7 +6,7 @@ import { DonationFormComponent } from './components/donations/donation-form/dona
 import { DonationDetailComponent } from './components/donations/donation-detail/donation-detail.component';
 import { LayoutComponent } from './shared/layout/layout.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
-
+import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';  
 const routes: Routes = [
   { 
     path: '', 
@@ -26,8 +26,13 @@ const routes: Routes = [
       { path: 'dashboard', component: AdminDashboardComponent }
     ]
   },
-  
-  
+  {
+    path: 'leaderboard',
+    component: LeaderboardComponent, // Utilisez Dashboard comme layout
+    children: [
+      { path: 'lead', component: LeaderboardComponent }
+    ]
+  },
   { path: '**', redirectTo: '' } 
 ];
 

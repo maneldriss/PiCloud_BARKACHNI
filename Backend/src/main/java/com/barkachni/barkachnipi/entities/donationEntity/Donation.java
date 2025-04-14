@@ -9,6 +9,8 @@ import jakarta.validation.constraints.*;
 import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.time.LocalDateTime;
+
 
 @Entity
 @ToString
@@ -49,6 +51,8 @@ public class Donation {
         this.amount = amount;
         this.itemDressing = itemDressing;
         this.donor = donor;
+        this.status = DonationStatus.PENDING;
+
     }
 
     public Donation(DonationType donationType, Double amount, ItemDressing itemDressing, user donor) {
@@ -56,7 +60,7 @@ public class Donation {
         this.amount = amount;
         this.itemDressing = itemDressing;
         this.donor = donor;
-        this.status = DonationStatus.PENDING; // Initialisé à PENDING par défaut
+        this.status = DonationStatus.PENDING;
 
     }
 
@@ -127,7 +131,9 @@ public class Donation {
                 ", itemDressing=" + (itemDressing != null ? itemDressing.getItemID() : "null") +
                 ", donor=" + (donor != null ? donor.getIdUser() : "null") +
                 ", status=" + status +
+
                 '}';
     }
+
 
 }

@@ -19,6 +19,10 @@ export interface Donation {
     itemID: number;
     itemName: string;
     imageUrl: string;
+    description: string;
+    condition: string;
+    category: string;
+    size?: string;
   };
   donor?: any;
   status?: DonationStatus | string;

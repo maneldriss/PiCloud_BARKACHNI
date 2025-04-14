@@ -29,7 +29,8 @@ export class DonationService {
         } : null,
         donor: d.donor ? {
           name: d.donor.name,
-          email: d.donor.email
+          email: d.donor.email,
+          donationPoints: d.donor.donationPoints
         } : null
       }))),
       tap(d => console.log('Donations after mapping:', d)) // Debug
@@ -57,7 +58,11 @@ export class DonationService {
       itemDressing: d.itemDressing ? {
         itemID: d.itemDressing.itemID,
         itemName: d.itemDressing.itemName,
-        imageUrl: d.itemDressing.imageUrl
+        imageUrl: d.itemDressing.imageUrl,
+        description: d.itemDressing.description,
+        condition: d.itemDressing.condition,
+        category: d.itemDressing.category,
+        size: d.itemDressing.size,
       } : undefined,
       donor: d.donor,
       status: d.status || DonationStatus.PENDING,

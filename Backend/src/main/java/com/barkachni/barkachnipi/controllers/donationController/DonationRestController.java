@@ -5,21 +5,25 @@ import com.barkachni.barkachnipi.entities.donationEntity.DonationStatus;
 import com.barkachni.barkachnipi.entities.donationEntity.DonationType;
 import com.barkachni.barkachnipi.entities.dressingEntity.ItemDressing;
 import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.services.donationService.LeaderboardService;
 import com.barkachni.barkachnipi.repositories.userRepository.UserRepository;
 import com.barkachni.barkachnipi.services.EmailService;
 import com.barkachni.barkachnipi.services.donationService.IDonationService;
 import com.barkachni.barkachnipi.services.dressingService.IDressingItemService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200") // À ajouter
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/donation")
 public class DonationRestController {
     private final IDonationService donationService;
@@ -30,12 +34,16 @@ public class DonationRestController {
     public DonationRestController(
             IDonationService donationService,
             IDressingItemService itemService,
-            UserRepository userRepository
-    ) {
+            UserRepository userRepository) {
         this.donationService = donationService;
         this.itemService = itemService;
         this.userRepository = userRepository;
+        System.out.println("UserRepository injected: " + (this.userRepository != null));
+
     }
+    @Autowired
+    private LeaderboardService leaderboardService;
+
     @Autowired
     private EmailService emailService;
     /*@GetMapping("/retrieve-all-donations")
@@ -52,62 +60,34 @@ public class DonationRestController {
 
         return ResponseEntity.ok(donations);
     }
-   /*@PostMapping("/add-donation")
-    public Donation addDonation(@RequestBody @Valid Donation donation,
-                                @RequestParam Long userId) {
-        user donor = new user();
-        donor.setIdUser(userId);
+
+    @PostMapping("/add-donation")
+    @Transactional
+    public ResponseEntity<Donation> addDonation(
+            @RequestBody @Valid Donation donation,
+            @RequestParam Long userId) {
+
+        user donor = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found"));
 
         donation.setDonor(donor);
+        donation.setStatus(DonationStatus.PENDING);
 
-        if (donation.getDonationType() == DonationType.MONEY) {
-            donation.setItemDressing(null);
-            if (donation.getAmount() == null || donation.getAmount() <= 0) {
-                throw new IllegalArgumentException("Amount must be greater than 0 for MONEY donations.");
+        if (donation.getDonationType() == DonationType.CLOTHING) {
+            if (donation.getItemDressing() == null || donation.getItemDressing().getItemID() == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Item ID is required for CLOTHING donation");
             }
-        } else if (donation.getDonationType() == DonationType.CLOTHING) {
-            if (donation.getItemDressing() == null) {
-                throw new IllegalArgumentException("ItemDressing must be provided for CLOTHING donation.");
-            }
-            if (donation.getItemDressing().getUser() == null) {
-                donation.getItemDressing().setUser(donor);
-            }
+            ItemDressing item = itemService.retrieveItem(donation.getItemDressing().getItemID());
+            donation.setItemDressing(item);
         }
 
-        return donationService.addDonation(donation);
-    }*/
-    ////////
-   @PostMapping("/add-donation")
-   public ResponseEntity<Donation> addDonation(
-           @RequestBody @Valid Donation donation,
-           @RequestParam Long userId) {
+        Donation savedDonation = donationService.addDonation(donation);
+        return ResponseEntity.ok(savedDonation);
+    }
 
-       // 1. Vérifier que l'utilisateur existe
-       user donor = userRepository.findById(userId)
-               .orElseThrow(() -> new ResponseStatusException(
-                       HttpStatus.NOT_FOUND, "User not found"));
-
-       // 2. Initialiser le statut
-       donation.setStatus(DonationStatus.PENDING);
-       donation.setDonor(donor);
-
-       // 3. Traitement spécifique selon le type
-       if (donation.getDonationType() == DonationType.CLOTHING) {
-           if (donation.getItemDressing() == null || donation.getItemDressing().getItemID() == null) {
-               throw new ResponseStatusException(
-                       HttpStatus.BAD_REQUEST,
-                       "Item ID is required for CLOTHING donation");
-           }
-
-           // 4. Récupérer l'item complet depuis la base
-           ItemDressing item = itemService.retrieveItem(donation.getItemDressing().getItemID());
-           donation.setItemDressing(item);
-       }
-
-       // 5. Sauvegarder
-       Donation savedDonation = donationService.addDonation(donation);
-       return ResponseEntity.ok(savedDonation);
-   }
 
 
     @DeleteMapping("/remove-donation/{donation-id}")
@@ -116,30 +96,6 @@ public class DonationRestController {
     }
 
 
-   /*@PutMapping("/modify-donation/{id}")
-   public ResponseEntity<Donation> modifyDonation(
-           @PathVariable int id,
-           @RequestBody @Valid Donation updatedDonation) {
-
-       Donation existingDonation = donationService.getDonationById(id)
-               .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Donation non trouvée"));
-
-       // Mise à jour obligatoire de l'ID
-       updatedDonation.setDonationId(id);
-
-       // Transfert de l'utilisateur existant
-       updatedDonation.setDonor(existingDonation.getDonor());
-
-       if (updatedDonation.getDonationType() == DonationType.MONEY) {
-           updatedDonation.setItemDressing(null);
-       } else if (updatedDonation.getDonationType() == DonationType.CLOTHING) {
-           if(updatedDonation.getItemDressing() == null) {
-               throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Item requis pour CLOTHING");
-           }
-       }
-
-       return ResponseEntity.ok(donationService.modifyDonation(updatedDonation));
-   }*/
    @PutMapping("/modify-donation/{id}")
    public ResponseEntity<Donation> modifyDonation(
            @PathVariable int id,
@@ -182,25 +138,6 @@ public class DonationRestController {
     }
 
 
-    /////////confirmation du donation/////////////
-  /*  @PatchMapping("/approve/{id}")
-    public ResponseEntity<Donation> approveDonation(@PathVariable int id) {
-        Donation donation = donationService.getDonationById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Donation not found"));
-
-        donation.setStatus(DonationStatus.APPROVED);
-        return ResponseEntity.ok(donationService.modifyDonation(donation));
-    }
-
-    @PatchMapping("/reject/{id}")
-    public ResponseEntity<Donation> rejectDonation(@PathVariable int id) {
-        Donation donation = donationService.getDonationById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Donation not found"));
-
-        donation.setStatus(DonationStatus.REJECTED);
-        return ResponseEntity.ok(donationService.modifyDonation(donation));
-    }
-*/
     @PatchMapping("/approve/{id}")
     public ResponseEntity<Donation> approveDonation(@PathVariable int id) {
         Donation donation = donationService.getDonationById(id)
@@ -243,4 +180,19 @@ public class DonationRestController {
         List<Donation> pendingDonations = donationService.getDonationsByStatus(DonationStatus.PENDING);
         return ResponseEntity.ok(pendingDonations);
     }
+
+    @GetMapping("/leaderboard")
+    public ResponseEntity<Page<Map<String, Object>>> getTopDonors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(leaderboardService.getTopDonors(page, size));
+    }
+    @GetMapping("/user/{userId}/points")
+    public ResponseEntity<Integer> getUserPoints(@PathVariable Long userId) {
+        user donor = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        return ResponseEntity.ok(donor.getDonationPoints());
+    }
+
 }
