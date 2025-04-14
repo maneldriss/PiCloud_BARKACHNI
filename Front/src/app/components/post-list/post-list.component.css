@@ -1,0 +1,318 @@
+/* Variables de couleurs vives inspirées d'Instagram */
+:root {
+  --primary: #833AB4;      /* Violet Instagram */
+  --secondary: #5851DB;    /* Bleu-violet */
+  --gradient-1: #405DE6;   /* Bleu */
+  --gradient-2: #5851DB;   /* Bleu-violet */
+  --gradient-3: #833AB4;   /* Violet */
+  --gradient-4: #C13584;   /* Rose-rouge */
+  --gradient-5: #E1306C;   /* Rose */
+  --gradient-6: #FD1D1D;   /* Rouge */
+  --gradient-7: #F56040;   /* Orange */
+  --gradient-8: #F77737;   /* Orange clair */
+  --gradient-9: #FCAF45;   /* Jaune-orange */
+  --gradient-10: #FFDC80;  /* Jaune clair */
+  --background: #FAFAFA;   /* Fond gris très clair */
+  --card-bg: #FFFFFF;      /* Blanc pour les cartes */
+  --text: #262626;         /* Texte noir */
+  --text-secondary: #8e8e8e; /* Texte gris */
+  --border: #DBDBDB;       /* Bordure grise */
+  --success: #58C322;      /* Vert pour les actions positives */
+  --danger: #ED4956;       /* Rouge pour les actions négatives */
+}
+
+/* Style global */
+body {
+  background-color: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+}
+
+/* Conteneur principal des posts */
+.post-container {
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+/* Carte de post - style Instagram */
+.post-card {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+/* En-tête du post avec photo de profil */
+.post-metadata {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+/* Style pour la photo de profil */
+.post-metadata:before {
+  content: '';
+  width: 32px;
+  height: 32px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="%23DBDBDB"/><circle cx="12" cy="10" r="4" fill="%238e8e8e"/><path d="M4,19 C4,15 7,13 12,13 C17,13 20,15 20,19" fill="%238e8e8e"/></svg>');
+  background-size: cover;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Style pour uploader une photo de profil réelle */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+/* Nom d'utilisateur */
+.post-user {
+  font-weight: 600;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Date de publication */
+.post-date {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  position: absolute;
+  right: 16px;
+}
+
+/* Zone de contenu du post */
+.post-content-wrapper {
+  padding: 12px 16px;
+}
+
+/* Titre du post */
+.post-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+/* Contenu du post */
+.post-content {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Conteneur d'image */
+.post-image-container {
+  width: 100%;
+  max-height: 600px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+}
+
+/* Image */
+.post-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Vidéo */
+.post-video {
+  width: 100%;
+  max-height: 600px;
+  background-color: #000;
+}
+
+/* Footer du post avec les icônes d'action */
+.post-footer {
+  display: flex;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  justify-content: space-around;
+}
+
+/* Boutons d'action transformés en icônes */
+.action-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.action-button i {
+  font-size: 20px;
+  margin-right: 6px;
+}
+
+/* Style des boutons au survol */
+.action-button:hover {
+  color: var(--primary);
+}
+
+/* Styles spécifiques pour les boutons */
+.like-button:hover {
+  color: var(--success);
+}
+
+.dislike-button:hover {
+  color: var(--danger);
+}
+
+.comment-button:hover {
+  color: var(--secondary);
+}
+
+/* Style pour la section d'édition */
+.edit-form {
+  padding: 16px;
+}
+
+/* Inputs et textarea dans le formulaire d'édition */
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* Messages d'erreur */
+.text-danger {
+  color: var(--danger);
+  font-size: 12px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Boutons d'action modifier/enregistrer/annuler */
+.btn {
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-warning {
+  background: linear-gradient(45deg, var(--gradient-5), var(--gradient-6));
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(45deg, var(--gradient-6), var(--gradient-7));
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(45deg, var(--gradient-8), var(--gradient-9));
+  color: white;
+}
+
+.btn-secondary {
+  background-color: var(--border);
+  color: var(--text);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Style pour la section "Pas de posts" */
+.no-posts {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+/* Style pour la carte "Ajouter un post" */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  padding: 16px;
+  background: linear-gradient(45deg, 
+    var(--gradient-1), 
+    var(--gradient-3), 
+    var(--gradient-5), 
+    var(--gradient-7), 
+    var(--gradient-9));
+  color: white;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+/* Bouton pour ajouter un post avec dégradé Instagram */
+.btn-primary {
+  background: linear-gradient(45deg, 
+    var(--gradient-1), 
+    var(--gradient-3), 
+    var(--gradient-5), 
+    var(--gradient-7));
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Responsive design pour les appareils mobiles */
+@media (max-width: 600px) {
+  .post-container {
+    width: 100%;
+    padding: 0 8px;
+  }
+  
+  .post-footer {
+    flex-wrap: wrap;
+  }
+  
+  .action-button {
+    font-size: 12px;
+  }
+  
+  .action-button i {
+    font-size: 16px;
+  }
+}

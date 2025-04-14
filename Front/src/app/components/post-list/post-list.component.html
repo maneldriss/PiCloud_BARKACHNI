@@ -1,0 +1,101 @@
+<!-- Structure globale -->
+<div class="card mb-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">Partager votre look</h5>
+  </div>
+  <div class="card-body">
+    <p>
+      Vous voulez partager votre expérience ou votre outfit d'aujourd'hui ?<br>
+      N'hésitez pas à ajouter un post !
+    </p>
+    <div class="d-grid">
+      <button class="btn btn-primary" [routerLink]="['/add-post']">Ajouter un Post</button>
+    </div>
+  </div>
+</div>
+
+<!-- Liste des posts -->
+<div class="post-container" *ngIf="posts.length > 0; else noPosts">
+  <div *ngFor="let post of posts" class="post-card">
+
+    <!-- Métadonnées -->
+    <div class="post-metadata">
+      <p class="post-user">{{ post.user?.username || 'Utilisateur inconnu' }}</p>
+      <p class="post-date">{{ post.createdAt | date:'dd/MM/yyyy' }}</p>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="post-content-wrapper" *ngIf="editPostId !== post.idPost">
+      <h2 class="post-title">{{ post.title }}</h2>
+      <p class="post-content">{{ post.content }}</p>
+    </div>
+
+    <!-- Mode édition -->
+    <div class="edit-form" *ngIf="editPostId === post.idPost">
+      
+      <input class="form-control mb-2" [(ngModel)]="editedPost.title" placeholder="Titre du post" />
+      <small class="text-danger" *ngIf="editedPost.title.trim().length < 3">
+        Le titre doit contenir au moins 3 caractères.
+      </small>
+      
+      <textarea class="form-control mb-2" [(ngModel)]="editedPost.content" rows="3" placeholder="Contenu du post"></textarea>
+      <small class="text-danger" *ngIf="editedPost.content.trim().length < 5">
+        Le contenu doit contenir au moins 5 caractères.
+      </small>
+      
+    </div>
+
+    <!-- Vidéo -->
+    <video *ngIf="post.videoUrl" class="post-video" controls>
+      <source [src]="post.videoUrl" type="video/mp4">
+      Votre navigateur ne supporte pas la vidéo.
+    </video>
+
+    <!-- Image -->
+    <div *ngIf="post.imageUrl" class="post-image-container">
+      <img [src]="post.imageUrl" alt="Image du post" class="post-image">
+    </div>
+
+    <!-- Boutons -->
+    <div class="post-footer">
+
+      <!-- Actions classiques -->
+      <button class="action-button comment-button"
+      [routerLink]="['/post', post.idPost, 'commentaires']">
+<i class="fas fa-comment"></i> Commenter
+</button>
+
+      <button class="action-button like-button">
+        <i class="fas fa-thumbs-up"></i> J'aime
+      </button>
+      <button class="action-button dislike-button">
+        <i class="fas fa-thumbs-down"></i> Je n'aime pas
+      </button>
+
+      <!-- Modifier / Enregistrer / Annuler -->
+      <ng-container *ngIf="editPostId !== post.idPost">
+        <button class="btn btn-warning me-2" (click)="startEditing(post)">Modifier</button>
+        <button class="btn btn-danger" (click)="onDeletePost(post.idPost)">Supprimer</button>
+      </ng-container>
+
+      <ng-container *ngIf="editPostId === post.idPost">
+        <button class="btn btn-success me-2"
+        (click)="saveEdit()"
+        [disabled]="editedPost.title.trim().length < 3 || editedPost.content.trim().length < 5">
+  Enregistrer
+</button>
+
+        <button class="btn btn-secondary" (click)="cancelEdit()">Annuler</button>
+      </ng-container>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Message s'il n'y a pas de posts -->
+<ng-template #noPosts>
+  <div class="no-posts">
+    <p>Aucun post n'a été trouvé. Revenez plus tard !</p>
+  </div>
+</ng-template>
