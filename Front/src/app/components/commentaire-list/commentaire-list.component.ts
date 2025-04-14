@@ -16,6 +16,8 @@ export class CommentaireListComponent  implements OnInit {
   postId!: number;
   post!: Post;
   commentaires: Commentaire[] = [];
+  errorMessage: string = '';
+badWordsDetected: string[] = [];
   newCommentContent: string = '';
   isCommentFormVisible: boolean = false;
   currentUser: User = {
@@ -66,23 +68,83 @@ export class CommentaireListComponent  implements OnInit {
       );
     }
   
-  
+    highlightBadWords() {
+      // Liste des mots interdits connus (doit correspondre à votre backend)
+      const badWords = ['putain']; 
+      
+      this.badWordsDetected = badWords.filter(word => 
+        this.newCommentContent.toLowerCase().includes(word.toLowerCase())
+      );
+    }
+    /***add */
     addComment(): void {
       if (!this.newCommentContent.trim()) return;
     
-      this.commentaireService.addCommentaire(this.postId, { 
-        content: this.newCommentContent 
+      // Réinitialisation des messages d'erreur
+      this.clearErrors();
+    
+      // Vérification des mots interdits côté client
+      if (this.hasBadWords()) {
+        this.showBadWordsError();
+        return;
+      }
+    
+      // Envoi au serveur
+      this.sendCommentToServer();
+    }
+    
+    private clearErrors(): void {
+      this.errorMessage = '';
+      this.badWordsDetected = [];
+    }
+    
+    private hasBadWords(): boolean {
+      this.highlightBadWords();
+      return this.badWordsDetected.length > 0;
+    }
+    
+    private showBadWordsError(): void {
+      this.errorMessage = 'Votre commentaire contient des termes inappropriés. Veuillez le reformuler.';
+    }
+    
+    private sendCommentToServer(): void {
+      this.commentaireService.addCommentaire(this.postId, {
+        content: this.newCommentContent
       }).subscribe({
-        next: (comment) => {
-          this.commentaires.unshift(comment);
-          this.newCommentContent = '';
-          this.isCommentFormVisible = false;
-        },
-        error: (err) => {
-          console.error('Erreur lors de l\'ajout du commentaire', err);
-        }
+        next: (comment) => this.handleSuccess(comment),
+        error: (err) => this.handleError(err)
       });
     }
+    
+    private handleSuccess(comment: Commentaire): void {
+      // Correction des %20 si nécessaire
+      comment.content = this.fixEncodedSpaces(comment.content);
+      
+      this.commentaires.unshift(comment);
+      this.resetCommentForm();
+    }
+    
+    private fixEncodedSpaces(content: string): string {
+      return content.includes('%20') ? content.replace(/%20/g, ' ') : content;
+    }
+    
+    private resetCommentForm(): void {
+      this.newCommentContent = '';
+      this.isCommentFormVisible = false;
+    }
+    
+    private handleError(err: any): void {
+      console.error('Erreur:', err);
+      this.errorMessage = this.getErrorMessage(err);
+    }
+    
+    private getErrorMessage(err: any): string {
+      if (err.status === 400) {
+        return err.error || 'Contenu inapproprié détecté';
+      }
+      return 'Erreur lors de l\'ajout du commentaire';
+    }
+    /**** */
     deleteComment(commentId: number): void {
       if (!confirm('Voulez-vous vraiment supprimer ce commentaire ?')) {
         return;

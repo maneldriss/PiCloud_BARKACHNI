@@ -14,12 +14,19 @@ export class CommentaireService {
 
 
 
+
   addCommentaire(postId: number, commentaire: { content: string }): Observable<Commentaire> {
     return this.http.post<Commentaire>(
-      `${this.baseUrl}/${postId}/commentaires`, 
-      { content: commentaire.content } // Envoyez seulement le contenu
+      `${this.baseUrl}/${postId}/commentaires`,
+      { content: commentaire.content }, // Envoi direct sans transformation
+      {
+        headers: {
+          'Content-Type': 'application/json' // Essentiel pour un bon encodage
+        }
+      }
     );
   }
+
   // Récupérer tous les commentaires
   getAllCommentaires(): Observable<Commentaire[]> {
     return this.http.get<Commentaire[]>(`${this.baseUrl}`);

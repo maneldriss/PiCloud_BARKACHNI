@@ -33,6 +33,17 @@
       Ajouter un commentaire
     </button>
   </div>
+  <!-- Ajoutez ceci près de votre formulaire -->
+<div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+    
+    <div *ngIf="badWordsDetected.length > 0">
+      <p>Mots détectés :</p>
+      <ul>
+        <li *ngFor="let word of badWordsDetected">{{ word }}</li>
+      </ul>
+    </div>
+  </div>
   <!-- Liste des commentaires -->
   <div class="comment-section">
     <h4>Commentaires</h4>
