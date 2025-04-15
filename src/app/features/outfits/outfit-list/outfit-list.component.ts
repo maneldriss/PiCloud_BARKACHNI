@@ -4,6 +4,9 @@ import {OutfitService} from "../../../core/services/outfit.service";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {PageEvent} from "@angular/material/paginator";
+import {WeatherData, WeatherService} from "../../../core/services/weather.service";
+import {OutfitRecommendationService} from "../../../core/services/outfit-recommendation.service";
+import {finalize} from "rxjs";
 
 @Component({
   selector: 'app-outfit-list',
@@ -15,6 +18,11 @@ export class OutfitListComponent implements OnInit {
   filteredOutfits: Outfit[] = [];
   paginatedOutfits: Outfit[] = [];
   loading = true;
+
+  weatherData: WeatherData | null = null;
+  recommendedOutfit: Outfit | null = null;
+  showRecommendation = true;
+  loadingRecommendation = true;
 
   searchTerm: string = '';
   showAdvancedFilters: boolean = false;
@@ -34,11 +42,68 @@ export class OutfitListComponent implements OnInit {
   constructor(
     private outfitService: OutfitService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private recommendationService: OutfitRecommendationService,
+    private weatherService: WeatherService
   ) { }
 
   ngOnInit(): void {
-    this.loadOutfits();
+    this.loadOutfitsAndRecommendation();
+  }
+
+  loadOutfitsAndRecommendation(): void {
+    this.loading = true;
+    this.loadingRecommendation = true;
+
+    console.log('Starting to load outfits and recommendations');
+
+    this.outfitService.getOutfits().subscribe({
+      next: (outfits) => {
+        console.log('Loaded outfits:', outfits);
+        this.outfits = outfits;
+        this.extractAllFilterOptions();
+        this.updateAvailableFilterOptions();
+        this.applyFilters();
+        this.loading = false;
+
+        this.getRecommendation();
+      },
+      error: (error) => {
+        console.error('Error loading outfits:', error);
+        this.snackBar.open('Failed to load outfits', 'Close', {
+          duration: 3000
+        });
+        this.loading = false;
+        this.loadingRecommendation = false;
+      }
+    });
+  }
+
+  getRecommendation(): void {
+    console.log('Getting weather-based recommendation');
+
+    this.recommendationService.getWeatherBasedRecommendation()
+      .pipe(finalize(() => this.loadingRecommendation = false))
+      .subscribe({
+        next: (result) => {
+          console.log('Got recommendation result:', result);
+          this.weatherData = result.weather;
+          this.recommendedOutfit = result.outfit;
+
+          if (this.recommendedOutfit) {
+            this.outfits = this.outfits.filter(o =>
+              o.outfitID !== this.recommendedOutfit?.outfitID
+            );
+            this.applyFilters();
+          }
+        },
+        error: (error) => {
+          console.error('Error getting recommendation:', error);
+          this.snackBar.open('Could not get weather data', 'Close', {
+            duration: 3000
+          });
+        }
+      });
   }
 
   loadOutfits(): void {
@@ -168,5 +233,19 @@ export class OutfitListComponent implements OnInit {
         }
       });
     }
+  }
+
+  dismissRecommendation(): void {
+    console.log('Dismissing recommendation');
+    this.showRecommendation = false;
+    if (this.recommendedOutfit) {
+      this.outfits.push(this.recommendedOutfit);
+      this.applyFilters();
+    }
+  }
+
+  refreshWeather(): void {
+    this.loadingRecommendation = true;
+    this.getRecommendation();
   }
 }

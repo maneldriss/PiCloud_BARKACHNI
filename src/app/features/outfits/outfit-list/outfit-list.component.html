@@ -7,6 +7,105 @@
     </button>
   </div>
 
+  <div *ngIf="loadingRecommendation" class="recommendation-loading">
+    <mat-card>
+      <mat-card-content class="loading-content">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>Getting weather-based outfit recommendation...</span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!loadingRecommendation && showRecommendation && weatherData && recommendedOutfit" class="recommendation-card">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar class="weather-icon">
+          <img *ngIf="weatherData.icon" [src]="'https://openweathermap.org/img/wn/' + weatherData.icon + '@2x.png'"
+               alt="Weather Icon">
+          <mat-icon *ngIf="!weatherData.icon">wb_sunny</mat-icon>
+        </div>
+        <mat-card-title>
+          Today's Outfit Recommendation
+          <button mat-icon-button color="primary" (click)="refreshWeather()" matTooltip="Refresh weather">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ weatherData.temperature | number:'1.0-0' }}°C - {{ weatherData.description }} in {{ weatherData.location }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="recommendation-content">
+        <div class="outfit-preview">
+          <h3>{{ recommendedOutfit.name }}</h3>
+          <p *ngIf="recommendedOutfit.description">{{ recommendedOutfit.description }}</p>
+
+          <div class="tags">
+            <span *ngIf="recommendedOutfit.season" class="tag season-tag">
+              <mat-icon>event</mat-icon> {{ recommendedOutfit.season }}
+            </span>
+            <span *ngIf="recommendedOutfit.occasion" class="tag occasion-tag">
+              <mat-icon>event_note</mat-icon> {{ recommendedOutfit.occasion }}
+            </span>
+          </div>
+
+          <div class="item-previews" *ngIf="recommendedOutfit.items && recommendedOutfit.items.length > 0">
+            <div class="item-preview" *ngFor="let item of recommendedOutfit.items?.slice(0, 4)">
+              <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+            </div>
+            <div class="more-items" *ngIf="recommendedOutfit.items && recommendedOutfit.items.length > 4">
+              +{{ recommendedOutfit.items.length - 4 }} more
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="primary" [routerLink]="['/outfits', recommendedOutfit.outfitID]">
+          <mat-icon>visibility</mat-icon> View Details
+        </button>
+        <button mat-button color="warn" (click)="dismissRecommendation()">
+          <mat-icon>close</mat-icon> Dismiss
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- No recommendation message when weather data exists but no matching outfit -->
+  <div *ngIf="!loadingRecommendation && showRecommendation && weatherData && !recommendedOutfit" class="recommendation-card">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar class="weather-icon">
+          <img *ngIf="weatherData.icon" [src]="'https://openweathermap.org/img/wn/' + weatherData.icon + '@2x.png'"
+               alt="Weather Icon">
+          <mat-icon *ngIf="!weatherData.icon">wb_sunny</mat-icon>
+        </div>
+        <mat-card-title>
+          Current Weather
+          <button mat-icon-button color="primary" (click)="refreshWeather()" matTooltip="Refresh weather">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ weatherData.temperature | number:'1.0-0' }}°C - {{ weatherData.description }} in {{ weatherData.location }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>No suitable outfit found for the current weather. Create a new outfit for this weather condition!</p>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="primary" routerLink="/outfits/new">
+          <mat-icon>add</mat-icon> Create New Outfit
+        </button>
+        <button mat-button color="warn" (click)="dismissRecommendation()">
+          <mat-icon>close</mat-icon> Dismiss
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
   <div class="search-bar">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Search outfits</mat-label>
