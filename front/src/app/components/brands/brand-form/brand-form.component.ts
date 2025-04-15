@@ -14,6 +14,7 @@ export class BrandFormComponent implements OnInit {
   brandForm: FormGroup;
   isEditMode = false;
   brandId?: number;
+  loadingMessage = 'Saving brand...'; 
   loading = false;
   error = '';
   selectedFile: File | null = null;
@@ -31,7 +32,7 @@ export class BrandFormComponent implements OnInit {
     this.brandForm = this.fb.group({
       name: ['', [Validators.required]],
       logo: ['', [Validators.pattern('(https?://.*.(?:png|jpg|jpeg|gif|svg|webp))')]],
-      description: [''],
+      description: ['', [Validators.maxLength(1000)]],
       rating: [0, [Validators.min(0), Validators.max(5)]],
       address: [''],
       email: ['', [Validators.email]]
@@ -185,4 +186,7 @@ export class BrandFormComponent implements OnInit {
   get emailControl() { return this.brandForm.get('email'); }
   get ratingControl() { return this.brandForm.get('rating'); }
   get logoControl() { return this.brandForm.get('logo'); }
+  get descriptionControl() { 
+    return this.brandForm.get('description'); 
+  }
 }

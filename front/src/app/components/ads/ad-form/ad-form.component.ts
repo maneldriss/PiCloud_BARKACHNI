@@ -192,25 +192,49 @@ export class AdFormComponent implements OnInit {
     });
   }
 
-  private saveAd(adData: Ad): void {
+  private saveAd(adData: any): void {
+    // Format the data correctly for backend
+    const formattedAd = {
+      ...adData,
+      id: this.isEditMode ? this.adId : undefined, // Include ID for edits
+      // Convert brand ID to brand object
+      brand: { id: adData.brand },
+      // Ensure date is in correct format
+      expDate: new Date(adData.expDate).toISOString(),
+      // Maintain existing click count for edits, initialize for new ads
+      nbClicks: this.isEditMode ? adData.nbClicks || 0 : 0
+    };
+  
     const operation = this.isEditMode
-      ? this.adService.updateAd(adData)
-      : this.adService.addAd(adData);
-
+      ? this.adService.updateAd(formattedAd)
+      : this.adService.addAd(formattedAd);
+  
     operation.subscribe({
       next: () => {
-        this.router.navigate(['/ads'], {
+        this.router.navigate(['/brands'], {
           queryParams: { refresh: new Date().getTime() }
         });
       },
       error: (err: HttpErrorResponse) => {
-        this.error = this.isEditMode
-          ? 'Failed to update ad. Please try again.'
-          : 'Failed to create ad. Please try again.';
+        // Parse backend error if available
+        const backendError = err.error?.message || 
+                           (err.error?.errors ? this.formatErrors(err.error.errors) : 
+                           err.message);
+        
+        this.error = backendError || 
+                    (this.isEditMode 
+                      ? 'Failed to update ad. Please try again.' 
+                      : 'Failed to create ad. Please try again.');
         this.loading = false;
         console.error('Save ad error:', err);
       }
     });
+  }
+  
+  private formatErrors(errors: any): string {
+    return Object.keys(errors)
+      .map(key => `${key}: ${errors[key]}`)
+      .join(', ');
   }
 
   get titleControl() { return this.adForm.get('title'); }

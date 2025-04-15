@@ -49,16 +49,19 @@ export class BrandDetailComponent implements OnInit {
     });
   }
 
-  loadBrandAds(brandId: number): void {
-    this.adService.findAdsByBrandId(brandId).subscribe({
-      next: (ads) => {
-        this.ads = ads;
-      },
-      error: (err) => {
-        console.error('Failed to load brand ads', err);
-      }
-    });
-  }
+  // In brand-detail.component.ts
+loadBrandAds(brandId: number): void {
+  console.log('Loading ads for brand ID:', brandId);
+  this.adService.findApprovedAdsByBrandId(brandId).subscribe({
+    next: (ads) => {
+      console.log('Ads received:', ads);
+      this.ads = ads;
+    },
+    error: (err) => {
+      console.error('Error loading ads:', err);
+    }
+  });
+}
 
   deleteAd(adId: number | undefined): void {
     if (!adId) return;
@@ -91,5 +94,13 @@ defaultLogo = 'assets/images/default-brand.png';
 handleImageError(event: Event) {
   this.imageError = true;
   console.log('Image load error - switching to default logo');
+}
+// In your component class
+getFullLink(link: string): string {
+  if (!link) return '#';
+  if (link.startsWith('http://') || link.startsWith('https://')) {
+    return link;
+  }
+  return `http://${link}`;
 }
 }

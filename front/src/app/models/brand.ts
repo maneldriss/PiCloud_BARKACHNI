@@ -6,4 +6,5 @@ export interface Brand {
     rating?: number;
     address?: string;
     email?: string;
+    website?: string; 
   }

@@ -35,6 +35,15 @@ public class Ad {
     @ManyToOne
     @JsonIgnoreProperties({"ads", "address", "email"})
     private Brand brand;
+    @Enumerated(EnumType.STRING)
+    private AdStatus status = AdStatus.PENDING;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date approvalDate;
+
+    private String rejectionReason;
+    @Column(nullable = false)
+    private boolean deleted = false;
 
     // Constructors
     public Ad() {}
@@ -130,4 +139,29 @@ public class Ad {
         }
         this.brand = brand;
     }
+    public AdStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AdStatus status) {
+        this.status = status;
+    }
+
+    public Date getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(Date approvalDate) {
+        this.approvalDate = approvalDate;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 }

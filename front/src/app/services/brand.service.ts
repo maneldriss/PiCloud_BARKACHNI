@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, Observable, catchError } from 'rxjs';
 import { Brand } from '../models/brand';
 
 @Injectable({
@@ -40,8 +40,16 @@ export class BrandService {
     );
   }
 
-  deleteBrand(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/remove-brand/${id}`);
+  deleteBrand(brandId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/remove-brand/${brandId}`).pipe(
+      catchError(err => {
+        // Handle specific error cases
+        if (err.status === 400 && err.error?.message) {
+          throw new Error(err.error.message);
+        }
+        throw new Error('Failed to delete brand. Please try again.');
+      })
+    );
   }
 
   findBrandByName(name: string): Observable<Brand> {

@@ -1,22 +1,27 @@
 package com.barkachni.PiLezelefons.service;
 
 import com.barkachni.PiLezelefons.entity.Ad;
+import com.barkachni.PiLezelefons.entity.AdStatus;
 import com.barkachni.PiLezelefons.repository.AdRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
-@RequiredArgsConstructor
-@AllArgsConstructor
+
 @Service
 public class AdServiceImpl implements IAdService {
 
+
+    private final AdRepository adRepository;
     @Autowired
-    private AdRepository adRepository;
+    public AdServiceImpl(AdRepository adRepository) {
+        this.adRepository = adRepository;
+    }
 
     @Override
     public List<Ad> retrieveAllAds() {
@@ -46,8 +51,9 @@ public class AdServiceImpl implements IAdService {
             throw new IllegalArgumentException("Ad expiration date must be in the future");
         }
 
-        // Set initial click count to 0
+        // Set initial values
         ad.setNbClicks(0);
+        ad.setStatus(AdStatus.PENDING); // <-- THIS IS THE CRUCIAL LINE
 
         return adRepository.save(ad);
     }
@@ -82,4 +88,37 @@ public class AdServiceImpl implements IAdService {
         ad.setNbClicks(ad.getNbClicks() + 1);
         adRepository.save(ad);
     }
+    @Override
+    public List<Ad> getPendingAds() {
+        return adRepository.findByStatus(AdStatus.PENDING);
+    }
+
+    @Override
+    public void approveAd(Long id) {
+        Ad ad = adRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ad not found"));
+        ad.setStatus(AdStatus.APPROVED);
+        ad.setApprovalDate(new Date());
+        adRepository.save(ad);
+    }
+
+    @Override
+    @Transactional
+    public void rejectAd(Long id, String reason) {
+        // Simply delete the ad permanently
+        adRepository.deleteById(id);
+
+        // If you need to log the rejection first:
+        /*
+        Ad ad = adRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ad not found"));
+        // Log rejection to external system if needed
+        adRepository.delete(ad);
+        */
+    }
+    @Override
+    public List<Ad> findApprovedAdsByBrandId(Long brandId) {
+        return adRepository.findByBrandIdAndStatus(brandId, AdStatus.APPROVED);
+    }
+
 }

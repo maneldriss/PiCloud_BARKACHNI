@@ -1,5 +1,7 @@
 package com.barkachni.PiLezelefons.controller;
 
+import com.barkachni.PiLezelefons.entity.AdStatus;
+import com.barkachni.PiLezelefons.repository.AdRepository;
 import com.barkachni.PiLezelefons.service.FileStorageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -13,18 +15,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Tag(name = "Ad Management")
 @RequestMapping("/ad")
 public class AdRestController {
-    @Autowired
     private final IAdService adService;
+    private final AdRepository adRepository;
     private final FileStorageService fileStorageService;
-
-    public AdRestController(IAdService adService, FileStorageService fileStorageService) {
+    @Autowired
+    public AdRestController(IAdService adService,
+                            AdRepository adRepository, // Add this
+                            FileStorageService fileStorageService) {
         this.adService = adService;
+        this.adRepository = adRepository; // Add this
+
         this.fileStorageService = fileStorageService;
     }
     @GetMapping("/retrieve-all-ads")
@@ -38,8 +46,19 @@ public class AdRestController {
     }
 
     @PostMapping("/add-ad")
-    public Ad addAd(@RequestBody Ad ad) {
-        return adService.addAd(ad);
+    public ResponseEntity<?> addAd(@RequestBody Ad ad) {
+        try {
+            Ad savedAd = adService.addAd(ad);
+            return ResponseEntity.ok(savedAd);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    Map.of(
+                            "error", "Validation failed",
+                            "message", e.getMessage(),
+                            "timestamp", new Date()
+                    )
+            );
+        }
     }
 
     @DeleteMapping("/remove-ad/{ad-id}")
@@ -86,5 +105,43 @@ public class AdRestController {
         } catch (IOException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+    @GetMapping("/pending")
+    public List<Ad> getPendingAds() {
+        return adService.getPendingAds();
+    }
+
+    // In your approve endpoint
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<?> approveAd(@PathVariable Long id) {
+        Ad ad = adRepository.findById(id).orElseThrow();
+        System.out.println("Before approval - Status: " + ad.getStatus()); // Debug log
+
+        ad.setStatus(AdStatus.APPROVED);
+        ad.setApprovalDate(new Date());
+        adRepository.save(ad);
+
+        System.out.println("After approval - Status: " + ad.getStatus()); // Debug log
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<?> rejectAd(@PathVariable Long id) {
+        try {
+            adService.rejectAd(id, ""); // Reason no longer needed
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to delete ad");
+        }
+    }
+    @GetMapping("/brand/{brandId}")
+    public ResponseEntity<List<Ad>> getAdsByBrand(
+            @PathVariable Long brandId,
+            @RequestParam(required = false) AdStatus status) {
+
+        if (status != null) {
+            return ResponseEntity.ok(adRepository.findByBrandIdAndStatus(brandId, status));
+        }
+        return ResponseEntity.ok(adRepository.findByBrandId(brandId));
     }
 }

@@ -21,31 +21,39 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css",
-              "src/assets/css/bootstrap.min.css",
-              "src/assets/css/elegant-icons.css",
-              "src/assets/css/font-awesome.min.css",
-              "src/assets/css/magnific-popup.css",
-              "src/assets/css/nice-select.css",
-              "src/assets/css/slicknav.min.css",
-              "src/assets/css/style.css"
-            ],
-            "scripts": [
-            "src/assets/js/bootstrap.min.js",
-            "src/assets/js/jquery-3.3.1.min.js",
-            "src/assets/js/jquery.nice-select.min.js",
-            "src/assets/js/jquery.magnific-popup.min.js",
-            "src/assets/js/jquery.slicknav.js",
-            "src/assets/js/owl.carousel.min.js",
-            "src/assets/js/main.js",
-            "src/assets/js/jquery.countdown.min.js",
-            "src/assets/js/jquery.nicescroll.min.js",
-            "src/assets/js/mixitup.min.js"
-            ]
+  "src/favicon.ico",
+  "src/assets",
+  "src/assetsback"  
+],
+"styles": [
+  "src/styles.css",
+  "src/assets/css/bootstrap.min.css",
+  "src/assets/css/font-awesome.min.css",  
+  "src/assets/css/elegant-icons.css",
+  "src/assets/css/magnific-popup.css",
+  "src/assets/css/nice-select.css",
+  "src/assets/css/owl.carousel.min.css",  
+  "src/assets/css/slicknav.min.css",
+  "src/assets/css/style.css",
+  "src/assetsback/css/styles.css"
+],
+        "scripts": [
+  "src/assets/js/jquery-3.3.1.min.js",  
+  "src/assets/js/bootstrap.min.js",     
+  "src/assets/js/jquery.nicescroll.min.js",
+  "src/assets/js/jquery.magnific-popup.min.js",
+  "src/assets/js/jquery.nice-select.min.js",
+  "src/assets/js/jquery.slicknav.js",
+  "src/assets/js/owl.carousel.min.js",
+  "src/assets/js/jquery.countdown.min.js",
+  "src/assets/js/mixitup.min.js",
+  "src/assets/js/main.js",              
+  "src/assetsback/js/scripts.js",
+  "src/assetsback/js/chart-area-demo.js",
+  "src/assetsback/js/chart-bar-demo.js",
+  "src/assetsback/js/datatables-simple-demo.js"
+
+]
           },
           "configurations": {
             "production": {

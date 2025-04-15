@@ -12,4 +12,8 @@ public interface IAdService {
     List<Ad> findAdsByTitle(String title);
     List<Ad> findAdsByBrandId(Long brandId);
     void incrementAdClicks(Long adId);
+    List<Ad> getPendingAds();
+    void approveAd(Long id);
+    void rejectAd(Long id, String reason);
+    List<Ad> findApprovedAdsByBrandId(Long brandId);
 }

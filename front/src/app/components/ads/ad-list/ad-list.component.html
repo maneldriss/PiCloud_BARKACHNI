@@ -49,7 +49,7 @@
           <div class="card-body">
             <h5 class="card-title">{{ ad.title }}</h5>
             <p class="card-text text-muted">
-              <small>{{ ad.brand?.name }}</small>
+              <small>{{ ad.brand?.name || 'No brand' }}</small>
             </p>
             <p class="card-text" *ngIf="ad.description">
               {{ ad.description | truncate:100 }}

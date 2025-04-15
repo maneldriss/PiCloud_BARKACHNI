@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Ad } from '../models/ad';
 
 @Injectable({
@@ -20,11 +21,21 @@ export class AdService {
   }
 
   addAd(ad: Ad): Observable<Ad> {
-    return this.http.post<Ad>(`${this.apiUrl}/add-ad`, ad);
+    // Ensure proper date format
+    const formattedAd = {
+      ...ad,
+      expDate: new Date(ad.expDate).toISOString()
+    };
+    return this.http.post<Ad>(`${this.apiUrl}/add-ad`, formattedAd);
   }
 
   updateAd(ad: Ad): Observable<Ad> {
-    return this.http.put<Ad>(`${this.apiUrl}/modify`, ad);
+    // Ensure proper date format
+    const formattedAd = {
+      ...ad,
+      expDate: new Date(ad.expDate).toISOString()
+    };
+    return this.http.put<Ad>(`${this.apiUrl}/modify`, formattedAd);
   }
 
   deleteAd(id: number): Observable<any> {
@@ -51,5 +62,26 @@ export class AdService {
       }
     );
   }
-  
+  getPendingAds(): Observable<Ad[]> {
+    return this.http.get<Ad[]>(`${this.apiUrl}/pending`);
+  }
+
+  approveAd(adId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${adId}/approve`, {});
+  }
+
+  rejectAd(adId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/remove-ad/${adId}`);
+}
+  // In your ad.service.ts
+findApprovedAdsByBrandId(brandId: number): Observable<Ad[]> {
+  console.log('Fetching approved ads for brand:', brandId);
+  return this.http.get<Ad[]>(`${this.apiUrl}/brand/${brandId}?status=APPROVED`).pipe(
+    tap(ads => console.log('Received ads:', ads)),
+    catchError(err => {
+      console.error('Error fetching ads:', err);
+      return throwError(err);
+    })
+  );
+}
 }

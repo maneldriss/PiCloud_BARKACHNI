@@ -1,1 +1,87 @@
-<p>home works!</p>
+<div class="fashion-home">
+    <!-- Hero Slider -->
+    <section class="hero-slider">
+      <div class="slider-item" [style.backgroundImage]="'url(assets/img/hero-1.jpg)'">
+        <div class="container">
+          <div class="slider-content">
+            <span class="season-tag">Summer Collection</span>
+            <h1>New Arrivals 2025</h1>
+            <p>Discover our curated selection of premium fashion essentials</p>
+            <a routerLink="/shop" class="shop-now-btn">Shop Now <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Categories Grid -->
+    <section class="categories-section">
+      <div class="container">
+        <h2 class="section-title">Shop By Category</h2>
+        <div class="categories-grid">
+          <div class="category-card" *ngFor="let category of categories">
+            <img [src]="'assets/img/categories/' + category.image" [alt]="category.name">
+            <div class="category-overlay">
+              <h3>{{category.name}}</h3>
+              <a [routerLink]="['/shop', category.slug]" class="category-link">Explore</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Featured Products -->
+    <section class="featured-products">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Trending Now</h2>
+          <a routerLink="/shop" class="view-all">View All</a>
+        </div>
+        <div class="products-grid">
+          <div class="product-card" *ngFor="let product of featuredProducts">
+            <div class="product-badge" *ngIf="product.badge">{{product.badge}}</div>
+            <div class="product-image">
+              <img [src]="'assets/img/products/' + product.image" [alt]="product.name">
+              <div class="product-actions">
+                <button class="quick-view"><i class="far fa-eye"></i></button>
+                <button class="add-wishlist"><i class="far fa-heart"></i></button>
+              </div>
+            </div>
+            <div class="product-details">
+              <h3 class="product-title">{{product.name}}</h3>
+              <div class="product-price">
+                <span class="current-price">${{product.price}}</span>
+                <span class="old-price" *ngIf="product.oldPrice">${{product.oldPrice}}</span>
+              </div>
+              <button class="add-to-cart">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Fashion Banner -->
+    <section class="fashion-banner">
+      <div class="container">
+        <div class="banner-content">
+          <h2>Elevate Your Style</h2>
+          <p>Get 20% off your first order when you sign up</p>
+          <a routerLink="/signup" class="cta-button">Join Now</a>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Instagram Feed -->
+    <section class="instagram-feed">
+      <div class="container">
+        <h2 class="section-title">Follow Us &#64;Barkachni</h2>
+        <div class="instagram-grid">
+          <div class="instagram-post" *ngFor="let post of instagramPosts">
+            <img [src]="'assets/img/instagram/' + post.image" alt="Instagram post">
+            <div class="post-overlay">
+              <i class="fab fa-instagram"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>

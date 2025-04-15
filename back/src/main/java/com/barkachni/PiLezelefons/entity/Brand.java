@@ -15,6 +15,7 @@ public class Brand {
     @Column(nullable = false)
     private String name;
     private String logo;
+    @Column(length = 1000)
     private String description;
     private float rating;
     private String address;

@@ -12,6 +12,6 @@ public interface IBrandService {
     void removeBrand(Long brandId);
     Brand modifyBrand(Brand brand);
     Brand findBrandByName(String name);
-    String uploadLogo(MultipartFile file); // Add this method
+    String uploadLogo(MultipartFile file);
 
 }

@@ -1,0 +1,449 @@
+/* Base Styles */
+.fashion-home {
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  /* Hero Slider */
+  .hero-slider {
+    height: 80vh;
+    position: relative;
+    background-color: #f8f8f8;
+  }
+  
+  .slider-item {
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .slider-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.2);
+  }
+  
+  .slider-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    max-width: 500px;
+  }
+  
+  .season-tag {
+    display: inline-block;
+    background: #e83e8c;
+    color: white;
+    padding: 5px 15px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+  
+  .shop-now-btn {
+    display: inline-block;
+    background: #111;
+    color: white;
+    padding: 12px 30px;
+    margin-top: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .shop-now-btn:hover {
+    background: #e83e8c;
+  }
+  
+  /* Categories Grid */
+  .categories-section {
+    padding: 80px 0;
+  }
+  
+  .section-title {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 50px;
+    position: relative;
+  }
+  
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: #e83e8c;
+    margin: 15px auto 0;
+  }
+  
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  
+  .category-card {
+    position: relative;
+    overflow: hidden;
+    height: 300px;
+  }
+  
+  .category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .category-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .category-card:hover .category-overlay {
+    opacity: 1;
+  }
+  
+  .category-card:hover img {
+    transform: scale(1.05);
+  }
+  
+  .category-link {
+    color: white;
+    border: 1px solid white;
+    padding: 8px 20px;
+    margin-top: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .category-link:hover {
+    background: white;
+    color: #111;
+  }
+  
+  /* Featured Products */
+  .featured-products {
+    padding: 80px 0;
+    background: #f9f9f9;
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  
+  .view-all {
+    color: #111;
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
+  }
+  
+  .view-all::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #111;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .view-all:hover::after {
+    transform: scaleX(1);
+  }
+  
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+  }
+  
+  .product-card {
+    background: white;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  .product-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #e83e8c;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+    z-index: 2;
+  }
+  
+  .product-image {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .product-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+  
+  .product-actions {
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    transition: bottom 0.3s ease;
+  }
+  
+  .product-card:hover .product-actions {
+    bottom: 20px;
+  }
+  
+  .quick-view, .add-wishlist {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: none;
+    margin: 0 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .quick-view:hover, .add-wishlist:hover {
+    background: #111;
+    color: white;
+  }
+  
+  .product-details {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .product-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .product-price {
+    margin-bottom: 15px;
+  }
+  
+  .current-price {
+    font-weight: 600;
+    color: #e83e8c;
+    font-size: 18px;
+  }
+  
+  .old-price {
+    text-decoration: line-through;
+    color: #999;
+    margin-left: 5px;
+    font-size: 14px;
+  }
+  
+  .add-to-cart {
+    background: #111;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .add-to-cart:hover {
+    background: #e83e8c;
+  }
+  
+  /* Fashion Banner */
+  .fashion-banner {
+    padding: 100px 0;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)); /* Removed the image URL */
+    color: white;
+    text-align: center;
+  }
+  
+  .banner-content h2 {
+    font-size: 42px;
+    margin-bottom: 20px;
+  }
+  
+  .banner-content p {
+    font-size: 18px;
+    margin-bottom: 30px;
+  }
+  
+  .cta-button {
+    display: inline-block;
+    background: #e83e8c;
+    color: white;
+    padding: 12px 35px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background: white;
+    color: #111;
+  }
+  
+  /* Instagram Feed */
+  .instagram-feed {
+    padding: 80px 0;
+  }
+  
+  .instagram-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+  
+  .instagram-post {
+    position: relative;
+  }
+  
+  .instagram-post img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .post-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(232, 62, 140, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .instagram-post:hover .post-overlay {
+    opacity: 1;
+  }
+  
+  .post-overlay i {
+    color: white;
+    font-size: 24px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .categories-grid, .products-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .instagram-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .categories-grid, .products-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .hero-slider {
+      height: 60vh;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .categories-grid, .products-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .instagram-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .simple-slider {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+  }
+  
+  .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  .slide.active {
+    opacity: 1;
+  }
+  
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .slide-content {
+    position: absolute;
+    bottom: 20%;
+    left: 10%;
+    color: white;
+    max-width: 500px;
+  }
+  
+  .slider-controls {
+    position: absolute;
+    bottom: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+  
+  .slider-controls button {
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 50%;
+  }

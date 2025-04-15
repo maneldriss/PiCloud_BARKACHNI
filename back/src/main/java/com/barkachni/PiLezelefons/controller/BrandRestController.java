@@ -1,9 +1,9 @@
 package com.barkachni.PiLezelefons.controller;
 
+import com.barkachni.PiLezelefons.entity.Ad;
+import com.barkachni.PiLezelefons.repository.AdRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -24,10 +25,12 @@ import java.util.UUID;
 @Tag(name = "Brand Management")
 @RequestMapping("/brand")
 public class BrandRestController {
-    @Autowired
     private final IBrandService brandService;
+    private final AdRepository adRepository; // Properly injected
+
     private static final String UPLOAD_DIR = "uploads/";
     private final Path uploadDir = Paths.get("uploads");
+
     @GetMapping("/retrieve-all-brands")
     public List<Brand> getAllBrands() {
         return brandService.retrieveAllBrands();
@@ -44,8 +47,27 @@ public class BrandRestController {
     }
 
     @DeleteMapping("/remove-brand/{brand-id}")
-    public void removeBrand(@PathVariable("brand-id") Long brandId) {
-        brandService.removeBrand(brandId);
+    public ResponseEntity<?> removeBrand(@PathVariable("brand-id") Long brandId) {
+        try {
+            // First check if brand has ads
+            List<Ad> brandAds = adRepository.findByBrandId(brandId);
+            if (!brandAds.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                        Map.of(
+                                "error", "Cannot delete brand",
+                                "message", "Brand has associated ads. Delete ads first.",
+                                "adCount", brandAds.size()
+                        )
+                );
+            }
+
+            brandService.removeBrand(brandId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Failed to delete brand", "message", e.getMessage())
+            );
+        }
     }
 
     @PutMapping("/modify")
@@ -54,26 +76,21 @@ public class BrandRestController {
     }
 
     @GetMapping("/find-by-name/{brand-name}")
-    public Brand findBrandByName(@PathVariable("brand-name")
-                                     String name) {
+    public Brand findBrandByName(@PathVariable("brand-name") String name) {
         return brandService.findBrandByName(name);
     }
+
     @PostMapping("/upload-logo")
     public ResponseEntity<String> uploadLogo(@RequestParam("file") MultipartFile file) {
         try {
-            // Create directory if needed
             if (!Files.exists(uploadDir)) {
                 Files.createDirectories(uploadDir);
             }
 
-            // Generate unique filename
             String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
             Path filePath = uploadDir.resolve(filename);
-
-            // Save file
             Files.copy(file.getInputStream(), filePath);
 
-            // Return the relative path
             String relativePath = "/brand/logos/" + filename;
             return ResponseEntity.ok(relativePath);
         } catch (IOException e) {
@@ -82,7 +99,6 @@ public class BrandRestController {
         }
     }
 
-    // Add this to serve the uploaded files
     @GetMapping("/logos/{filename:.+}")
     public ResponseEntity<byte[]> getLogo(@PathVariable String filename) throws IOException {
         Path filePath = uploadDir.resolve(filename);
@@ -97,5 +113,4 @@ public class BrandRestController {
                 .contentType(MediaType.parseMediaType(mimeType))
                 .body(imageBytes);
     }
-
 }

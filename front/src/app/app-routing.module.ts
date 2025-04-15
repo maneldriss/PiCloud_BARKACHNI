@@ -9,6 +9,7 @@ import { AdFormComponent } from './components/ads/ad-form/ad-form.component';
 import { AdDetailComponent } from './components/ads/ad-detail/ad-detail.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '', component: HomeComponent },
   { path: 'brands', component: BrandListComponent },
   { path: 'brands/add', component: BrandFormComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'ads/add', component: AdFormComponent },
   { path: 'ads/edit/:id', component: AdFormComponent },
   { path: 'ads/:id', component: AdDetailComponent },
+  { path: 'admin', loadChildren: () => import('./admin/admin/admin.module').then(m => m.AdminModule) },
   { path: '**', redirectTo: '' }
 ];
 
