@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Item} from "../../../core/models/item.model";
 import {finalize} from "rxjs";
 import {ImageProcessingService} from "../../../core/services/image-processing.service";
+import {ColorService} from "../../../core/services/color.service";
 
 interface SizeOption {
   value: string;
@@ -137,14 +138,16 @@ export class ItemFormComponent implements OnInit,OnDestroy {
   eyedropperActive = false;
   sampleRadius = this.eyedropperTolerance;
 
+  displayColorName: string = '';
+
   constructor(
     private fb: FormBuilder,
     private itemService: ItemService,
     private imageService: ImageProcessingService,
+    private colorService: ColorService, // Add this line
     private router: Router,
     private route: ActivatedRoute
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -316,15 +319,37 @@ export class ItemFormComponent implements OnInit,OnDestroy {
   loadItem(id: number): void {
     this.itemService.getItemById(id).subscribe(item => {
       if (item) {
-        this.itemForm.patchValue(item);
-
         if (item.category) {
+          this.itemForm.get('category')?.setValue(item.category);
           this.updateSizeOptions(item.category as Category);
         }
 
-        if (item.color) {
-          this.selectedColor = item.color;
+        if (item.color && !item.color.startsWith('#')) {
+          this.displayColorName = item.color;
+          const storedHex = this.colorService.getHexFromName(item.color);
+          if (storedHex) {
+            this.selectedColor = storedHex;
+          } else {
+            this.selectedColor = '#FFFFFF';
+          }
+        } else {
+          this.selectedColor = item.color || '#FFFFFF';
+          this.displayColorName = '';
+          if (item.color) {
+            this.getAndSetColorName(item.color);
+          }
         }
+
+        setTimeout(() => {
+          this.itemForm.patchValue({
+            itemName: item.itemName,
+            description: item.description,
+            size: item.size,
+            brand: item.brand,
+            color: item.color || this.selectedColor,
+            imageUrl: item.imageUrl
+          });
+        }, 100);
 
         if (item.imageUrl) {
           this.imagePreview = item.imageUrl;
@@ -337,6 +362,14 @@ export class ItemFormComponent implements OnInit,OnDestroy {
             }
           }, 500);
         }
+      }
+    });
+  }
+
+  private getAndSetColorName(hexColor: string): void {
+    this.colorService.getColorName(hexColor).subscribe(response => {
+      if (response && response.name) {
+        this.displayColorName = response.name.value;
       }
     });
   }
@@ -463,16 +496,26 @@ export class ItemFormComponent implements OnInit,OnDestroy {
 
   selectColor(color: string): void {
     this.selectedColor = color;
-    this.itemForm.patchValue({color: color});
+    this.colorService.getColorName(color).subscribe(response => {
+      if (response && response.name) {
+        const colorName = response.name.value;
+        this.displayColorName = colorName;
+        // Store the color name in the form
+        this.itemForm.patchValue({color: colorName});
+        console.log(`Color ${color} identified as: ${colorName}`);
+      } else {
+        // If API fails, use the hex code
+        this.displayColorName = '';
+        this.itemForm.patchValue({color: color});
+      }
+    });
   }
 
   getContrastColor(hexColor: string): string {
-    const rgb = this.hexToRgb(hexColor);
-    if (!rgb) return '#000000';
-
-    const luminance = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
-    return luminance > 128 ? '#000000' : '#FFFFFF';
+    return this.colorService.getContrastColor(hexColor);
   }
+
+
 
   processImage(): void {
     if (this.selectedFile) {
@@ -520,6 +563,22 @@ export class ItemFormComponent implements OnInit,OnDestroy {
       return;
     }
 
+    if (!this.itemForm.get('color')?.value && this.selectedColor) {
+      this.colorService.getColorName(this.selectedColor).subscribe(response => {
+        if (response && response.name) {
+          this.itemForm.patchValue({colorName: response.name.value});
+          this.submitFormToServer();
+        } else {
+          this.itemForm.patchValue({colorName: `Color ${this.selectedColor.replace('#', '')}`});
+          this.submitFormToServer();
+        }
+      });
+    } else {
+      this.submitFormToServer();
+    }
+  }
+
+  private submitFormToServer(): void {
     const item: Item = this.itemForm.value;
 
     if (this.isEditMode && this.itemId) {
@@ -543,4 +602,6 @@ export class ItemFormComponent implements OnInit,OnDestroy {
       });
     }
   }
+
+
 }

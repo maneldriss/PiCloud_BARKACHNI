@@ -92,50 +92,55 @@
     </div>
 
     <div class="form-row">
-      <!-- Color selection -->
       <div class="color-selection">
         <h3>Color</h3>
-        <div class="color-picker">
-          <div class="extracted-colors" *ngIf="extractedColors.length > 0">
-            <p class="color-label">Colors from image:</p>
-            <div class="color-options">
-              <div *ngFor="let color of extractedColors"
-                   class="color-swatch"
-                   [style.background-color]="color"
-                   [class.selected]="selectedColor === color"
-                   (click)="selectColor(color)">
-                <span [style.color]="getContrastColor(color)" *ngIf="selectedColor === color">✓</span>
+        <div class="color-picker-container">
+          <div class="color-input-section">
+            <div class="selected-color-display" [style.background-color]="selectedColor">
+              <span [style.color]="getContrastColor(selectedColor)">✓</span>
+            </div>
+            <div class="color-tools">
+              <button type="button" mat-icon-button
+                      [class.active]="eyedropperActive"
+                      (click)="toggleEyedropper($event)"
+                      [disabled]="!imagePreview"
+                      matTooltip="Pick color from image">
+                <mat-icon>colorize</mat-icon>
+              </button>
+              <input type="color" [(ngModel)]="selectedColor" [ngModelOptions]="{standalone: true}"
+                     (change)="selectColor(selectedColor)">
+            </div>
+            <div class="color-text">
+              <span class="color-hex">{{selectedColor}}</span>
+              <span class="color-name" *ngIf="displayColorName">({{displayColorName}})</span>
+            </div>
+          </div>
+          <div class="color-swatches-section">
+            <div class="extracted-colors" *ngIf="extractedColors.length > 0">
+              <p class="color-label">From image:</p>
+              <div class="color-options">
+                <div *ngFor="let color of extractedColors"
+                     class="color-swatch"
+                     [style.background-color]="color"
+                     [class.selected]="selectedColor === color"
+                     (click)="selectColor(color)">
+                  <span [style.color]="getContrastColor(color)" *ngIf="selectedColor === color">✓</span>
+                </div>
+              </div>
+            </div>
+            <div class="predefined-colors">
+              <p class="color-label">Common:</p>
+              <div class="color-options">
+                <div *ngFor="let color of predefinedColors"
+                     class="color-swatch"
+                     [style.background-color]="color"
+                     [class.selected]="selectedColor === color"
+                     (click)="selectColor(color)">
+                  <span [style.color]="getContrastColor(color)" *ngIf="selectedColor === color">✓</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="predefined-colors">
-            <p class="color-label">Common colors:</p>
-            <div class="color-options">
-              <div *ngFor="let color of predefinedColors"
-                   class="color-swatch"
-                   [style.background-color]="color"
-                   [class.selected]="selectedColor === color"
-                   (click)="selectColor(color)">
-                <span [style.color]="getContrastColor(color)" *ngIf="selectedColor === color">✓</span>
-              </div>
-            </div>
-          </div>
-
-        <div class="color-input">
-          <div class="color-tools">
-            <button type="button" mat-icon-button
-                    [class.active]="eyedropperActive"
-                    (click)="toggleEyedropper($event)"
-                    [disabled]="!imagePreview"
-                    matTooltip="Pick color from image">
-              <mat-icon>colorize</mat-icon>
-            </button>
-            <input type="color" [(ngModel)]="selectedColor" [ngModelOptions]="{standalone: true}"
-                   (change)="selectColor(selectedColor)">
-          </div>
-          <span class="color-hex">{{selectedColor}}</span>
         </div>
         <mat-error *ngIf="itemForm.get('color')?.hasError('required') && itemForm.get('color')?.touched">
           Color is required

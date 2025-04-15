@@ -82,6 +82,24 @@
   justify-content: space-between;
 }
 
+.item-card mat-card-actions button {
+  overflow: visible;
+  white-space: nowrap;
+  min-width: auto;
+  padding: 0 8px;
+}
+
+.item-card mat-card-actions button mat-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.item-card mat-card-actions button span {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
 .no-items {
   display: flex;
   justify-content: center;
