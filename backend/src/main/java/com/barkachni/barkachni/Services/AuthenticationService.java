@@ -1,5 +1,9 @@
-package com.barkachni.barkachni.auth;
+package com.barkachni.barkachni.Services;
 
+import com.barkachni.barkachni.auth.AuthenticationRequest;
+import com.barkachni.barkachni.auth.AuthenticationResponse;
+import com.barkachni.barkachni.auth.ConnectionTrackingService;
+import com.barkachni.barkachni.auth.RegistrationRequest;
 import com.barkachni.barkachni.email.EmailTemplateName;
 import com.barkachni.barkachni.email.EmailService;
 import com.barkachni.barkachni.entities.role.RoleName;

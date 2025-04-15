@@ -1,3 +1,5 @@
-<app-layout>
+<!-- app.component.html -->
+<app-layout *ngIf="!isDashboardPage">
   <router-outlet></router-outlet>
 </app-layout>
+<router-outlet *ngIf="isDashboardPage"></router-outlet>

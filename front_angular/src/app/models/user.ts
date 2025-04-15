@@ -1,3 +1,4 @@
+import { Role } from './role.model';
 export interface User {
 [x: string]: any;
 
@@ -11,5 +12,7 @@ export interface User {
     email: string;
     accountLocked: boolean;
     enabled: boolean;
-    roles: string[];
+    roles: Role[];
+    currentlyOnline: boolean;
+    lastConnection: string | Date;
   }

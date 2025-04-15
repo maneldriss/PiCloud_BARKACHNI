@@ -24,6 +24,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { AppOauthRedirectComponent } from './components/auth/app-oauth-redirect/app-oauth-redirect.component';
 import { OauthRedirectComponent } from './components/auth/auth/oauth-redirect/oauth-redirect.component';
+import { UserManagementComponent } from './admin/admin/user-management/user-management.component';
+import { SidebarComponent } from './admin/admin/sidebar/sidebar.component';
 
 
 @NgModule({
@@ -45,7 +47,9 @@ import { OauthRedirectComponent } from './components/auth/auth/oauth-redirect/oa
     ActivateAccountComponent,
     RegisterComponent,
     AppOauthRedirectComponent,
-    OauthRedirectComponent
+    OauthRedirectComponent,
+    UserManagementComponent
+   
   ],
   imports: [
     BrowserModule,

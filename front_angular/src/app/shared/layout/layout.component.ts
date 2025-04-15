@@ -58,11 +58,17 @@ export class LayoutComponent implements OnInit {
       }
     }
   }
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+  async logout(): Promise<void> {
+    try {
+      await this.authService.logout().toPromise();
+      this.router.navigate(['/login']);
+    } catch (err) {
+      console.error('Erreur lors de la déconnexion', err);
+      this.router.navigate(['/login']);
+    } finally {
+      this.cdr.detectChanges();
+    }
   }
-
   ngOnDestroy() {
     this.authSubscriptions.forEach(sub => sub.unsubscribe());
   }

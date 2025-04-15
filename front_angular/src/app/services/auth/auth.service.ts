@@ -86,25 +86,26 @@ export class AuthService {
   register(userData: RegisterRequest): Observable<any> {
     return this.http.post<void>(`${this.apiUrl}/auth/register`, userData);
   }
-  
-
+  isAdmin(): boolean {
+    const user = this.currentUserValue;
+    return !!(user && user.roles && user.roles.some(role => role.name === 'ADMIN'));
+  }
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
   login(credentials: LoginRequest): Observable<User> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/auth/authenticate`, credentials)
       .pipe(
         tap(response => {
           this.jwtService.saveToken(response.token);
-          
-          // D'abord décoder le token pour avoir un user minimal
-     
           this.isAuthenticatedSubject.next(true);
-          console.log("response from backend ",response)
-          localStorage.setItem("currentUser",JSON.stringify(response.user));
+          console.log("response from backend ", response);
+          
+          // Make sure roles are properly stored
+          localStorage.setItem("currentUser", JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
-
-          // Ensuite compléter avec les données du backend si disponibles
-           
         }),
-        map(() => this.currentUserSubject.value!), // Retourne toujours l'user courant
+        map(() => this.currentUserSubject.value!),
         catchError(error => {
           console.error('Erreur lors de la requête:', error);
           return throwError(() => this.handleError(error));
@@ -112,14 +113,29 @@ export class AuthService {
       );
   }
 
-  logout(): void {
-    this.jwtService.destroyToken();
+  logout(): Observable<void> {
+    // Inclure le token dans les headers
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.jwtService.getToken()}`
+    });
+  
+    return this.http.post<void>(`${this.apiUrl}/auth/logout`, {}, { headers }).pipe(
+      tap(() => {
+        this.clearAuth();
+      }),
+      catchError(error => {
+        this.clearAuth();
+        return throwError(() => error);
+      })
+    );
   }
   clearAuth(): void {
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
     localStorage.removeItem('currentUser');
     this.jwtService.destroyToken();
+    // Redirigez vers la page de login si nécessaire
+   // this.router.navigate(['/login']);
   }
   private handleError(error: any): string {
     if (error.error?.businessErrorDescription) {

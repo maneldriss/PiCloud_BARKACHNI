@@ -32,7 +32,8 @@
               "src/assets/css/magnific-popup.css",
               "src/assets/css/nice-select.css",
               "src/assets/css/slicknav.min.css",
-              "src/assets/css/style.css"
+              "src/assets/css/style.css",
+               "src/assetsBack/css/styles.css"
           
             ],
             "scripts": [
@@ -46,6 +47,8 @@
             "src/assets/js/jquery.countdown.min.js",
             "src/assets/js/jquery.nicescroll.min.js",
             "src/assets/js/mixitup.min.js"
+          
+            
             ]
           },
           "configurations": {

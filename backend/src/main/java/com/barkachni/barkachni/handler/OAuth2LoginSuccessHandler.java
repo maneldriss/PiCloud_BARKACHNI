@@ -1,4 +1,5 @@
 package com.barkachni.barkachni.handler;
+import com.barkachni.barkachni.entities.role.RoleName;
 import com.barkachni.barkachni.entities.role.RoleRepository;
 import com.barkachni.barkachni.entities.user.User;
 import com.barkachni.barkachni.entities.user.UserRepository;
@@ -45,7 +46,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                             .lastname(getAttribute(attributes, "family_name", ""))
                             .enabled(true)
                             .accountLocked(false)
-                            .roles(List.of(roleRepository.findByName("USER")
+                            .roles(List.of(roleRepository.findByName(RoleName.USER)
                                     .orElseThrow(() -> new RuntimeException("ROLE USER not found"))))
                             .build();
                     return userRepository.save(newUser);

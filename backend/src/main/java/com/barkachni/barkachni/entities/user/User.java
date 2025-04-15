@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.security.auth.Subject;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +43,26 @@ public class User implements UserDetails, Principal // Implements Spring Securit
     private boolean enabled;
     @ManyToMany(fetch = EAGER)
     private List<Role_user> roles;
+    @Column(name = "last_connection")
+    private LocalDateTime lastConnection;
+     // This field won't be persisted in DB
+    private boolean currentlyOnline;
 
+    public LocalDateTime getLastConnection() {
+        return lastConnection;
+    }
+
+    public void setLastConnection(LocalDateTime lastConnection) {
+        this.lastConnection = lastConnection;
+    }
+
+    public boolean isCurrentlyOnline() {
+        return currentlyOnline;
+    }
+
+    public void setCurrentlyOnline(boolean currentlyOnline) {
+        this.currentlyOnline = currentlyOnline;
+    }
     public Integer getId() {
         return id;
     }

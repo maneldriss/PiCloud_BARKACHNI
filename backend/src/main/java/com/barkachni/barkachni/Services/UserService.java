@@ -1,5 +1,6 @@
-package com.barkachni.barkachni.auth;
+package com.barkachni.barkachni.Services;
 import ch.qos.logback.classic.Logger;
+import com.barkachni.barkachni.auth.ConnectionTrackingService;
 import com.barkachni.barkachni.entities.user.User;
 import com.barkachni.barkachni.entities.user.UserRepository;
 import lombok.RequiredArgsConstructor;

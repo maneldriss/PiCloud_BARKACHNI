@@ -1,4 +1,4 @@
-package com.barkachni.barkachni.auth;
+package com.barkachni.barkachni.Services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

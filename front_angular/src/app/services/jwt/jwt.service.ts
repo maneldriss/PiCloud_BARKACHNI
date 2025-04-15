@@ -46,4 +46,15 @@ export class JwtService {
       return true;
     }
   }
+  getUserIdFromToken(token?: string): number | null {
+    token = token || this.getToken() || undefined;
+    if (!token) return null;
+    
+    try {
+      const decoded = this.decodeToken<any>(token);
+      return decoded?.id || decoded?.sub || null;
+    } catch (e) {
+      return null;
+    }
+  }
 }

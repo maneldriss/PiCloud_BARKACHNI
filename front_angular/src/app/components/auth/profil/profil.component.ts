@@ -23,7 +23,9 @@ export class ProfilComponent implements OnInit {
     email: '',
     accountLocked: false,
     enabled: true,
-    roles: []
+    roles: [],
+    currentlyOnline: false,
+    lastConnection: ""
   };
   loading = true;
   isLoading = true;

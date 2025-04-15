@@ -16,10 +16,8 @@
   <!-- Main Profile Content -->
   <div *ngIf="!isLoading" class="profile-container">
     <!-- Cover Photo -->
-    <div class="cover-photo">
-      <div class="cover-overlay">
-     
-      </div>
+    <div class="cover-photo" [style.backgroundImage]="'url(assets/img/logoApp/couverture.jpg)'">
+      <div class="cover-overlay"></div>
       <button class="edit-cover-btn">
         <i class="fas fa-camera"></i> Edit Cover
       </button>

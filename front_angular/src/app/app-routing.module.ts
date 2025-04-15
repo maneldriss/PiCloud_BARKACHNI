@@ -34,6 +34,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'oauth2/redirect', component: AppOauthRedirectComponent },
   {  path: 'auth/oauth-redirect', component: OauthRedirectComponent },
+  { path: 'admin', loadChildren: () => import('./admin/admin/admin.module').then(m => m.AdminModule) },
   { path: '**', redirectTo: '' }
 ];
 

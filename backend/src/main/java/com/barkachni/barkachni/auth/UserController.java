@@ -1,9 +1,10 @@
 package com.barkachni.barkachni.auth;
 //import ch.qos.logback.classic.Logger;
+import com.barkachni.barkachni.Services.CloudinaryService;
+import com.barkachni.barkachni.Services.UserService;
 import com.barkachni.barkachni.entities.user.User;
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,9 +13,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,7 +34,19 @@ public class UserController {
         System.out.println(user);
         return ResponseEntity.ok(user);
     }
-
+    @GetMapping("/Allusers")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers() {
+        log.info("Attempting to fetch all users");
+        try {
+            List<User> users = userService.getAllUsers();
+            log.info("Successfully fetched {} users", users.size());
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            log.error("Error fetching users", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     @PutMapping("/me")
     public ResponseEntity<?> updateUser(
             @AuthenticationPrincipal User currentUser,
@@ -80,6 +94,41 @@ public class UserController {
         } catch (IOException e) {
             log.error("Upload failed for user {}: {}", currentUser.getId(), e.getMessage());
             return ResponseEntity.internalServerError().body("Upload failed: " + e.getMessage());
+        }
+    }
+    @PatchMapping("/{userId}/status")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUserStatus(@PathVariable Integer userId,
+                                              @RequestBody Map<String, Boolean> request) {
+        try {
+            Boolean enabled = request.get("enabled");
+            if (enabled == null) {
+                return ResponseEntity.badRequest().body("Enabled status is required");
+            }
+
+            User updatedUser = userService.updateUserStatus(userId, enabled);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            log.error("Error updating user status", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{userId}/lock")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateAccountLockStatus(@PathVariable Integer userId,
+                                                     @RequestBody Map<String, Boolean> request) {
+        try {
+            Boolean locked = request.get("locked");
+            if (locked == null) {
+                return ResponseEntity.badRequest().body("Locked status is required");
+            }
+
+            User updatedUser = userService.updateAccountLockStatus(userId, locked);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            log.error("Error updating account lock status", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
