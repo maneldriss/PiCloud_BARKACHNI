@@ -41,7 +41,7 @@ public class DonationService implements IDonationService {
     @Override
     @Transactional
     public Donation addDonation(Donation donation) {
-        // 1. Validations de base
+
         if (donation.getDonor() == null) {
             throw new IllegalArgumentException("Le donateur ne peut pas être null");
         }
@@ -87,7 +87,7 @@ public class DonationService implements IDonationService {
             if (donation.getItemDressing() == null) {
                 throw new IllegalArgumentException("Item manquant pour un don matériel");
             }
-            return 10; // Note: Vous avez changé 50 → 10, assurez-vous que c'est intentionnel
+            return 50; // Note: Vous avez changé 50 → 10, assurez-vous que c'est intentionnel
         }
 
         throw new IllegalArgumentException("Type de don non reconnu");
@@ -97,7 +97,6 @@ public class DonationService implements IDonationService {
         user user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Utilisez la bonne colonne dans @Query
         List<Donation> approvedDonations = donationRepository.findApprovedDonationsByUser(userId);
 
         int totalPoints = approvedDonations.stream()
@@ -106,6 +105,8 @@ public class DonationService implements IDonationService {
 
         user.setDonationPoints(totalPoints);
         userRepository.save(user);
+
+        System.out.println("[DEBUG] Points recalculés pour " + user.getEmail() + ": " + totalPoints);
     }
 
     @Override

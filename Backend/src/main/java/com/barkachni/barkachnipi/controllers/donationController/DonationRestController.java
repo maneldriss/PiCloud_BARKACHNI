@@ -5,6 +5,7 @@ import com.barkachni.barkachnipi.entities.donationEntity.DonationStatus;
 import com.barkachni.barkachnipi.entities.donationEntity.DonationType;
 import com.barkachni.barkachnipi.entities.dressingEntity.ItemDressing;
 import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.repositories.donationRepository.DonationRepository;
 import com.barkachni.barkachnipi.services.donationService.LeaderboardService;
 import com.barkachni.barkachnipi.repositories.userRepository.UserRepository;
 import com.barkachni.barkachnipi.services.EmailService;
@@ -29,15 +30,18 @@ public class DonationRestController {
     private final IDonationService donationService;
     private final IDressingItemService itemService;
     private final UserRepository userRepository;
+    private final DonationRepository donationRepository;
 
     @Autowired
     public DonationRestController(
             IDonationService donationService,
             IDressingItemService itemService,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            DonationRepository donationRepository) {
         this.donationService = donationService;
         this.itemService = itemService;
         this.userRepository = userRepository;
+        this.donationRepository=donationRepository;
         System.out.println("UserRepository injected: " + (this.userRepository != null));
 
     }
@@ -88,7 +92,22 @@ public class DonationRestController {
         return ResponseEntity.ok(savedDonation);
     }
 
+    @PostMapping("/recalculate-points/{userId}")
+    public ResponseEntity<String> recalculateUserPoints(@PathVariable Long userId) {
+        try {
+            donationService.recalculateUserPoints(userId);
+            return ResponseEntity.ok("Points recalculés avec succès pour l'utilisateur ID: " + userId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors du recalcul: " + e.getMessage());
+        }
+    }
 
+    @GetMapping("/user/{userId}/total-approved")
+    public ResponseEntity<Double> getTotalApprovedDonations(@PathVariable Long userId) {
+        Double total = donationRepository.sumApprovedDonationsByUser(userId);
+        return ResponseEntity.ok(total != null ? total : 0.0);
+    }
 
     @DeleteMapping("/remove-donation/{donation-id}")
     public void removeDonation(@PathVariable("donation-id") int dId) {
@@ -145,6 +164,7 @@ public class DonationRestController {
 
         donation.setStatus(DonationStatus.APPROVED);
         Donation updatedDonation = donationService.modifyDonation(donation);
+        donationService.recalculateUserPoints(updatedDonation.getDonor().getIdUser());
 
         if (updatedDonation.getDonor() != null && updatedDonation.getDonor().getEmail() != null) {
             emailService.sendDonationStatusEmail(

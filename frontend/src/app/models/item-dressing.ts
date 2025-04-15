@@ -1,7 +1,7 @@
 import { User } from './user';
 
 export interface ItemDressing {
-  itemID: number;
+  itemID?: number;
   itemName?: string;
   description?: string;
   size?: string;
