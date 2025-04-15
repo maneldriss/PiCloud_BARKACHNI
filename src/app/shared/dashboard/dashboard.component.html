@@ -1,0 +1,78 @@
+<div class="dashboard-container">
+    <h2>Admin Dashboard</h2>
+  
+    <form #productFormRef="ngForm" (ngSubmit)="selectedProduct ? updateProduct() : addProduct()" class="product-form">
+      <input type="text" [(ngModel)]="productForm.nameProduct" name="title" placeholder="Title" required>
+      <input type="number" [(ngModel)]="productForm.productPrice" name="price" placeholder="Price" required>
+      <input type="text" [(ngModel)]="productForm.productDescription" name="description" placeholder="Description" required>
+      <input type="text" [(ngModel)]="productForm.categoryProduct" name="category" placeholder="Category" required>
+      <select [(ngModel)]="productForm.genderProduct" name="genderProduct" required>
+        <option value="" disabled selected>Select Gender</option>
+        <option value="Men">Men</option>
+        <option value="Women">Women</option>
+        <option value="Kids">Kids</option>
+      </select>
+      <select [(ngModel)]="productForm.productSize" name="sizeProduct" required>
+        <option value="" disabled selected>Select Size</option>
+        <option value="XXS">XXS</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+      </select>
+      <select [(ngModel)]="productForm.productState" name="stateProduct" required>
+        <option value="" disabled selected>Select State</option>
+        <option value="AVAILABLE">Available</option>
+        <option value="SOLD">Sold</option>
+        <option value="UPCOMING">Upcoming</option>
+      </select>
+      <input type="text" [(ngModel)]="productForm.productImageURL" name="image" placeholder="Image URL" required>
+  
+      <div class="form-buttons">
+        <button type="submit" [disabled]="!productFormRef.form.valid">
+          {{ selectedProduct ? 'Update Product' : 'Add Product' }}
+        </button>
+        <button type="button" *ngIf="selectedProduct" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  
+    <table class="product-table">
+      <thead>
+        <tr>
+        <th>Product ID</th>
+        <th>Product Seller ID</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>For</th>
+          <th>State</th>
+          <th>Size</th>
+          <th>Reserved</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of allProducts">
+        <td>{{ product.productId }}</td>
+        <td>{{ product.productSeller.idUser }}</td>
+          <td>{{ product.nameProduct }}</td>
+          <td>{{ product.productPrice }}</td>
+          <td>{{ product.productDescription }}</td>
+          <td>{{ product.categoryProduct }}</td>
+          <td>{{ product.genderProduct }}</td>
+          <td>{{ product.productState }}</td>
+          <td>{{ product.productSize }}</td>
+        <td>{{ product.reserved ? 'Yes' : 'No' }}</td>
+          <td><img [src]="product.productImageURL" alt="{{ product.nameProduct }}" class="product-img" /></td>
+          <td>
+            <button (click)="editProduct(product)">Edit</button>
+            <button (click)="deleteProduct(product.productId)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

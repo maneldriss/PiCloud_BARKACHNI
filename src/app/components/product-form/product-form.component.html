@@ -21,8 +21,72 @@
 
     <div class="form-group">
       <label for="categoryProduct">Product Category</label>
-      <input type="text" id="categoryProduct" class="form-control rounded-input" formControlName="categoryProduct" />
+      <select id="categoryProduct" class="form-control rounded-input" formControlName="categoryProduct" (change)="onCategoryChange()" >
+        <option *ngFor="let category of allCategories" [value]="category">{{ category }}</option>
+     
+      </select>    
     </div>
+    <div class="form-group">
+      <label for="genderProduct">Product For:</label>
+      <select id="genderProduct" class="form-control rounded-input" formControlName="genderProduct" (change)="onGenderChange()">
+        <option *ngFor="let gender of productGenders" [value]="gender">{{ gender }}</option>
+      </select>    
+    </div>
+
+    <div class="form-group">
+      <label for="productSize">Product Size:</label>
+      <select id="productSize" class="form-control rounded-input" formControlName="productSize">
+        <option *ngFor="let size of filteredSizes" [value]="size">{{ size }}</option>
+      </select>
+  
+    </div>
+<button class="btn btn-link p-0 mt-2" (click)="toggleSizeGuide()">Need help figuring out the product's size?</button>
+
+<!-- Sidebar -->
+<div [class.active]="showSizeGuide" class="size-guide-sidebar">
+  <button class="close-btn" (click)="toggleSizeGuide()">×</button>
+  <h3>Size Guide</h3>
+
+  <!-- Dynamic Inputs for Size Guide -->
+  <div *ngIf="selectedGender === 'KIDS'" class="input-group">
+    <label>Height:</label>
+    <input type="number" formControlName="height">
+    <label>Chest:</label>
+    <input type="number" formControlName="chest">
+    <label>Waist:</label>
+    <input type="number" formControlName="waist">
+  </div>
+
+  <div *ngIf="selectedGender === 'WOMEN'" class="input-group">
+    <label>Bust:</label>
+    <input type="number" formControlName="bust">
+    <label>Waist:</label>
+    <input type="number" formControlName="waist">
+    <label>Hips:</label>
+    <input type="number" formControlName="hips">
+  </div>
+
+  <div *ngIf="selectedGender === 'MEN' && (selectedCategory === 'TOP' || selectedCategory === 'JACKET') " class="input-group">
+    <label>Neck:</label>
+    <input type="number" formControlName="neck">
+    <label>Chest:</label>
+    <input type="number" formControlName="chest">
+    <label>Waist:</label>
+    <input type="number" formControlName="waist">
+  </div>
+
+  <div *ngIf="selectedGender === 'MEN' && selectedCategory === 'PANTS'" class="input-group">
+    <label>In Seam:</label>
+    <input type="number" formControlName="inSeam">
+    <label>Waist:</label>
+    <input type="number" formControlName="waist">
+  </div>
+
+  <p *ngIf="sizeMessage" class="size-message">{{ sizeMessage }}</p>
+</div>
+
+<!-- End of Sidebar -->
+
 
     <div class="mb-3">
       <label for="productSeller" class="form-label">Seller</label>
@@ -58,7 +122,7 @@
       <label for="productState">State</label>
       <select id="productState" class="form-control rounded-input" formControlName="productState">
         <option value="AVAILABLE">Available</option>
-        <option value="SOLD">Sold</option>
+        <option value="UPCOMING">Upcoming</option>
       </select>
     </div>
 

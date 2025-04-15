@@ -37,4 +37,20 @@ export class ProductService {
     return this.http.get<Product>(`${this.apiUrl}/find-by-name/${name}`);
   }
 
+  reserveProduct(productId: number): Observable<any> {
+    const staticUserId = 1; // replace with your test user ID
+    return this.http.post(`${this.apiUrl}/products/${productId}/reserve`, null, {
+      params: { userId: staticUserId.toString() }
+    });
+    
+  }
+  
+  getReservedProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/reserved-products`);
+  }
+
+  unreserveProduct(productId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/unreserve-product/${productId}`);
+  }
+
 }

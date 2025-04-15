@@ -33,7 +33,8 @@
               "src/assets/css/nice-select.css",
               "src/assets/css/owl.carousel.min.css",
               "src/assets/css/slicknav.min.css",
-              "src/assets/css/style.css"
+              "src/assets/css/style.css",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": [
               "src/assets/js/bootstrap.min.js",

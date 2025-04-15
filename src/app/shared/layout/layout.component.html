@@ -53,10 +53,15 @@
                     <nav class="header__menu mobile-menu">
                         <ul>
                             <li class="active"><a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
-                            <li><a class="nav-link" routerLink="/products" routerLinkActive="active">Shop</a></li>
+                            <li><a class="nav-link" routerLink="/products" routerLinkActive="active">Shop</a>
+                                <ul class="dropdown">
+                                    <li><a routerLink="/products/women" routerLinkActive="active">Women</a></li>
+                                    <li><a routerLink="/products/men" routerLinkActive="active">Men</a></li>
+                                    <li><a routerLink="/products/kids" routerLinkActive="active">Kids</a></li>     
+                                </ul></li>
                             <li><a href="">Our Brands</a>
-                            <li><a href="">My Dressing</a>
                             <li><a href="">Blog</a></li>
+                            <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
                           
                                
                         </ul>

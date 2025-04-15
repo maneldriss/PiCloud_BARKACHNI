@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
@@ -11,6 +10,11 @@ import { ProductFormComponent } from './components/product-form/product-form.com
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { LayoutComponent } from './shared/layout/layout.component';
 import { ProductEditComponent } from './product-edit/product-edit.component';
+import { MenShopComponent } from './components/men-shop/men-shop.component';
+import { WomenShopComponent } from './components/women-shop/women-shop.component';
+import { KidsShopsComponent } from './components/kids-shops/kids-shops.component';
+import { ReservedProductsComponent } from './components/reserved-products/reserved-products.component';
+import { DashboardComponent } from './shared/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -20,14 +24,21 @@ import { ProductEditComponent } from './product-edit/product-edit.component';
     ProductFormComponent,
     ProductDetailComponent,
     LayoutComponent,
-    ProductEditComponent
+    ProductEditComponent,
+    MenShopComponent,
+    WomenShopComponent,
+    KidsShopsComponent,
+    ReservedProductsComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    
+
   ],
   providers: [],
   bootstrap: [AppComponent]

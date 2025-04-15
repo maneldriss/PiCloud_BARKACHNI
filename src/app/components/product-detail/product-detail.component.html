@@ -1,1 +1,82 @@
-<p>product-detail works!</p>
+<div class="container mt-4">
+    <div *ngIf="loading" class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading product details...</p>
+    </div>
+  
+    <div *ngIf="error" class="alert alert-danger">
+      <i class="fas fa-exclamation-circle me-2"></i>
+      {{ error }}
+    </div>
+  
+    <div *ngIf="product && !loading">
+      <div class="card shadow-sm product-card">
+        <div class="card-body d-flex">
+          <!-- Product Image (Zoomable) -->
+          <div class="product-image-container me-3">
+            <img 
+              [src]="product.productImageURL" 
+              alt="Product Image" 
+              class="product-image"
+            />
+          </div>
+  
+          <!-- Product Details -->
+          <div class="product-details">
+            <!-- Product Name -->
+            <div class="mb-3 text-center">
+              <h2 class="product-name text-pink">
+                {{ product.nameProduct }}
+              </h2>
+            </div>
+  
+            <!-- Size -->
+            <div class="product-attribute mb-3">
+              <span class="label">Size:</span>
+              <span class="value">{{ product.productSize }}</span>
+            </div>
+  
+            <!-- Description -->
+            <div class="product-attribute mb-3">
+              <span class="label">Description:</span>
+              <span class="value">{{ product.productDescription }}</span>
+            </div>
+  
+            <!-- Date Added -->
+            <div class="product-attribute mb-3">
+              <span class="label">Date Added:</span>
+              <span class="value">{{ product.dateProductAdded | date:'shortDate' }}</span>
+            </div>
+  
+            <!-- Gender -->
+            <div class="product-attribute mb-3">
+              <span class="label">Gender:</span>
+              <span class="value">{{ product.genderProduct}}</span>
+            </div>
+  
+            <!-- Reserved Status -->
+            <div class="product-attribute mb-3">
+              <span class="label">Status:</span>
+              <span class="value" [ngClass]="{'text-success': product.reserved, 'text-danger': !product.reserved}">
+                {{ product.reserved ? 'Reserved' : 'Not Reserved' }}
+              </span>
+            </div>
+  
+            <!-- Product Price -->
+            <div class="product-attribute mb-3">
+              <span class="label">Price:</span>
+              <span class="value fs-4 text-success">{{ product.productPrice}}</span>
+            </div>
+          </div>
+        </div>
+        <h6  class="product-location-header">Find the product's pickup location:</h6>
+        <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+        <div class="card-footer bg-transparent border-top py-2">
+          <button (click)="goBack()" class="btn btn-pink ">Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

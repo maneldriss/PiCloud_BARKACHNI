@@ -1,0 +1,109 @@
+.btn-pink {
+    background-color: #ff69b4;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-pink:hover {
+    background-color: #ff85c1;
+  }
+  
+  .product-card {
+    width: 20rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-img-top {
+    border-radius: 15px;
+    height: 400px;
+    object-fit: cover;
+  }
+  
+  .card-title, .card-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .rounded-input {
+    border-radius: 12px;
+    padding: 10px;
+    border: 2px solid #f59fbf;
+  }
+
+  .rounded-input-dropdown {
+    border-radius: 12px;
+    height: 45px;
+    padding: 10px;
+    border: 2px solid #f59fbf;
+  }
+  .rounded-input-price {
+    border-radius: 12px;
+    width: 500px;
+    padding: 10px;
+    border: 2px solid #f59fbf;
+  }
+
+  .btn-red {
+    background-color: #e3323d;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-pink2 {
+    background-color: #ff69b4;;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  .btn-green {
+    background-color: #74ec88;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  .sidebar {
+    position: fixed;
+    top: 80px;
+    right: -300px;
+    width: 280px;
+    height: 100%;
+    background-color: #ffffff;
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
+    border-left: 1px solid #ddd;
+    overflow-y: auto;
+  }
+  
+  .sidebar.active {
+    right: 0;
+  }
+  
+  .sidebar .form-label {
+    font-weight: bold;
+  }
+  
+  .rounded-input, .rounded-input-price, .rounded-input-dropdown {
+    border-radius: 12px;
+  }
+  
