@@ -1,36 +1,42 @@
-<div class="leaderboard-container">
-    <h2>Classement des Donateurs</h2>
-  
-    <table mat-table [dataSource]="topDonors" class="mat-elevation-z8">
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> # </th>
-        <td mat-cell *matCellDef="let element; let i = index"> {{i + 1}} </td>
-      </ng-container>
-  
-      <!-- Email Column -->
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef> Email </th>
-        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-      </ng-container>
-  
-      <!-- Points Column -->
-      <ng-container matColumnDef="points">
-        <th mat-header-cell *matHeaderCellDef> Points </th>
-        <td mat-cell *matCellDef="let element"> 
-          {{element.points | number}} 
-        </td>
-      </ng-container>
-  
-      <!-- Total Donné Column -->
-      <ng-container matColumnDef="totalDonated">
-        <th mat-header-cell *matHeaderCellDef> Total Donné </th>
-        <td mat-cell *matCellDef="let element">
-          {{element.totalDonated | currency:'TND':'symbol':'1.2-2'}}
-        </td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+<div class="donor-leaderboard">
+  <div class="leaderboard-header">
+      <h2 class="leaderboard-title">Donor Ranking</h2>
+      <div class="leaderboard-subtitle">Top donors of the month</div>
   </div>
+
+  <div class="table-container">
+      <table class="donor-table">
+          <thead>
+              <tr>
+                  <th class="rank-header">RANK</th>
+                  <th class="email-header">EMAIL</th>
+                  <th class="points-header">POINTS</th>
+                  <th class="donation-header">TOTAL</th>
+                  <th class="badge-header">REWARD</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let donor of topDonors; let i = index">
+                  <td class="rank-cell">
+                      <div class="rank-number">
+                          <span *ngIf="i !== 0">{{i + 1}}</span>
+                          <span *ngIf="i === 0" class="crown-icon">👑</span>
+                      </div>
+                  </td>
+                  <td class="email-cell">{{donor.email}}</td>
+                  <td class="points-cell">{{donor.points | number}}</td>
+                  <td class="donation-cell">{{donor.totalDonated | currency:'TND':'symbol':'1.2-2'}}</td>
+                  <td class="badge-cell">
+                      <div *ngIf="donor.isDonatorOfTheMonth" class="premium-badge">
+                          <span class="trophy-icon">🏆</span> Donator of The Month
+                      </div>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+
+  <div class="leaderboard-footer">
+      <p>Dernière mise à jour : {{currentDate | date:'medium'}}</p>
+  </div>
+</div>

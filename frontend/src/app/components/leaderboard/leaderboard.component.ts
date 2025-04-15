@@ -13,8 +13,8 @@ export class LeaderboardComponent implements OnInit {
   pageSize = 10;
   totalElements = 0;
   totalItems = 0;
-  displayedColumns: string[] = ['position', 'email', 'points', 'totalDonated'];
-
+  displayedColumns: string[] = ['position', 'email', 'points', 'totalDonated', 'badge'];
+  currentDate: Date = new Date();
   constructor(private leaderboardService: LeaderboardServiceService) {}
 
   ngOnInit(): void {
@@ -32,7 +32,9 @@ export class LeaderboardComponent implements OnInit {
           email: item.email,
           points: item.points,
           totalDonated: item.totalDonated,
-          position: (this.currentPage * this.pageSize) + index + 1
+          position: (this.currentPage * this.pageSize) + index + 1,
+          isDonatorOfTheMonth: item.points >= 500 // Nouveau champ
+
         };
       });
       this.totalElements = response.totalElements;
