@@ -3,7 +3,7 @@ package com.barkachni.barkachnipi.entities.cartEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.entities.userEntity.User;
 
 import java.util.Set;
 
@@ -20,7 +20,7 @@ public class Cart {
     Long cartID;
 
     @OneToOne
-    private user user;
+    private User user;
 
     @OneToMany(cascade = CascadeType.PERSIST)
     private Set<ItemCart> itemCarts;
@@ -36,11 +36,11 @@ public class Cart {
         this.cartID = cartID;
     }
 
-    public user getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

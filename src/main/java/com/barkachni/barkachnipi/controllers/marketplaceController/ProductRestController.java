@@ -6,14 +6,22 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Tag(name="Gestion MarketPlace")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/marketplace")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProductRestController {
     @Autowired
     IProductService productService;
@@ -28,6 +36,7 @@ public class ProductRestController {
     // http://localhost:8089/PICloud/product/retrieve-product/8
     @GetMapping("/retrieve-product/{productId}")
     public Product retrieveProduct(@PathVariable("productId") long productId) {
+        System.out.println("Product ID in service layer: " + productId); // Debugging line
         Product product = productService.retrieveProduct(productId);
         return product;
     }
@@ -43,12 +52,54 @@ public class ProductRestController {
         productService.removeProduct(productId);
 
     }
-    // ttp://localhost:8089/PICloud/product/modify-product
-    @PutMapping("/modify-product")
-    public Product modifyProduct(@RequestBody Product p) {
-        Product product = productService.modifyProduct(p);
-        return product;
+
+
+    @PutMapping("/modify-product/{productId}")
+    public Product modifyProduct(@RequestBody Product p, @PathVariable Long productId) {
+        p.setProductId(productId); // or whatever your ID field is
+        return productService.modifyProduct(p);
+    }
+//image upload
+    @PostMapping("/upload-image")
+    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            String uploadDirBackend = "uploads/";  // For backend storage
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path filePathBackend = Paths.get(uploadDirBackend + fileName);
+
+            // Create folder if not exists
+            Files.createDirectories(filePathBackend.getParent());
+
+            // Save file to backend directory
+            Files.write(filePathBackend, file.getBytes());
+
+            // Now return the filename in a JSON response
+            return ResponseEntity.ok(Map.of("fileName", fileName));  // Return filename
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload");
+        }
     }
 
+    //reservation purposes
+    @PostMapping("/products/{id}/reserve")
+    public ResponseEntity<Product> reserveProduct(@PathVariable Long id, @RequestParam Long userId) {
+        Product reservedProduct = productService.reserveProduct(id, userId);
+        return ResponseEntity.ok(reservedProduct);
+    }
+
+    @GetMapping("/reserved-products")
+    public List<Product> getReservedProducts() {
+        return productService.getReservedProducts();  // Get reserved products
+    }
+
+    @DeleteMapping("/unreserve-product/{productId}")
+    public ResponseEntity<String> unreserveProduct(@PathVariable Long productId) {
+        boolean isUnreserved = productService.unreserveProduct(productId);
+        return ResponseEntity.noContent().build();
+    }
 
 }
+
+
+
+

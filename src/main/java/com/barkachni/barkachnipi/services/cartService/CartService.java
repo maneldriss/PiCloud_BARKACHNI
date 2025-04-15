@@ -2,7 +2,7 @@ package com.barkachni.barkachnipi.services.cartService;
 
 import com.barkachni.barkachnipi.entities.cartEntity.Cart;
 import com.barkachni.barkachnipi.entities.cartEntity.ItemCart;
-import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.entities.userEntity.User;
 import com.barkachni.barkachnipi.repositories.cartRepository.ItemCartRepository;
 import com.barkachni.barkachnipi.repositories.userRepository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class CartService implements ICartService {
     public List<Cart> retrieveAllcarts() {
         return CartRepository.findAll();
     }
-    public List<user> retrieveAllusers() {
+    public List<User> retrieveAllusers() {
         return UserRepository.findAll();
     }
     public List<ItemCart> retrieveAllitems() {
@@ -51,7 +51,7 @@ public class CartService implements ICartService {
     @Override
     public void assignUserToCart(Long cartId, Long userId) {
         // Fetch the User entity by ID
-        user user = UserRepository.findById(userId).get();
+        User user = UserRepository.findById(userId).get();
 
         // Fetch the Cart entity by ID
         Cart cart = CartRepository.findById(cartId).get();

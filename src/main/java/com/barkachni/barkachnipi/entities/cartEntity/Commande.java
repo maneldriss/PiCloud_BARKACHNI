@@ -3,7 +3,7 @@ package com.barkachni.barkachnipi.entities.cartEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.entities.userEntity.User;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ public class Commande {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long commandeID;
     @ManyToOne
-    private user user;
+    private User user;
     private String shippingAddress;
 
     private String status;
@@ -42,11 +42,11 @@ public class Commande {
         this.commandeID = commandeID;
     }
 
-    public user getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

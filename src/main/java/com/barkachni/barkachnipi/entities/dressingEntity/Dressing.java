@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.entities.userEntity.User;
 import java.util.List;
 
 @Entity
@@ -39,11 +39,11 @@ public class Dressing {
         this.name = name;
     }
 
-    public com.barkachni.barkachnipi.entities.userEntity.user getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(com.barkachni.barkachnipi.entities.userEntity.user user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -57,7 +57,7 @@ public class Dressing {
 
     @OneToOne
     @JoinColumn(name = "userID")
-    private user user;
+    private User user;
 
     @OneToMany(mappedBy = "dressing", cascade = CascadeType.ALL)
     private List<Outfit> outfits;

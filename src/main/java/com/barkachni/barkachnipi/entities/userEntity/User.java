@@ -17,9 +17,11 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class user {
+@Table(name = "user")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_user")
     private Long idUser;
     @OneToMany(cascade = CascadeType.ALL, mappedBy="productSeller")
     private Set<Product> products;
@@ -28,4 +30,42 @@ public class user {
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private Dressing dressing;
+
+    private Double latitude;
+    private Double longitude;
+
+    public Long getIdUser() {
+        return idUser;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
+    }
+
+    @Column(name = "name_user")
+    private String nameUser;
 }

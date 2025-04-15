@@ -2,7 +2,7 @@ package com.barkachni.barkachnipi.controllers.cartController;
 
 import com.barkachni.barkachnipi.entities.cartEntity.Cart;
 import com.barkachni.barkachnipi.entities.cartEntity.ItemCart;
-import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.entities.userEntity.User;
 import com.barkachni.barkachnipi.services.cartService.ICartService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ public class CartRestController {
         return listcarts;
     }
     @GetMapping("/retrieve-all-users")
-    public List<user> getusers() {
-        List<user> listusers = CartService.retrieveAllusers();
+    public List<User> getusers() {
+        List<User> listusers = CartService.retrieveAllusers();
         return listusers;
     }
     @GetMapping("/retrieve-all-items")

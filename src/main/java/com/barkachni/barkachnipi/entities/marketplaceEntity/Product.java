@@ -1,11 +1,12 @@
 package com.barkachni.barkachnipi.entities.marketplaceEntity;
 
-import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.entities.userEntity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 import java.util.Date;
 
@@ -21,14 +22,67 @@ public class Product {
     private String nameProduct;
     @Enumerated(EnumType.STRING)
     private CategoryProduct categoryProduct;
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    private user productSeller;
+    @Enumerated(EnumType.STRING)
+    private GenderProduct genderProduct;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private User productSeller;
     private Date dateProductAdded;
     private String productImageURL;
     private String productDescription;
     private float productPrice;
     @Enumerated(EnumType.STRING)
     private ProductState productState;
+    @Enumerated(EnumType.STRING)
+    private ProductSize productSize;
+
+    //for reservation purposes
+    private boolean reserved = false;
+    @ManyToOne
+    private User reservedBy;
+    private LocalDateTime reservationExpiry;
+
+
+    public boolean isReserved() {
+        return reserved;
+    }
+
+    public void setReserved(boolean reserved) {
+        this.reserved = reserved;
+    }
+
+    public User getReservedBy() {
+        return reservedBy;
+    }
+
+    public void setReservedBy(User reservedBy) {
+        this.reservedBy = reservedBy;
+    }
+
+    public LocalDateTime getReservationExpiry() {
+        return reservationExpiry;
+    }
+
+    public void setReservationExpiry(LocalDateTime reservationExpiry) {
+        this.reservationExpiry = reservationExpiry;
+    }
+
+
+    public ProductSize getProductSize() {
+        return productSize;
+    }
+
+    public void setProductSize(ProductSize productSize) {
+        this.productSize = productSize;
+    }
+
+
+    public GenderProduct getGenderProduct() {
+        return genderProduct;
+    }
+
+    public void setGenderProduct(GenderProduct genderProduct) {
+        this.genderProduct = genderProduct;
+    }
 
     public ProductState getProductState() {
         return productState;
@@ -62,11 +116,11 @@ public class Product {
         this.categoryProduct = categoryProduct;
     }
 
-    public user getProductSeller() {
+    public User getProductSeller() {
         return productSeller;
     }
 
-    public void setProductSeller(user productSeller) {
+    public void setProductSeller(User productSeller) {
         this.productSeller = productSeller;
     }
 

@@ -2,14 +2,14 @@ package com.barkachni.barkachnipi.services.cartService;
 
 import com.barkachni.barkachnipi.entities.cartEntity.Cart;
 import com.barkachni.barkachnipi.entities.cartEntity.ItemCart;
-import com.barkachni.barkachnipi.entities.userEntity.user;
+import com.barkachni.barkachnipi.entities.userEntity.User;
 
 import java.util.List;
 
 public interface ICartService {
     List<Cart> retrieveAllcarts();
     Cart retrievecart(Long cartId);
-    List<user> retrieveAllusers();
+    List<User> retrieveAllusers();
     List<ItemCart> retrieveAllitems();
     Cart addcart(Cart cart);
     void removecart(Long cartId);
