@@ -126,5 +126,12 @@ public class ServiceCommande implements IServiceCommande {
 
         return commande;
     }
+@Override
 
+public void updatePaymentStatus(Long commandeId, String status) {
+    commande commande = commandeRepository.findById(commandeId)
+            .orElseThrow(() -> new RuntimeException("Commande not found with ID: " + commandeId));
+    commande.setPaymentStatus(status);
+    commandeRepository.save(commande);
+}
 }

@@ -12,6 +12,11 @@ import { CommandeComponent } from './commande/commande.component';
 import { OrderFormComponent } from './order-form/order-form.component';
 import { SpinWheelComponent } from './spin-wheel/spin-wheel.component';
 import { RewardmodalComponent } from './rewardmodal/rewardmodal.component';
+import { PaymentComponent } from './payment/payment.component';
+import { DashbordLayoutComponent } from './shared/dashbord-layout/dashbord-layout.component';
+import { CommandeBackComponent } from './commande-back/commande-back.component';
+
+;
 
 
 @NgModule({
@@ -23,7 +28,10 @@ import { RewardmodalComponent } from './rewardmodal/rewardmodal.component';
     CommandeComponent,
     OrderFormComponent,
     SpinWheelComponent,
-    RewardmodalComponent
+    RewardmodalComponent,
+    PaymentComponent,
+    DashbordLayoutComponent,
+    CommandeBackComponent
   ],
   imports: [
     BrowserModule,

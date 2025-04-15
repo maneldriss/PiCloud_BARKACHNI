@@ -25,11 +25,11 @@ export class SpinWheelComponent {
     { label: '10% Discount', color: '#FFD700' },
     { label: '10% Discount', color: '#FFD700' },
     { label: '15% Discount', color: '#FF33A1' },
-    { label: 'Free Shipping', color: '#FFD700' },
+    { label: '15% Discount', color: '#FFD700' },
     { label: '20% Discount', color: '#33A1FF' },
-    { label: 'Free Shipping', color: '#FFD700' },
-    { label: 'Free Gift', color: '#F0A1FF' },
-    { label: 'Free Shipping', color: '#FFD700' }
+    { label: '15% Discount', color: '#FFD700' },
+    { label: '5% Discount', color: '#F0A1FF' },
+    { label: '15% Discount', color: '#FFD700' }
   ];
   segmentAngle = 360 / this.segments.length;
 

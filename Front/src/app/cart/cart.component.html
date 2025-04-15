@@ -116,8 +116,7 @@
       </div>
     </div>
   </div>
-  <p>Total Items: {{ cart?.cartitems?.length || 0 }}</p>
-  <p>{{ showWheel }}</p>
+
   <!-- Spin-the-Wheel Popup -->
   <div *ngIf="showWheel" class="spin-wheel-overlay" (click)="closeWheel()">
     <div class="spin-wheel-popup" (click)="$event.stopPropagation()">

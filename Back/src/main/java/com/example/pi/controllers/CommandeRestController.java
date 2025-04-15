@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -87,5 +88,13 @@ public class CommandeRestController {
 
         return ResponseEntity.ok(commande);
     }
+    @PutMapping("/{commandeId}/payment-status/{status}")
+    public ResponseEntity<Void> updatePaymentStatus(
+            @PathVariable Long commandeId,
+            @PathVariable String status) {
+        CommandeService.updatePaymentStatus(commandeId, status);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

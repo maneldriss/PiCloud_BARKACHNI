@@ -47,4 +47,8 @@ export class CommandeService {
   assignCartToCommande(commandeId: number, cartId: number): Observable<Commande> {
     return this.http.put<Commande>(`${this.baseUrl}/assign-cart-to-commande/${commandeId}/${cartId}`, {});
   }
+  updatePaymentStatus(commandeId: number, status: string): Observable<void> {
+    const url = `${this.baseUrl}/${commandeId}/payment-status/${status}`;
+    return this.http.put<void>(url, {});
+  }
 }

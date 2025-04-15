@@ -20,4 +20,6 @@ public interface IServiceCommande {
     commande placeOrder(Long cartId, String shippingAddress,
                         String shippingMethod, String paymentMethod,
                         Double discountApplied, String discountType);
+
+    void updatePaymentStatus(Long commandeId, String  status);
 }

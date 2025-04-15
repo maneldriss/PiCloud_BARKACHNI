@@ -101,6 +101,9 @@ export class OrderFormComponent implements OnInit {
           if (response.commandeID) {
             this.commande.commandeID = response.commandeID;
             this.getTotal(response.commandeID);
+            setTimeout(() => {
+              this.router.navigate(['/payment'], { queryParams: { total: this.commande.total  ,commandeId:this.commande.commandeID} });
+            }, 700);  
           } else {
             console.error('Order response does not include commandeID');
           }

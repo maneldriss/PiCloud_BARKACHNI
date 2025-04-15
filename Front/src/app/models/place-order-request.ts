@@ -4,6 +4,7 @@ export interface PlaceOrderRequest {
     shippingMethod: string;
     paymentMethod: string;
     discountApplied?: number;  // Add this field
-  discountType?: string;    // Optional: 'percentage' or 'fixed'
+  discountType?: string;   
+   // Optional: 'percentage' or 'fixed'
   }
-  
+   
