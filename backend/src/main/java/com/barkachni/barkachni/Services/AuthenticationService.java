@@ -2,6 +2,7 @@ package com.barkachni.barkachni.auth;
 
 import com.barkachni.barkachni.email.EmailTemplateName;
 import com.barkachni.barkachni.email.EmailService;
+import com.barkachni.barkachni.entities.role.RoleName;
 import com.barkachni.barkachni.entities.role.RoleRepository;
 import com.barkachni.barkachni.entities.user.Token;
 import com.barkachni.barkachni.entities.user.TokenRepository;
@@ -36,13 +37,14 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
+    private final ConnectionTrackingService connectionTrackingService;
 
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
 
     @Transactional
     public void register(RegistrationRequest request) throws MessagingException {
-        var userRole = roleRepository.findByName("USER")
+        var userRole = roleRepository.findByName(RoleName.USER)
                 .orElseThrow(() -> new IllegalStateException("ROLE USER was not initiated"));
 
         var user = User.builder()
@@ -73,12 +75,16 @@ public class AuthenticationService {
         );
 
         var user = (User) auth.getPrincipal();
+
+        // Update connection status
+        connectionTrackingService.userConnected(user.getId());
+        user.setLastConnection(LocalDateTime.now());
+        userRepository.save(user);
+
         var claims = new HashMap<String, Object>();
         claims.put("fullName", user.getUsername());
-
-        // Ajouter les rôles (on suppose que c'est une liste, on peut prendre le premier pour simplifier)
         claims.put("roles", user.getRoles().stream()
-                .map(role -> role.getName().name()) // Convert RoleName enum to String
+                .map(role -> role.getName().name())
                 .collect(Collectors.toList())
         );
 
