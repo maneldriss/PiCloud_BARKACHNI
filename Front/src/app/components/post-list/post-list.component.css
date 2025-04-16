@@ -1,17 +1,15 @@
-/* Variables de couleurs vives inspirées d'Instagram */
+/* Variables de couleurs vives inspirées d'Instagram (sans dégradés) */
 :root {
   --primary: #833AB4;      /* Violet Instagram */
   --secondary: #5851DB;    /* Bleu-violet */
-  --gradient-1: #405DE6;   /* Bleu */
-  --gradient-2: #5851DB;   /* Bleu-violet */
-  --gradient-3: #833AB4;   /* Violet */
-  --gradient-4: #C13584;   /* Rose-rouge */
-  --gradient-5: #E1306C;   /* Rose */
-  --gradient-6: #FD1D1D;   /* Rouge */
-  --gradient-7: #F56040;   /* Orange */
-  --gradient-8: #F77737;   /* Orange clair */
-  --gradient-9: #FCAF45;   /* Jaune-orange */
-  --gradient-10: #FFDC80;  /* Jaune clair */
+  --blue: #405DE6;         /* Bleu */
+  --purple: #C13584;       /* Rose-rouge */
+  --pink: #E1306C;         /* Rose */
+  --red: #FD1D1D;          /* Rouge */
+  --orange: #F56040;       /* Orange */
+  --light-orange: #F77737; /* Orange clair */
+  --yellow-orange: #FCAF45;/* Jaune-orange */
+  --light-yellow: #FFDC80; /* Jaune clair */
   --background: #FAFAFA;   /* Fond gris très clair */
   --card-bg: #FFFFFF;      /* Blanc pour les cartes */
   --text: #262626;         /* Texte noir */
@@ -88,20 +86,20 @@ body {
   font-size: 12px;
   color: var(--text-secondary);
   position: absolute;
-  right: 70px; /* Espacé pour les icônes edit/delete */
+  right: 70px;
 }
 
 /* Icônes d'édition/suppression sous la date */
 .post-admin-actions {
   position: absolute;
   right: 16px;
-  top: 14px; /* Aligné avec la date */
+  top: 14px;
   display: flex;
-  gap: 15px; /* Plus d'espace entre les icônes */
+  gap: 15px;
 }
 
 .edit-icon, .delete-icon {
-  font-size: 14px; /* Plus grand pour meilleure visibilité */
+  font-size: 14px;
   color: var(--text-secondary);
   background: none;
   border: none;
@@ -222,7 +220,7 @@ body {
 /* Style pour la section d'édition */
 .edit-form {
   padding: 16px;
-  background-color: rgba(250, 250, 250, 0.9); /* Fond légèrement différent pour le mode édition */
+  background-color: rgba(250, 250, 250, 0.9);
   border: 1px solid var(--border);
   margin: 10px;
   border-radius: 8px;
@@ -262,7 +260,7 @@ body {
 .btn {
   border: none;
   border-radius: 4px;
-  padding: 10px 16px; /* Plus grand pour meilleure visibilité */
+  padding: 10px 16px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -271,9 +269,9 @@ body {
 }
 
 .btn-success {
-  background: linear-gradient(45deg, var(--gradient-8), var(--gradient-9));
+  background-color: var(--yellow-orange);
   color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre pour faire ressortir */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-success:hover {
@@ -311,12 +309,7 @@ body {
 
 .card-header {
   padding: 16px;
-  background: linear-gradient(45deg, 
-    var(--gradient-1), 
-    var(--gradient-3), 
-    var(--gradient-5), 
-    var(--gradient-7), 
-    var(--gradient-9));
+  background-color: var(--primary);
   color: white;
   font-weight: 600;
 }
@@ -325,23 +318,19 @@ body {
   padding: 16px;
 }
 
-/* Bouton pour ajouter un post avec dégradé Instagram */
+/* Bouton pour ajouter un post avec couleur unie */
 .btn-primary {
-  background: linear-gradient(45deg, 
-    var(--gradient-1), 
-    var(--gradient-3), 
-    var(--gradient-5), 
-    var(--gradient-7));
+  background-color: var(--pink);
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 12px 16px; /* Plus grand pour être plus visible */
+  padding: 12px 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
   width: 100%;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Ombre pour faire ressortir */
-  letter-spacing: 0.5px; /* Espacement des lettres pour lisibilité */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
 }
 
 .btn-primary:hover {
@@ -367,13 +356,15 @@ body {
   }
   
   .post-date {
-    right: 60px; /* Ajusté pour mobile */
+    right: 60px;
   }
   
   .post-admin-actions {
     gap: 12px;
   }
-  /* Styles pour la pagination */
+}
+
+/* Styles pour la pagination */
 .pagination-container {
   margin-top: 20px;
   display: flex;
@@ -407,9 +398,9 @@ body {
 }
 
 .page-item.active .page-link {
-  background-color: #007bff;
+  background-color: var(--blue);
   color: white;
-  border-color: #007bff;
+  border-color: var(--blue);
 }
 
 .page-item.disabled .page-link {
@@ -424,11 +415,10 @@ body {
   font-size: 14px;
   color: #6c757d;
 }
+
 .no-results p::before {
   content: '🔍';
   display: block;
   font-size: 32px;
   margin-bottom: 10px;
-}
-
 }

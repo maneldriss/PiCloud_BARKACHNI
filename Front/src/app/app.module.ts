@@ -12,6 +12,9 @@ import { HomeComponent } from './home/home.component';
 import { PostFormComponent } from './components/post-form/post-form.component';
 import { CommentaireListComponent } from './components/commentaire-list/commentaire-list.component';
 
+
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,6 +22,7 @@ import { CommentaireListComponent } from './components/commentaire-list/commenta
     LayoutComponent,
     HomeComponent,
     PostFormComponent,
+   
     CommentaireListComponent
   ],
   imports: [

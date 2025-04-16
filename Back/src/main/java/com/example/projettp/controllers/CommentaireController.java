@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -49,77 +50,107 @@ public class CommentaireController {
             @PathVariable Long postId,
             @RequestBody Commentaire commentaire) {
 
-        // 1. Supprimer le décodage manuel (Spring le gère automatiquement)
-        String content = commentaire.getContent();
-
-        // 2. Utilisation de l'utilisateur par défaut
-        User defaultUser = userRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("Utilisateur par défaut non trouvé"));
-
-        // 3. Vérification des mots interdits
-        if (purgoMalumFilterService.containsBadWords(content)) {
-            return ResponseEntity.badRequest()
-                    .body("Le commentaire contient des mots inappropriés");
-        }
-
-        // 4. Filtrage des mots interdits
-        String filteredContent = purgoMalumFilterService.filter(content);
-
-        // 5. Récupération du post
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post non trouvé"));
-
-        // 6. Création et sauvegarde du commentaire
-        Commentaire newCommentaire = new Commentaire();
-        newCommentaire.setContent(filteredContent);
-        newCommentaire.setPost(post);
-        newCommentaire.setUser(defaultUser);
-
-        Commentaire savedCommentaire = commentaireRepository.save(newCommentaire);
-
-        // 7. Envoi d'email (avec gestion d'erreur)
         try {
-            User postAuthor = savedCommentaire.getPost().getUser();
-            emailService.sendCommentNotification(
-                    postAuthor.getEmail(),
-                    savedCommentaire.getPost().getTitle(),
-                    savedCommentaire.getContent(),
-                    defaultUser.getUsername(),
-                    savedCommentaire.getCreatedAt()
-            );
-        } catch (Exception e) {
-            logger.error("Erreur lors de l'envoi de l'email", e);
-            // On continue même si l'email échoue
-        }
+            // 1. Récupération et décodage du contenu
+            String content = commentaire.getContent();
+            logger.info("Contenu reçu brut: {}", content);
 
-        return ResponseEntity.ok(savedCommentaire);
+            // 2. Récupération de l'utilisateur
+            User defaultUser = userRepository.findById(1L)
+                    .orElseThrow(() -> new RuntimeException("Utilisateur par défaut non trouvé"));
+
+            // 3. Vérification des mots interdits
+            if (purgoMalumFilterService.containsBadWords(content)) {
+                logger.warn("Commentaire rejeté - contenu inapproprié détecté");
+                return ResponseEntity.badRequest()
+                        .body("Le commentaire contient des mots inappropriés");
+            }
+
+            // 4. Filtrage des mots interdits
+            String filteredContent = purgoMalumFilterService.filter(content);
+
+            // 5. Récupération du post
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new RuntimeException("Post non trouvé"));
+
+            // 6. Création et sauvegarde du commentaire
+            Commentaire newCommentaire = new Commentaire();
+            newCommentaire.setContent(filteredContent);
+            newCommentaire.setPost(post);
+            newCommentaire.setUser(defaultUser);
+
+            Commentaire savedCommentaire = commentaireRepository.save(newCommentaire);
+            logger.info("Commentaire sauvegardé avec ID: {}", savedCommentaire.getIdCommentaire());
+
+            // 7. Envoi d'email
+            try {
+                User postAuthor = savedCommentaire.getPost().getUser();
+                emailService.sendCommentNotification(
+                        postAuthor.getEmail(),
+                        savedCommentaire.getPost().getTitle(),
+                        savedCommentaire.getContent(),
+                        defaultUser.getUsername(),
+                        savedCommentaire.getCreatedAt()
+                );
+                logger.info("Email de notification envoyé à {}", postAuthor.getEmail());
+            } catch (Exception e) {
+                logger.error("Erreur lors de l'envoi de l'email", e);
+            }
+
+            // 8. Retour de la réponse avec contenu décodé
+            savedCommentaire.setContent(URLDecoder.decode(savedCommentaire.getContent(), StandardCharsets.UTF_8));
+            return ResponseEntity.ok(savedCommentaire);
+
+        } catch (Exception e) {
+            logger.error("Erreur lors de l'ajout du commentaire", e);
+            return ResponseEntity.internalServerError()
+                    .body("Une erreur est survenue lors de l'ajout du commentaire");
+        }
     }
+
 
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCommentaire(
             @PathVariable Long id,
-            @RequestBody Commentaire commentaire) {
+            @RequestBody Map<String, String> requestBody) {
 
-        // 0. Vérification et filtrage des mots interdits
-        if (purgoMalumFilterService.containsBadWords(commentaire.getContent())) {
-            return ResponseEntity.badRequest()
-                    .body("Le commentaire contient des mots inappropriés");
+        try {
+            // 0. Récupération du contenu
+            String content = requestBody.get("content");
+            logger.info("Contenu reçu pour mise à jour: {}", content);
+
+            // 1. Vérification des mots interdits
+            if (purgoMalumFilterService.containsBadWords(content)) {
+                logger.warn("Mise à jour rejetée - contenu inapproprié détecté");
+                return ResponseEntity.badRequest()
+                        .body("Le commentaire contient des mots inappropriés");
+            }
+
+            // 2. Filtrage des mots interdits
+            String filteredContent = purgoMalumFilterService.filter(content);
+
+            // 3. Récupérer le commentaire existant
+            Commentaire existingComment = commentaireRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Commentaire non trouvé avec l'id " + id));
+
+            // 4. Mettre à jour le contenu
+            existingComment.setContent(filteredContent);
+
+            // 5. Sauvegarder
+            Commentaire updatedComment = commentaireRepository.save(existingComment);
+            logger.info("Commentaire mis à jour avec ID: {}", updatedComment.getIdCommentaire());
+
+            // 6. Décoder le contenu avant retour
+            updatedComment.setContent(URLDecoder.decode(updatedComment.getContent(), StandardCharsets.UTF_8));
+
+            return ResponseEntity.ok(updatedComment);
+
+        } catch (Exception e) {
+            logger.error("Erreur lors de la mise à jour du commentaire", e);
+            return ResponseEntity.internalServerError()
+                    .body("Une erreur est survenue lors de la mise à jour du commentaire");
         }
-
-        String filteredContent = purgoMalumFilterService.filter(commentaire.getContent());
-
-        // 1. Récupérer le commentaire existant
-        Commentaire existingComment = commentaireRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commentaire not found with id " + id));
-
-        // 2. Mettre à jour uniquement le contenu (ne pas modifier les relations)
-        existingComment.setContent(filteredContent); // Utiliser le contenu filtré
-
-        // 3. Sauvegarder
-        Commentaire updatedComment = commentaireRepository.save(existingComment);
-
-        return ResponseEntity.ok(updatedComment);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCommentaire(@PathVariable Long id) {

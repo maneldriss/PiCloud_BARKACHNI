@@ -12,6 +12,7 @@ const routes: Routes = [
   { path: 'post/:id/commentaires', component: CommentaireListComponent },
 
   { path: '**', redirectTo: '' } // Redirection si la route est inconnue
+  
 ];
 
 

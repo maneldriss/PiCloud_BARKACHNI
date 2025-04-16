@@ -144,28 +144,26 @@
   <div class="text-muted small">
     Page {{ currentPage }} of {{ totalPages }} • 
     Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
-    {{ getMinValue(currentPage * itemsPerPage, posts.length) }} of 
-    {{ posts.length }} posts
+    {{ getMinValue(currentPage * itemsPerPage, filteredPosts.length) }} of 
+    {{ filteredPosts.length }} posts
   </div>
 
   <nav>
     <ul class="pagination pagination-sm">
       <li class="page-item" [class.disabled]="currentPage === 1">
-        <a class="page-link" (click)="previousPage()" style="color: #59886b;">
+        <a class="page-link" (click)="previousPage()" style="cursor: pointer;">
           <i class="fas fa-chevron-left"></i>
         </a>
       </li>
       <li class="page-item" *ngFor="let page of getPages()" [class.active]="page === currentPage">
-        <a class="page-link"
+        <a class="page-link" 
            (click)="goToPage(page)"
-           [style.backgroundColor]="page === currentPage ? '#59886b' : 'transparent'" 
-           [style.color]="page === currentPage ? 'white' : '#59886b'"
-           [style.borderColor]="page === currentPage ? '#59886b' : '#dee2e6'">
+           style="cursor: pointer;">
           {{ page }}
         </a>
       </li>
       <li class="page-item" [class.disabled]="currentPage === totalPages">
-        <a class="page-link" (click)="nextPage()" style="color: #59886b;">
+        <a class="page-link" (click)="nextPage()" style="cursor: pointer;">
           <i class="fas fa-chevron-right"></i>
         </a>
       </li>

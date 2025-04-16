@@ -16,7 +16,7 @@ export class PostListComponent implements OnInit {
 
   // Pagination
 currentPage = 1;
-itemsPerPage = 5;
+itemsPerPage = 2;
 searchQuery: string = '';
 searchTerm: string = '';
 
@@ -78,7 +78,7 @@ getAllPosts(): void {
       this.posts = data.sort((a, b) => 
         new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
       );
-      
+      this.printPaginationInfo();
       this.loadLikes();  // Charge les likes après avoir récupéré les posts
     },
     error: (err) => {
@@ -180,6 +180,7 @@ getAllPosts(): void {
   }
   like(postId: number): void {
     this.likeService.likePost(this.userId, postId).subscribe(() => {
+      this.loadPosts();
       this.loadLikes();  // Recharge les likes après un like
       this.loadLikedUsers(postId);  // Recharge les utilisateurs qui ont aimé
     });
@@ -235,13 +236,25 @@ getAllPosts(): void {
     }
   }
   //pagination
+  printPaginationInfo(): void {
+    console.log('--- Pagination Info ---');
+    console.log('Total posts:', this.posts.length);
+    console.log('Filtered posts:', this.filteredPosts.length);
+    console.log('Current page:', this.currentPage);
+    console.log('Total pages:', this.totalPages);
+    console.log('Items per page:', this.itemsPerPage);
+    console.log('----------------------');
+  }
+
   getMinValue(a: number, b: number): number {
     return Math.min(a, b);
   }
   get filteredPosts(): Post[] {
-    return this.posts.filter(post =>
+    const filtered = this.posts.filter(post =>
       post.title.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
+    console.log('Filtered posts:', filtered.length);
+    return filtered;
   }
   
   get totalPages(): number {
@@ -253,7 +266,9 @@ getAllPosts(): void {
   get paginatedPosts(): Post[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
-    return this.filteredPosts.slice(start, end);
+    const paginated = this.filteredPosts.slice(start, end);
+    console.log('Paginated posts:', paginated.length, 'Page:', this.currentPage);
+    return paginated;
   }
   
   

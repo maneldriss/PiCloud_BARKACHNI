@@ -31,6 +31,9 @@ export class LikeDislikeService {
   getUsersWhoDisliked(postId: number): Observable<string[]> {
     return this.http.get<string[]>(`${this.baseUrl}/dislikes/users/${postId}`);
   }
+  react(userId: number, postId: number, reaction: string) {
+    return this.http.post(`/likes/${userId}/post/${postId}/react`, { reactionType: reaction });
+  }
   
 
 }

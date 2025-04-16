@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Commentaire } from '../models/commentaire';
 import { Observable } from 'rxjs';
@@ -15,15 +15,16 @@ export class CommentaireService {
 
 
 
-  addCommentaire(postId: number, commentaire: { content: string }): Observable<Commentaire> {
+
+  addCommentaire(postId: number, comment: any): Observable<Commentaire> {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json; charset=utf-8')
+      .set('Accept', 'application/json; charset=utf-8');
+  
     return this.http.post<Commentaire>(
-      `${this.baseUrl}/${postId}/commentaires`,
-      { content: commentaire.content }, // Envoi direct sans transformation
-      {
-        headers: {
-          'Content-Type': 'application/json' // Essentiel pour un bon encodage
-        }
-      }
+      `${this.baseUrl}/${postId}/commentaires`, 
+      JSON.stringify(comment),
+      { headers }
     );
   }
 
@@ -41,17 +42,20 @@ export class CommentaireService {
  
 
   updateCommentaire(commentaire: Commentaire): Observable<Commentaire> {
-    // Envoyez seulement l'ID et le contenu
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json; charset=utf-8')
+        .set('Accept', 'application/json; charset=utf-8');
+
     const updateData = {
-      idCommentaire: commentaire.idCommentaire,
-      content: commentaire.content
+        content: commentaire.content
     };
     
     return this.http.put<Commentaire>(
-      `${this.baseUrl}/${commentaire.idCommentaire}`,
-      updateData
+        `${this.baseUrl}/${commentaire.idCommentaire}`,
+        JSON.stringify(updateData),
+        { headers }
     );
-  }
+}
 
   // Supprimer un commentaire
   deleteCommentaire(id: number): Observable<void> {
