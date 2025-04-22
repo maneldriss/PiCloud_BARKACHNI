@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ 
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="user-greeting">
+                <h1>Hi, Anderson N. Horvath</h1>
+                <p>This is your HR report so far</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">25.5%</div>
+                <div class="stat-label">Employee Growth</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12.5%</div>
+                <div class="stat-label">Attrition Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4,510</div>
+                <div class="stat-label">Total Employees</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1,450</div>
+                <div class="stat-label">Job Applicants</div>
+            </div>
+        </div>
+        <app-employee-list></app-employee-list>
+        <app-ad-management></app-ad-management>
+        <div class="performance-section">
+            <div class="chart-header">
+                <h3>Team Performance</h3>
+                <div class="time-filter">
+                    <span>Last 5 months</span>
+                </div>
+            </div>
+            <div class="bar-chart">
+                <!-- Bar chart implementation would go here -->
+            </div>
+        </div>
+
+       
+    </div>
+    
+</body>
+</html>

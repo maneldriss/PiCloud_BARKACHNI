@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Bar9achni</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="register-container">
+    <div class="logo">
+        <img src="/assets/img/logoApp/bar9achni1.png" alt="Bar9achni Logo">
+        <h1>Create Your Account</h1>
+        <p>Join our fashion community</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+        </div>
+
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="success-message">
+            <i class="fas fa-check-circle"></i> {{ successMessage }}
+        </div>
+
+        <!-- Firstname Field -->
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" formControlName="firstname" placeholder="First name" required>
+        </div>
+        <div *ngIf="registerForm.get('firstname')?.invalid && registerForm.get('firstname')?.touched" class="error-message">
+            First name is required
+        </div>
+
+        <!-- Lastname Field -->
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" formControlName="lastname" placeholder="Last name" required>
+        </div>
+        <div *ngIf="registerForm.get('lastname')?.invalid && registerForm.get('lastname')?.touched" class="error-message">
+            Last name is required
+        </div>
+
+        <!-- Email Field -->
+        <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" formControlName="email" placeholder="Email address" required>
+        </div>
+        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
+            <div *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</div>
+            <div *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email</div>
+        </div>
+
+        <!-- Date of Birth Field -->
+        <div class="input-group">
+            <i class="fas fa-calendar"></i>
+            <input type="date" formControlName="dateOfBirth" placeholder="Date of Birth" required
+                   [max]="maxDate | date:'yyyy-MM-dd'"
+                   [min]="minDate | date:'yyyy-MM-dd'">
+        </div>
+        <div *ngIf="registerForm.get('dateOfBirth')?.invalid && registerForm.get('dateOfBirth')?.touched" class="error-message">
+            <div *ngIf="registerForm.get('dateOfBirth')?.errors?.['required']">Date of birth is required</div>
+            <div *ngIf="registerForm.get('dateOfBirth')?.errors?.['underAge']">You must be at least 18 years old</div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" formControlName="password" placeholder="Password" required>
+        </div>
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error-message">
+            <div *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</div>
+            <div *ngIf="registerForm.get('password')?.errors?.['minlength']">
+                Password must be at least 6 characters
+            </div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" formControlName="confirmPassword" placeholder="Confirm password" required>
+        </div>
+        <div *ngIf="registerForm.hasError('mismatch')" class="error-message">
+            Passwords do not match
+        </div>
+
+        <div class="terms">
+            <input type="checkbox" id="terms" formControlName="terms" required>
+            <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+        </div>
+        <div *ngIf="registerForm.get('terms')?.invalid && registerForm.get('terms')?.touched" class="error-message">
+            You must accept the terms and conditions
+        </div>
+
+        <button type="submit" class="register-btn" [disabled]="registerForm.invalid || isLoading" [class.loading]="isLoading">
+            <span *ngIf="!isLoading">Create Account</span>
+            <span *ngIf="isLoading">Creating account...</span>
+        </button>
+
+        <div class="divider"><span>OR</span></div>
+
+        <div class="social-login">
+            <button type="button" class="google-btn">
+                <i class="fab fa-google"></i>
+                Sign up with Google
+            </button>
+        </div>
+
+        <div class="login-link">
+            Already have an account? <a routerLink="/login">Sign in</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

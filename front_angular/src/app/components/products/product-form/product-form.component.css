@@ -1,0 +1,124 @@
+.product-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .form-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .rounded-input {
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  .form-control-file {
+    padding: 10px;
+    background-color: #ffe6f0;
+    border: none;
+    border-radius: 12px;
+    color: #d63384;
+    font-weight: bold;
+  }
+  
+  .form-control-file::file-selector-button {
+    background-color: #ff69b4;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .form-control-file::file-selector-button:hover {
+    background-color: #ff3399;
+  }
+  
+  .rounded-button {
+    border-radius: 20px;
+    padding: 10px 20px;
+    background-color: #ff69b4;
+    color: white;
+  }
+
+  .size-guide-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background-color: #ffe0f0; /* pinkish */
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+    z-index: 1050;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .size-guide-sidebar.active {
+    transform: translateX(0);
+  }
+  
+  .size-guide-sidebar h3 {
+    margin-bottom: 1.5rem;
+    color: #d63384;
+    font-weight: bold;
+  }
+  
+  .input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .input-group label {
+    margin-top: 10px;
+    font-weight: bold;
+    width: 100%;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #d63384;
+  }
+  
+  .size-message {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #d63384;
+    text-align: center;
+  }
+  

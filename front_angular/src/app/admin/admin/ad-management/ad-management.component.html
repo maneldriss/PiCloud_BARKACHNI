@@ -1,0 +1,96 @@
+<div class="dashboard-container">
+  <!-- Header Card -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <i class="bi bi-megaphone-fill header-icon"></i>
+      <h1 class="header-title">Pending Ads Approval</h1>
+      <p class="header-subtitle">{{pendingAds.length}} ads awaiting review</p>
+    </div>
+  </div>
+
+  <!-- Ads Cards View -->
+  <div class="ads-grid-container">
+    <div *ngFor="let ad of pendingAds" class="ad-card">
+      <!-- Ad Image -->
+      <div class="ad-image-container">
+        <img [src]="ad.image || 'assets/default-ad-image.png'" 
+             alt="{{ad.title}}" 
+             class="ad-image"
+             (error)="ad.image = 'assets/default-ad-image.png'">
+      </div>
+
+      <!-- Ad Content -->
+      <div class="ad-content">
+        <div class="ad-header">
+          <h3 class="ad-title">{{ad.title}}</h3>
+          <span class="status-badge pending">Pending</span>
+        </div>
+
+        <div class="brand-info">
+          <img [src]="ad.brand?.logo || 'assets/default-brand-logo.png'" 
+               alt="{{ad.brand?.name}}" 
+               class="brand-logo"
+               (error)="ad.brand.logo = 'assets/default-brand-logo.png'">
+          <span class="brand-name">{{ad.brand?.name || 'No brand'}}</span>
+        </div>
+
+        <p class="ad-description">{{ad.description || 'No description provided'}}</p>
+
+        <div class="ad-meta">
+          <div class="meta-item">
+            <i class="bi bi-calendar-event"></i>
+            <span>Expires: {{ad.expDate | date:'MMM d, yyyy'}}</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="ad-actions">
+          <a [href]="getFullLink(ad.link)" target="_blank" class="btn preview-btn">
+            <i class="bi bi-eye-fill"></i> Preview Link
+          </a>
+          <button (click)="openApproveModal(ad)" class="btn approve-btn">
+            <i class="bi bi-check-circle-fill"></i> Approve
+          </button>
+          <button (click)="openRejectModal(ad)" class="btn reject-btn">
+            <i class="bi bi-x-circle-fill"></i> Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && pendingAds.length === 0" class="empty-state">
+    <i class="bi bi-check-circle-fill"></i>
+    <h3>No pending ads to review</h3>
+    <p>All ads have been processed</p>
+  </div>
+
+  <!-- Rejection Reason Modal -->
+  <div *ngIf="showRejectModal" class="modern-modal-backdrop">
+    <div class="modern-modal">
+      <div class="modal-header">
+        <h3>Reject Ad</h3>
+        <button (click)="cancelReject()" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Please provide a reason for rejecting "{{selectedAd?.title}}"</p>
+        <textarea 
+          [(ngModel)]="rejectionReason" 
+          placeholder="Enter rejection reason..."
+          class="reason-textarea"
+        ></textarea>
+      </div>
+      <div class="modal-footer">
+        <button (click)="cancelReject()" class="btn cancel-btn">Cancel</button>
+        <button 
+          (click)="confirmReject()" 
+          class="btn confirm-reject-btn"
+          [disabled]="!rejectionReason"
+        >
+          Confirm Rejection
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

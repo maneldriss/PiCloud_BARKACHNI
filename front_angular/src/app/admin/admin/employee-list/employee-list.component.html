@@ -1,0 +1,72 @@
+<p>employee-list works!</p>
+<div class="employee-table">
+    <div class="filter-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search employees..." 
+        (input)="onSearchInput($event)">
+      </div>
+      <select  (change)="applyFilters()">
+        <option>All Status</option>
+        <option>Active</option>
+        <option>Inactive</option>
+      </select>
+    </div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Employee Name</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Account</th>
+          <th>Connection</th>
+          <th>Last Connection</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>
+            <div class="user-info">
+              <img [src]="user.profilePicture || 'assets/default-avatar.png'" 
+                   alt="Profile" class="profile-pic">
+              <span>{{user.firstname}} {{user.lastname}}</span>
+            </div>
+          </td>
+          <td>{{user.email}}</td>
+          <td>
+            <span class="status-indicator" [class.active]="user.enabled">
+              {{user.enabled ? 'Active' : 'Inactive'}}
+            </span>
+          </td>
+          <td>
+            <span class="status-indicator" [class.locked]="user.accountLocked">
+              {{user.accountLocked ? 'Locked' : 'Unlocked'}}
+            </span>
+          </td>
+          <td>
+            <div class="connection-status">
+              <span class="status-dot" [class.connected]="user.currentlyOnline"></span>
+              {{user.currentlyOnline ? 'Online' : 'Offline'}}
+            </div>
+          </td>
+          <td class="last-connection">
+            {{user.lastConnection | date:'medium'}}
+          </td>
+          <td class="actions">
+            <button (click)="toggleUserStatus(user)" 
+                    [class.btn-success]="!user.enabled" 
+                    [class.btn-warning]="user.enabled">
+              {{ user.enabled ? 'Disable' : 'Enable' }}
+            </button>
+            <button (click)="toggleAccountLock(user)"
+                    [class.btn-success]="user.accountLocked" 
+                    [class.btn-warning]="!user.accountLocked">
+              {{ user.accountLocked ? 'Unlock' : 'Lock' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
