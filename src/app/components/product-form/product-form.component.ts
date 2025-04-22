@@ -20,6 +20,10 @@ export class ProductFormComponent implements OnInit {
   error = '';
   users: User[] = []; // Store users
   selectedFile: File | null = null;
+  //newly added
+  aiProcessing = false;
+  predictedCategory: string | null = null;
+showCategoryOverride = false;
 
   //sizing and fit
   productGenders: string[] = ['MEN', 'WOMEN', 'KIDS', 'UNISEX'];
@@ -186,69 +190,123 @@ ensureControlExists(name: string) {
   }
 }
 updateSizeGuideInputs() {
+  // Ensure form is initialized
+  if (!this.productForm) return;
+
+  // Get current values
   this.selectedGender = this.productForm.get('genderProduct')?.value;
   this.selectedCategory = this.productForm.get('categoryProduct')?.value;
+  
+  console.log('Updating size guide:', {
+    gender: this.selectedGender,
+    category: this.selectedCategory
+  });
 
+  // Determine which controls to show based on gender and category
   const newControls: string[] = [];
 
-  // Determine which controls to add
-  switch (this.selectedGender) {
-    case 'KIDS':
-      newControls.push('height', 'chest', 'waist');
-      break;
-    case 'WOMEN':
-      newControls.push('bust', 'waist', 'hips');
-      break;
-    case 'MEN':
-      if (this.selectedCategory === 'TOP' || this.selectedCategory === 'JACKET') {
-        newControls.push('neck', 'chest', 'waist');
-      } else if (this.selectedCategory === 'PANTS') {
-        newControls.push('inSeam', 'waist');
-      }
-      break;
+  if (this.selectedGender === 'KIDS') {
+    newControls.push('height', 'chest', 'waist');
+  } else if (this.selectedGender === 'WOMEN') {
+    newControls.push('bust', 'waist', 'hips');
+  } else if (this.selectedGender === 'MEN') {
+    if (this.selectedCategory === 'TOP' || this.selectedCategory === 'JACKET') {
+      newControls.push('neck', 'chest', 'waist');
+    } else if (this.selectedCategory === 'PANTS') {
+      newControls.push('inSeam', 'waist');
+    }
   }
 
-  // Remove existing size guide controls
-  Object.keys(this.sizeGuideInputs).forEach(key => {
-    if (this.productForm.contains(key)) {
-      this.productForm.removeControl(key);
+  // Remove only size-related controls that aren't needed anymore
+  const sizeControls = ['height', 'chest', 'waist', 'bust', 'hips', 'neck', 'inSeam'];
+  sizeControls.forEach(control => {
+    if (this.productForm.contains(control) && !newControls.includes(control)) {
+      this.productForm.removeControl(control);
+      delete this.sizeGuideInputs[control];
     }
   });
 
-  // Reset sizeGuideInputs
-  this.sizeGuideInputs = {};
-
-  // Add new controls and bind changes
+  // Add new controls if they don't exist
   newControls.forEach(control => {
-    this.productForm.addControl(control, this.fb.control(null));
+    if (!this.productForm.contains(control)) {
+      this.productForm.addControl(control, this.fb.control(null));
+    }
 
+    // Update the sizeGuideInputs object when values change
     this.productForm.get(control)?.valueChanges.subscribe(val => {
       this.sizeGuideInputs[control] = val;
-
-      switch (this.selectedGender) {
-        case 'WOMEN':
-          this.checkWomenSize();
-          break;
-        case 'MEN':
-          if (this.selectedCategory === 'TOP' || this.selectedCategory === 'JACKET') {
-            this.checkMenTopSize();
-          } else if (this.selectedCategory === 'PANTS') {
-            this.checkMenButtomSize();
-          }
-          break;
-        case 'KIDS':
-          this.checkKidsSize();
-          break;
-      }
+      this.calculateSize();
     });
   });
 }
 
+// New helper method to handle size calculation
+calculateSize() {
+  if (!this.selectedGender) return;
 
-//upload file related
-  onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
+  switch (this.selectedGender) {
+    case 'WOMEN':
+      this.checkWomenSize();
+      break;
+    case 'MEN':
+      if (this.selectedCategory === 'TOP' || this.selectedCategory === 'JACKET') {
+        this.checkMenTopSize();
+      } else if (this.selectedCategory === 'PANTS') {
+        this.checkMenButtomSize();
+      }
+      break;
+    case 'KIDS':
+      this.checkKidsSize();
+      break;
   }
+}
+//upload file related:updated
+onFileSelected(event: any): void {
+  this.selectedFile = event.target.files[0];
+  this.aiProcessing = true;
+  
+  const formData = new FormData();
+  if (this.selectedFile) {
+    formData.append('file', this.selectedFile);
+  }
+  
+  this.http.post<{predictions: Array<{label: string, score: number}>}>(
+    'http://localhost:5000/predict-category',
+    formData
+  ).subscribe({
+    next: (response) => {
+      this.predictedCategory = this.mapToCategory(response.predictions[0].label);
+      this.productForm.patchValue({
+        categoryProduct: this.predictedCategory
+      });
+    },
+    error: (err) => console.error('AI error:', err),
+    complete: () => this.aiProcessing = false
+  });
+}
+
+private mapToCategory(aiLabel: string): string {
+  aiLabel = aiLabel.toLowerCase();
+  if (aiLabel.includes('jean') || aiLabel.includes('denim') || aiLabel.includes('pants')) {
+    return 'PANTS';
+  }
+  if (aiLabel.includes('dress') || aiLabel.includes('gown')){ return 'DRESS';}
+  if (aiLabel.includes('shirt') || aiLabel.includes('t-shirt') || aiLabel.includes('top')|| aiLabel.includes('poncho')) return 'TOP';
+  if (aiLabel.includes('jacket') || aiLabel.includes('coat')|| aiLabel.includes('cardigan')|| aiLabel.includes('suit')) return 'JACKET';
+  if (aiLabel.includes('skirt')) return 'SKIRT';
+  if (aiLabel.includes('bag')) return 'BAG';
+  if (aiLabel.includes('shoe') || aiLabel.includes('sneaker')) return 'SHOES';
+  return 'ACCESSORIES'; 
+}
+
+//newly added
+toggleCategoryOverride(): void {
+  this.showCategoryOverride = !this.showCategoryOverride;
+  if (this.showCategoryOverride) {
+    this.productForm.get('categoryProduct')?.enable();
+  }
+}
+
 
   ngOnInit(): void {
     this.productId = +this.route.snapshot.params['productId'];
@@ -278,61 +336,50 @@ updateSizeGuideInputs() {
         }
       });
     }
+    setTimeout(() => {
+      this.updateSizeGuideInputs();
+    });
+  
+    // Watch for form changes
+    this.productForm.valueChanges.subscribe(() => {
+      this.updateSizeGuideInputs();
+    });
   }
 
-  onSubmit(): void {
-    if (this.productForm.invalid) return;
-    
-    this.loading = true;
-    const productData = this.productForm.value;
-    
-    // If there's an image, upload it first
-    if (this.selectedFile) {
+    onSubmit(): void {
+      if (this.productForm.invalid) return;
+      
+      this.loading = true;
+      const formValues = this.productForm.value;
     
       const formData = new FormData();
-      formData.append('file', this.selectedFile);
-
-      this.http.post<{ fileName: string }>('http://localhost:8089/BarkachniPI/marketplace/upload-image', formData)
-        .subscribe({
-          next: (response) => {
-            // Assuming response.fileName returns the uploaded file's name (e.g., "product1.jpg")
-            const product: Product = {
-              ...productData,
-              productImageURL: 'http://localhost:8089/BarkachniPI/uploads/' + response.fileName 
-            };
-
-            // Now, submit the product to the backend
-            this.productService.addProduct(product).subscribe({
-              next: () => this.router.navigate(['/products']),
-              error: (err) => {
-                this.error = 'Failed to create product.';
-                this.loading = false;
-                console.error(err);
-              }
-            });
-          },
-          error: (err) => {
-            console.error('Image upload error', err);  // Log the error details
-            this.error = 'Image upload failed.';
-            this.loading = false;
-          }
-        });
-
-    } else {
-      // No image selected, create product without image
-      const product: Product = {
-        ...productData,
-        productImageURL: '' // You can set a default image if necessary
-      };
+      // Append all form values
+      formData.append('nameProduct', formValues.nameProduct);
+      formData.append('categoryProduct', formValues.categoryProduct);
+      formData.append('genderProduct', formValues.genderProduct);
+      formData.append('productSize', formValues.productSize);
+      formData.append('productSeller', formValues.productSeller?.idUser || ''); 
+      formData.append('dateProductAdded', new Date().toISOString()); 
+      formData.append('productDescription', formValues.productDescription);
+      formData.append('productPrice', formValues.productPrice.toString());
+      formData.append('productState', formValues.productState || 'AVAILABLE');
       
-      this.productService.addProduct(product).subscribe({
-        next: () => this.router.navigate(['/products']),
-        error: (err) => {
-          this.error = 'Failed to create product.';
+      if (this.selectedFile) {
+        formData.append('file', this.selectedFile);
+      }
+    
+      this.productService.uploadWithAutoTag(
+        formData
+      ).subscribe({
+        next: () => {
+          this.router.navigate(['/products']);
           this.loading = false;
-          console.error(err);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.error = err.message || 'Failed to create product';
+          console.error('Upload error:', err);
         }
       });
     }
-  }
 }

@@ -1,4 +1,3 @@
-
 <div class="container product-form-container">
   <h2 class="form-title">{{ isEditMode ? 'Edit' : 'Add' }} Product</h2>
 
@@ -11,6 +10,7 @@
   </div>
 
   <form [formGroup]="productForm" (ngSubmit)="onSubmit()" *ngIf="!loading" novalidate>
+    <!-- Product Name -->
     <div class="form-group">
       <label for="nameProduct">Product Name</label>
       <input type="text" id="nameProduct" class="form-control rounded-input" formControlName="nameProduct" />
@@ -19,97 +19,80 @@
       </small>
     </div>
 
+      <!-- Image Upload -->
+      <div class="form-group">
+        <label>Product Image</label>
+        <input type="file" class="form-control-file" (change)="onFileSelected($event)" id="imageUpload" accept="image/*" />
+        <small class="text-muted">Upload to auto-detect category</small>
+        
+        <div *ngIf="selectedFile && !aiProcessing" class="alert alert-info mt-2">
+          <i class="fas fa-robot me-2"></i>
+          Category will be auto-detected from this image.
+        </div>
+        <div *ngIf="aiProcessing" class="alert alert-warning mt-2">
+          <i class="fas fa-cog fa-spin me-2"></i>
+          Analyzing image...
+        </div>
+      </div>
+
+    <!-- Category Field -->
     <div class="form-group">
       <label for="categoryProduct">Product Category</label>
-      <select id="categoryProduct" class="form-control rounded-input" formControlName="categoryProduct" (change)="onCategoryChange()" >
-        <option *ngFor="let category of allCategories" [value]="category">{{ category }}</option>
-     
-      </select>    
+      <div *ngIf="!selectedFile || showCategoryOverride">
+        <select id="categoryProduct" class="form-control rounded-input" formControlName="categoryProduct" (change)="onCategoryChange(); updateSizeGuideInputs()">
+          <option *ngFor="let category of allCategories" [value]="category">{{ category }}</option>
+        </select>
+      </div>
+      <div *ngIf="selectedFile && !showCategoryOverride" class="alert alert-info py-2">
+        <i class="fas fa-robot me-2"></i>
+        Category will be: <strong>{{ predictedCategory || 'Auto-detected' }}</strong>
+        <button type="button" class="btn btn-sm btn-outline-secondary ms-2" (click)="toggleCategoryOverride()">
+          Change
+        </button>
+      </div>
     </div>
+  <!-- Description -->
+  <div class="form-group">
+    <label for="productDescription">Description</label>
+    <textarea id="productDescription" class="form-control rounded-input" formControlName="productDescription" rows="3"></textarea>
+  </div>
+    <!-- Gender -->
     <div class="form-group">
       <label for="genderProduct">Product For:</label>
-      <select id="genderProduct" class="form-control rounded-input" formControlName="genderProduct" (change)="onGenderChange()">
+      <select id="genderProduct" class="form-control rounded-input" formControlName="genderProduct" (change)="onGenderChange(); updateSizeGuideInputs()">
         <option *ngFor="let gender of productGenders" [value]="gender">{{ gender }}</option>
       </select>    
     </div>
 
+    <!-- Size -->
     <div class="form-group">
       <label for="productSize">Product Size:</label>
       <select id="productSize" class="form-control rounded-input" formControlName="productSize">
         <option *ngFor="let size of filteredSizes" [value]="size">{{ size }}</option>
       </select>
-  
     </div>
-<button class="btn btn-link p-0 mt-2" (click)="toggleSizeGuide()">Need help figuring out the product's size?</button>
 
-<!-- Sidebar -->
-<div [class.active]="showSizeGuide" class="size-guide-sidebar">
-  <button class="close-btn" (click)="toggleSizeGuide()">×</button>
-  <h3>Size Guide</h3>
+    <!-- Size Guide -->
+    <button class="btn btn-link p-0 mt-2" (click)="toggleSizeGuide()">Need help figuring out the product's size?</button>
+    <div [class.active]="showSizeGuide" class="size-guide-sidebar">
+      <!-- ... existing size guide content ... -->
+    </div>
 
-  <!-- Dynamic Inputs for Size Guide -->
-  <div *ngIf="selectedGender === 'KIDS'" class="input-group">
-    <label>Height:</label>
-    <input type="number" formControlName="height">
-    <label>Chest:</label>
-    <input type="number" formControlName="chest">
-    <label>Waist:</label>
-    <input type="number" formControlName="waist">
-  </div>
-
-  <div *ngIf="selectedGender === 'WOMEN'" class="input-group">
-    <label>Bust:</label>
-    <input type="number" formControlName="bust">
-    <label>Waist:</label>
-    <input type="number" formControlName="waist">
-    <label>Hips:</label>
-    <input type="number" formControlName="hips">
-  </div>
-
-  <div *ngIf="selectedGender === 'MEN' && (selectedCategory === 'TOP' || selectedCategory === 'JACKET') " class="input-group">
-    <label>Neck:</label>
-    <input type="number" formControlName="neck">
-    <label>Chest:</label>
-    <input type="number" formControlName="chest">
-    <label>Waist:</label>
-    <input type="number" formControlName="waist">
-  </div>
-
-  <div *ngIf="selectedGender === 'MEN' && selectedCategory === 'PANTS'" class="input-group">
-    <label>In Seam:</label>
-    <input type="number" formControlName="inSeam">
-    <label>Waist:</label>
-    <input type="number" formControlName="waist">
-  </div>
-
-  <p *ngIf="sizeMessage" class="size-message">{{ sizeMessage }}</p>
-</div>
-
-<!-- End of Sidebar -->
-
-
-    <div class="mb-3">
-      <label for="productSeller" class="form-label">Seller</label>
-      <select formControlName="productSeller" class="form-control rounded-input" >
+    <!-- Seller -->
+    <div class="form-group">
+      <label for="productSeller">Seller</label>
+      <select id="productSeller" class="form-control rounded-input" formControlName="productSeller">
         <option *ngFor="let user of users" [ngValue]="user">{{ user.idUser }}</option>
       </select>
     </div>
 
+    <!-- Date -->
     <div class="form-group">
-      <label for="dateProductAdded">Date</label>
+      <label for="dateProductAdded">Date Added</label>
       <input type="datetime-local" id="dateProductAdded" class="form-control rounded-input" formControlName="dateProductAdded" />
     </div>
 
-    <div class="form-group">
-      <label for="productDescription">Description</label>
-      <input type="text" id="productDescription" class="form-control rounded-input" formControlName="productDescription" />
-    </div>
-
-    <div class="form-group">
-      <label>Product Image</label>
-      <input type="file" class="form-control-file" (change)="onFileSelected($event)" id="imageUpload" />
-    </div>
-
+    <!-- Price -->
     <div class="form-group">
       <label for="productPrice">Price</label>
       <input type="number" id="productPrice" class="form-control rounded-input" formControlName="productPrice" />
@@ -118,25 +101,20 @@
       </small>
     </div>
 
+    <!-- State -->
     <div class="form-group">
       <label for="productState">State</label>
       <select id="productState" class="form-control rounded-input" formControlName="productState">
         <option value="AVAILABLE">Available</option>
-        <option value="UPCOMING">Upcoming</option>
       </select>
     </div>
 
+    <!-- Submit Button -->
     <div class="form-buttons">
-      <button type="submit" class="btn btn-primary rounded-button" [disabled]="productForm.invalid">
+      <button type="submit" class="btn btn-primary rounded-button" [disabled]="productForm.invalid || aiProcessing">
         {{ isEditMode ? 'Update' : 'Create' }}
       </button>
       <a routerLink="/products" class="btn btn-secondary rounded-button ms-2">Cancel</a>
     </div>
   </form>
 </div>
-
-      
-  
-    
-
-     

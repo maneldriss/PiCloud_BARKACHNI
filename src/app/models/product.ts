@@ -17,4 +17,5 @@ export interface Product {
   reservedBy?: User | null;
   reservationExpiry?: string | null;
 
+
 }

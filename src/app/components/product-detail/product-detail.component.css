@@ -105,3 +105,97 @@
     text-align: center; /* Center the text */
   }
   
+   /* Rectangular Button Styles */
+.btn-green-rect {
+  background-color: #74ec88;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+  margin: 0 8px; /* Added horizontal margin */
+}
+
+.btn-red-rect {
+  background-color: #e3323d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+  margin: 0 8px; /* Added horizontal margin */
+}
+
+.btn-pink2-rect {
+  background-color: #00A79D;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+  margin: 0 8px; /* Added horizontal margin */
+}
+
+/* Hover Effects */
+.btn-green-rect:hover {
+  background-color: #5fd576;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.btn-red-rect:hover {
+  background-color: #c91e2a;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.btn-pink2-rect:hover {
+  background-color: #6cb8e0;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Recommended Products Styling */
+.recommended-card {
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.recommended-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.recommended-image {
+  height: 200px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .recommended-card {
+    margin-bottom: 20px;
+  }
+  
+  .recommended-image {
+    height: 150px;
+  }
+}

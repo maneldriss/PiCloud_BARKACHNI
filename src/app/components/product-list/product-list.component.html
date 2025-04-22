@@ -1,10 +1,14 @@
-<div class="mb-4 text-end w-100">
-  <a routerLink="/products/add" class="btn btn-pink">Add New Product</a>
-  <a routerLink="/products/reserved" class="btn btn-pink">View My Reserved Products</a>
-</div>
-
 <div class="container mt-4">
   <h2 class="text-center mb-4"><strong>Products</strong></h2>
+
+  <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+    <div class="d-flex gap-3">
+      <a routerLink="/products/add" class="btn btn-pink-rect">Add New Product</a>
+      <a routerLink="/products/reserved" class="btn btn-pink-rect">View Reserved</a>
+   
+    <button class="btn btn-pink-rect" (click)="toggleSidebar()">Toggle Filters</button>
+  </div>
+</div>
 
   <div *ngIf="loading" class="text-center">
     <p>Loading products...</p>
@@ -13,10 +17,6 @@
   <div *ngIf="error" class="alert alert-danger">
     {{ error }}
   </div>
-<!-- 🔘 Sidebar Toggle Button -->
-<div class="text-center mb-4 w-100">
-  <button class="btn btn-pink" (click)="toggleSidebar()">Toggle Filters</button>
-</div>
 
 <!-- 🧭 Sidebar with Filters -->
 <div class="sidebar bg-light p-4 shadow" [class.active]="showSidebar">
@@ -75,11 +75,10 @@
     placeholder="Max Price"
   />
 </div>
-
-  <div class="row justify-content-center">
-    <div *ngFor="let product of filteredProducts" class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
-      <div  class="card product-card m-2 p-3" style="width: 100%; max-width: 270px;"  >
-      <img [src]="product.productImageURL" alt="Product Image" class="card-img-top clickable-image" [routerLink]="['/products/view', product.productId]" />
+<div class="row justify-content-center">
+  <div *ngFor="let product of paginatedProducts" class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+    <div class="card product-card m-2 p-3" style="width: 100%; max-width: 350px;">  <!-- Changed from 270px to 320px -->
+      <img [src]="product.productImageURL" alt="Product Image" class="card-img-top clickable-image" (click)="onProductClick(product)" [routerLink]="['/products/view', product.productId]" />
       <div class="card-body text-center">
         <h4 class="card-title"><strong>{{ product.nameProduct | uppercase }}</strong> </h4>
         <p class="card-text"><strong>For:</strong> {{ product.genderProduct }}</p>
@@ -89,68 +88,44 @@
         <p *ngIf="product.reserved">This product is reserved</p>
 
         <div class="d-flex flex-column align-items-center gap-2 mt-2">
-          <!-- First row -->
-          <div class="d-flex justify-content-center gap-2">
-            <a [routerLink]="['/products/edit', product.productId]" class="btn btn-green">Edit</a>
-            <button (click)="deleteProduct(product.productId)" class="btn btn-red">Delete</button>
-          </div>
-          <!-- Second row -->
-          <div class="d-flex justify-content-center gap-2">
-            <button *ngIf="!product.reserved" class="btn btn-pink2">Purchase</button>
-            <button *ngIf="!product.reserved" (click)="reserveProduct(product.productId!)" class="btn btn-pink2">Reserve</button>
+          <div class="d-flex justify-content-center gap-3">
+            <button *ngIf="!product.reserved" class="btn btn-pink2-rect">Purchase</button>
+            <button *ngIf="!product.reserved" (click)="reserveProduct(product.productId!)" class="btn btn-pink2-rect">Reserve</button>
           </div>
         </div>        
       </div>
     </div>
   </div>
 </div>
-
-  <div *ngIf="products.length === 0" class="alert alert-info text-center mt-4">
-    No products found. Add a new product to get started.
-  </div>
+<!-- Add this after your product cards but before the "No products found" message -->
+<div *ngIf="filteredProducts.length > 0" class="d-flex justify-content-center mt-4">
+  <nav aria-label="Product pagination">
+    <ul class="pagination">
+      <li class="page-item" [class.disabled]="currentPage === 0">
+        <a class="page-link" (click)="previousPage()" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      
+      <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
+        <a class="page-link" (click)="goToPage(page)">{{page + 1}}</a>
+      </li>
+      
+      <li class="page-item" [class.disabled]="currentPage === getTotalPages() - 1">
+        <a class="page-link" (click)="nextPage()" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 </div>
 
-    <!--AFFICHAGE EN MODE TABLEAU CAN BE USED F DASHBOARD-->
-    <!--<div *ngIf="!loading && !error">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name Product</th>
-            <th>Product Category</th>
-            <th>User Name </th>
-            <th>Date Added</th>
-            <th>Product Image </th>
-            <th>Product Description</th>
-            <th>Product Price</th>
-            <th>Product State</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let product of products">
-            <td>{{ product.productId }}</td>
-            <td>{{ product.nameProduct }}</td>
-            <td>{{ product.categoryProduct }}</td>
-            <td>{{ product.productSeller?.nameUser }}</td>
-            <td>{{ product.dateProductAdded }}</td>
-            <td>{{ product.productImageURL }}</td>
-            <td>{{ product.productDescription }}</td>
-            <td>{{ product.productPrice }}</td>
-            <td>{{ product.productState }}</td>
-            <td>
-              <a [routerLink]="['/products', product.productId]" class="btn btn-info btn-sm me-2">View</a>
-              <a [routerLink]="['/products/edit', product.productId]" class="btn btn-warning btn-sm me-2">Edit</a>
-              <button (click)="deleteProduct(product.productId)" class="btn btn-danger btn-sm">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <div *ngIf="products.length === 0" class="alert alert-info">
-        No products found. Add a new product to get started.
-      </div>
-    </div>
-  </div>-->
+<div *ngIf="filteredProducts.length === 0 && !loading" class="alert alert-info text-center mt-4">
+  No products found. Add a new product to get started.
+</div>
+  
+</div>
+
   
   
   

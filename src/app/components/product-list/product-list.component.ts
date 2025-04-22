@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from '../../models/product';
 import { ProductService } from '../../productService/product.service';
+import { RecommendationService } from '../../recommendationService/recommendation.service';
+
 
 @Component({
   selector: 'app-product-list',
@@ -28,10 +30,11 @@ export class ProductListComponent implements OnInit {
   error = '';
 
   // Pagination variables
-  pageSize = 5;
-  currentPage = 0;
+  pageSize = 8; 
+  currentPage = 0; 
+  maxVisiblePages = 5; 
 
-  constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService, private recommendationService: RecommendationService) { }
 
   ngOnInit(): void {
     this.loadProducts();
@@ -91,28 +94,9 @@ export class ProductListComponent implements OnInit {
 
     return categoryMatches && searchTermMatches && priceMatches && sizeMatches;
   });
+  this.currentPage = 0;
+    this.updatePaginatedProducts();
   }
-
-
-  
-deleteProduct(id: number | undefined): void {
-  if (!id) {
-    this.error = 'Cannot delete product with undefined ID.';
-    return;
-  }
-  
-  if (confirm('Are you sure you want to delete this product?')) {
-    this.productService.deleteProduct(id).subscribe({
-      next: () => {
-        this.loadProducts();
-      },
-      error: (err) => {
-        this.error = 'Failed to delete product. Please try again later.';
-        console.error(err);
-      }
-    });
-  }
-}
 
 //reservation purposes
 reserveProduct(id: number) {
@@ -126,5 +110,74 @@ reserveProduct(id: number) {
   
 }
 
+//recommendation purposes
+onProductClick(product: any) {
+  this.recommendationService.addViewedProduct({
+    id: product.productId,
+    genderProduct: product.genderProduct,
+    categoryProduct: product.categoryProduct
+  });
 
+  console.log('Product clicked:', product);
+
+}
+
+  // Pagination methods
+  getTotalPages(): number {
+    return Math.ceil(this.filteredProducts.length / this.pageSize);
+  }
+
+  updatePaginatedProducts(): void {
+    const startIndex = this.currentPage * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedProducts = this.filteredProducts.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.getTotalPages()) {
+      this.currentPage = page;
+      this.updatePaginatedProducts();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.getTotalPages() - 1) {
+      this.currentPage++;
+      this.updatePaginatedProducts();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.updatePaginatedProducts();
+    }
+  }
+
+  getPages(): number[] {
+    const totalPages = this.getTotalPages();
+    const pages: number[] = [];
+    
+    // Always show first page
+    if (totalPages > 0) pages.push(0);
+    
+    // Calculate range around current page
+    let start = Math.max(1, this.currentPage - Math.floor(this.maxVisiblePages / 2));
+    let end = Math.min(totalPages - 1, start + this.maxVisiblePages - 1);
+    
+    // Adjust if we're at the end
+    start = Math.max(1, end - this.maxVisiblePages + 1);
+    
+    // Add pages in range
+    for (let i = start; i <= end; i++) {
+      if (i > 0 && i < totalPages - 1) {
+        pages.push(i);
+      }
+    }
+    
+    // Always show last page if there's more than one page
+    if (totalPages > 1) pages.push(totalPages - 1);
+    
+    return pages;
+  }
 }

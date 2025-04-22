@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { Product } from '../models/product';
 
 @Injectable({
@@ -36,7 +36,7 @@ export class ProductService {
   findProductByName(name: string): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/find-by-name/${name}`);
   }
-
+//reservation purposes
   reserveProduct(productId: number): Observable<any> {
     const staticUserId = 1; // replace with your test user ID
     return this.http.post(`${this.apiUrl}/products/${productId}/reserve`, null, {
@@ -52,5 +52,30 @@ export class ProductService {
   unreserveProduct(productId: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/unreserve-product/${productId}`);
   }
+//recommendation purposes
+recommendProducts(gender: string, category: string, productId: number): Observable<Product[]> {
+  return this.http.get<Product[]>(`${this.apiUrl}/recommend`, {
+    params: {
+      genderProduct: gender,
+      categoryProduct: category,
+      productId: productId.toString()
+    }
+  });
+}
+
+//fazet category
+uploadWithAutoTag(formData: FormData): Observable<Product> {
+  return this.http.post<Product>(
+    `${this.apiUrl}/upload-with-autotag`,
+    formData
+  ).pipe(
+    catchError(error => {
+      if (error.status === 502) {
+        throw new Error('AI service is currently unavailable. Please try again later.');
+      }
+      throw error;
+    })
+  );
+}
 
 }
