@@ -19,6 +19,7 @@ public class ProductService  implements IProductService{
     ProductRepository productRepository;
     @Autowired
     UserRepository userRepository;
+
     @Override
     public List<Product> retrieveAllProducts() {
         return productRepository.findAll();    }
@@ -83,5 +84,7 @@ public class ProductService  implements IProductService{
         }
         return false;  // Product not found or not reserved
     }
+
+
 
 }

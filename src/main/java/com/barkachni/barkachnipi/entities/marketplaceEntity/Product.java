@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +25,8 @@ public class Product {
     private CategoryProduct categoryProduct;
     @Enumerated(EnumType.STRING)
     private GenderProduct genderProduct;
+
+
     @ManyToOne(cascade = CascadeType.MERGE)
     private User productSeller;
     private Date dateProductAdded;
@@ -34,6 +37,7 @@ public class Product {
     private ProductState productState;
     @Enumerated(EnumType.STRING)
     private ProductSize productSize;
+
 
     //for reservation purposes
     private boolean reserved = false;

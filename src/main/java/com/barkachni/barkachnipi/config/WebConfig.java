@@ -9,6 +9,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:D:/ESPRIT/4Arctic/PICloud PhaseDev/BarkachniPI/uploads/");
+                .addResourceLocations("file:D:/ESPRIT/4Arctic/PICloud-PhaseDev/BarkachniPI/uploads/");
     }
 }

@@ -13,6 +13,7 @@ public class CORSConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Apply CORS to all endpoints
                         .allowedOrigins("http://localhost:4200") // Allow Angular frontend
+                        .allowedOrigins("http://localhost:5000") // Allow Angular frontend
                         .allowedMethods("GET", "POST", "PUT", "DELETE") // Allowed HTTP methods
                         .allowedHeaders("*"); // Allow all headers
             }
