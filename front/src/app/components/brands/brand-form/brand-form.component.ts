@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Brand } from '../../../models/brand';
 import { BrandService } from '../../../services/brand.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-brand-form',
@@ -27,7 +29,8 @@ export class BrandFormComponent implements OnInit {
     private fb: FormBuilder,
     private brandService: BrandService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private http: HttpClient
   ) {
     this.brandForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -181,6 +184,33 @@ export class BrandFormComponent implements OnInit {
       }
     });
   }
+  generateDescription() {
+    this.loading = true;
+    this.error = '';
+  
+    this.http.post<{description: string}>(
+      'http://localhost:8081/pilezelefons/brand/generate-description',
+      { keywords: this.nameControl?.value || '' }
+    ).subscribe({
+      next: (response) => {
+        if (response.description) {
+          this.brandForm.patchValue({ description: response.description });
+        } else {
+          this.error = 'Received empty description from server';
+        }
+      },
+      error: (err) => {
+        console.error('AI generation failed:', err);
+        this.error = err.error?.error || 
+                    err.error?.message || 
+                    'Failed to generate description. Please try again.';
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
+  }
+  
 
   get nameControl() { return this.brandForm.get('name'); }
   get emailControl() { return this.brandForm.get('email'); }
