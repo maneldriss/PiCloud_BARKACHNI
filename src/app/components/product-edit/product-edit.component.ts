@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { User } from '../models/user';
+import { User } from '../../models/user';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProductService } from '../productService/product.service';
-import { UserService } from '../userService/user.service';
-import { Product } from '../models/product';
+import { ProductService } from '../../productService/product.service';
+import { UserService } from '../../userService/user.service';
+import { Product } from '../../models/product';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -137,6 +137,11 @@ checkKidsSize() {
   ngOnInit(): void {
     this.productId = +this.route.snapshot.paramMap.get('id')!;
     this.loadProduct();
+    setTimeout(() => {
+      this.updateSizeGuideInputs();
+    });
+  
+    
   }
 
   onFileSelected(event: any): void {
@@ -146,13 +151,15 @@ checkKidsSize() {
   loadProduct(): void {
     this.productService.getProductById(this.productId).subscribe(product => {
       this.originalSeller = product.productSeller || {} as User; // Save original seller with fallback
-      
+      const originalDate = product.dateProductAdded ? 
+      new Date(product.dateProductAdded).toISOString().slice(0, 16) : 
+      new Date().toISOString().slice(0, 16);
       this.form = this.fb.group({
       nameProduct: [product.nameProduct, [Validators.required, Validators.pattern('^[A-Z].*')]],
       categoryProduct: [product.categoryProduct, Validators.required],
       genderProduct: [product.genderProduct, Validators.required],
       productSize: [product.productSize, Validators.required],
-      dateProductAdded: [product.dateProductAdded, Validators.required],
+      dateProductAdded: [{value: originalDate, disabled: true}],
       productImageURL: [product.productImageURL],
       productDescription: [product.productDescription, Validators.required],
       productPrice: [product.productPrice, [Validators.required, Validators.min(0.01), Validators.max(500)]],
@@ -184,6 +191,7 @@ onGenderChange() {
 //size sidebar related
 toggleSizeGuide() {
   this.showSizeGuide = !this.showSizeGuide;
+  console.log('Size guide toggled:', this.showSizeGuide);
 }
 onCategoryChange() {
   this.selectedCategory = this.form.get('categoryProduct')?.value;
@@ -196,98 +204,120 @@ ensureControlExists(name: string) {
   }
 }
 updateSizeGuideInputs() {
+  // Ensure form is initialized
+  if (!this.form) return;
+
+  // Get current values
   this.selectedGender = this.form.get('genderProduct')?.value;
   this.selectedCategory = this.form.get('categoryProduct')?.value;
+  
+  console.log('Updating size guide:', {
+    gender: this.selectedGender,
+    category: this.selectedCategory
+  });
 
+  // Determine which controls to show based on gender and category
   const newControls: string[] = [];
 
-  // Determine which controls to add
-  switch (this.selectedGender) {
-    case 'KIDS':
-      newControls.push('height', 'chest', 'waist');
-      break;
-    case 'WOMEN':
-      newControls.push('bust', 'waist', 'hips');
-      break;
-    case 'MEN':
-      if (this.selectedCategory === 'TOP' || this.selectedCategory === 'JACKET') {
-        newControls.push('neck', 'chest', 'waist');
-      } else if (this.selectedCategory === 'PANTS') {
-        newControls.push('inSeam', 'waist');
-      }
-      break;
+  if (this.selectedGender === 'KIDS') {
+    newControls.push('height', 'chest', 'waist');
+  } else if (this.selectedGender === 'WOMEN') {
+    newControls.push('bust', 'waist', 'hips');
+  } else if (this.selectedGender === 'MEN') {
+    if (this.selectedCategory === 'TOP' || this.selectedCategory === 'JACKET') {
+      newControls.push('neck', 'chest', 'waist');
+    } else if (this.selectedCategory === 'PANTS') {
+      newControls.push('inSeam', 'waist');
+    }
   }
 
-  // Remove existing size guide controls
-  Object.keys(this.sizeGuideInputs).forEach(key => {
-    if (this.form.contains(key)) {
-      this.form.removeControl(key);
+  // Remove only size-related controls that aren't needed anymore
+  const sizeControls = ['height', 'chest', 'waist', 'bust', 'hips', 'neck', 'inSeam'];
+  sizeControls.forEach(control => {
+    if (this.form.contains(control) && !newControls.includes(control)) {
+      this.form.removeControl(control);
+      delete this.sizeGuideInputs[control];
     }
   });
 
-  // Reset sizeGuideInputs
-  this.sizeGuideInputs = {};
-
-  // Add new controls and bind changes
+  // Add new controls if they don't exist
   newControls.forEach(control => {
-    this.form.addControl(control, this.fb.control(null));
+    if (!this.form.contains(control)) {
+      this.form.addControl(control, this.fb.control(null));
+    }
 
+    // Update the sizeGuideInputs object when values change
     this.form.get(control)?.valueChanges.subscribe(val => {
       this.sizeGuideInputs[control] = val;
-
-      switch (this.selectedGender) {
-        case 'WOMEN':
-          this.checkWomenSize();
-          break;
-        case 'MEN':
-          if (this.selectedCategory === 'TOP' || this.selectedCategory === 'JACKET') {
-            this.checkMenTopSize();
-          } else if (this.selectedCategory === 'PANTS') {
-            this.checkMenButtomSize();
-          }
-          break;
-        case 'KIDS':
-          this.checkKidsSize();
-          break;
-      }
+      this.calculateSize();
     });
   });
 }
-  onSubmit(): void {
-    if (this.form.valid) {
-      const updatedProduct: Product = {
-        ...this.form.value,
-        productSeller: this.originalSeller // Reuse original seller
-      };
 
-      if (this.selectedFile) {
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
+// New helper method to handle size calculation
+calculateSize() {
+  if (!this.selectedGender) return;
 
-        this.http.post<{ fileName: string }>('http://localhost:8089/BarkachniPI/marketplace/upload-image', formData)
-          .subscribe({
-            next: (response) => {
-              updatedProduct.productImageURL = 'http://localhost:8089/BarkachniPI/uploads/' + response.fileName;
-
-              // Now call the update method with the new image
-              this.productService.updateProduct(updatedProduct, this.productId).subscribe(() => {
-                this.router.navigate(['/products']);
-              });
-            },
-            error: (err) => {
-              console.error('Image upload failed', err);
-              this.error = 'Image upload failed.';
-            }
-          });
-      } else {
-        // No image change, just update the product
-        this.productService.updateProduct(updatedProduct, this.productId).subscribe(() => {
-          this.router.navigate(['/products']);
-        });
+  switch (this.selectedGender) {
+    case 'WOMEN':
+      this.checkWomenSize();
+      break;
+    case 'MEN':
+      if (this.selectedCategory === 'TOP' || this.selectedCategory === 'JACKET') {
+        this.checkMenTopSize();
+      } else if (this.selectedCategory === 'PANTS') {
+        this.checkMenButtomSize();
       }
-    }
+      break;
+    case 'KIDS':
+      this.checkKidsSize();
+      break;
   }
+}
 
+onSubmit(): void {
+  if (this.form.valid) {
+    this.loading = true;
+    this.error = '';
+
+    const formValue = {
+      ...this.form.value,
+      dateProductAdded: this.form.get('dateProductAdded')?.value
+    };
+    // Prepare form data for multipart request
+    const formData = new FormData();
+    
+    // Append the file if selected
+    if (this.selectedFile) {
+      formData.append('file', this.selectedFile);
+    }
+
+    // Append all product fields
+    formData.append('nameProduct', this.form.value.nameProduct);
+    formData.append('genderProduct', this.form.value.genderProduct);
+    formData.append('productPrice', this.form.value.productPrice.toString());
+    formData.append('productDescription', this.form.value.productDescription);
+    formData.append('dateProductAdded', formValue.dateProductAdded);
+    formData.append('productSize', this.form.value.productSize);
+    formData.append('productSeller', this.originalSeller?.idUser ? this.originalSeller.idUser.toString() : '');
+    formData.append('productState', this.form.value.productState);
+    formData.append('categoryProduct', this.form.value.categoryProduct);
+
+    // Call the unified update endpoint
+    this.productService.updateProductWithImage(this.productId, formData).subscribe({
+      next: () => {
+        this.router.navigate(['/products']);
+       
+        
+      },
+      error: (err) => {
+        console.error('Update failed', err);
+        this.error = 'Update failed. Please try again.';
+        this.loading = false;
+      }
+    });
+  }
+}
   onCancel(): void {
     this.router.navigate(['/products']);
   }

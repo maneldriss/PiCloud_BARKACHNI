@@ -78,4 +78,14 @@ uploadWithAutoTag(formData: FormData): Observable<Product> {
   );
 }
 
+updateProductWithImage(productId: number, formData: FormData): Observable<Product> {
+  return this.http.post<Product>(
+    `${this.apiUrl}/update-with-autotag/${productId}`,
+    formData
+  );
+}
+
+retrieveProductsBySellerId(idUser: number): Observable<Product[]> {
+  return this.http.get<Product[]>(`${this.apiUrl}/retrieve-by-seller/${idUser}`);
+}
 }

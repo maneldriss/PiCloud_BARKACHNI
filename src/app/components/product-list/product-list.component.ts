@@ -12,7 +12,7 @@ import { RecommendationService } from '../../recommendationService/recommendatio
 export class ProductListComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
-  paginatedProducts: Product[] = [];
+  
   showSidebar: boolean = false;
 
 
@@ -33,6 +33,7 @@ export class ProductListComponent implements OnInit {
   pageSize = 8; 
   currentPage = 0; 
   maxVisiblePages = 5; 
+  paginatedProducts: Product[] = [];
 
   constructor(private productService: ProductService, private recommendationService: RecommendationService) { }
 

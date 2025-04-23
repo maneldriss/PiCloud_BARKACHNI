@@ -54,7 +54,7 @@
   
   /* Product Title */
   .product-name {
-    color: #ff69b4;
+    color: #00A79D;
     font-weight: bold;
     font-size: 2rem;
   }
@@ -101,7 +101,7 @@
   
   .product-location-header {
     font-weight: bold; /* Make text bold */
-    color: #ff69b4;; /* Set text color to pink */
+    color: #00A79D; /* Set text color to pink */
     text-align: center; /* Center the text */
   }
   

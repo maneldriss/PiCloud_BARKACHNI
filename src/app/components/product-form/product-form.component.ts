@@ -150,7 +150,7 @@ checkKidsSize() {
       productImageURL: [''],
       productDescription: [''],
       productPrice: [0, [Validators.required, Validators.min(0.01), Validators.max(500)]],
-      productState: [Validators.required],
+      productState: [{value: 'AVAILABLE', disabled: true}],
       height: [''],
       chest: [''],
       waist: [''],

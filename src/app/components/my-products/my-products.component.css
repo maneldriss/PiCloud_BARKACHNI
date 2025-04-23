@@ -46,16 +46,9 @@
     border-color: #ff69b4; 
   }
   
-  .card-title {
+  .card-title, .card-text {
     font-size: 0.95rem;
     margin-bottom: 0.5rem;
-    color: #00A79D;
-  }
-  
-  .card-text {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-    
   }
   
   label {

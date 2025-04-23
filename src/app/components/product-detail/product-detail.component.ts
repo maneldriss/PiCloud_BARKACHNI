@@ -26,6 +26,8 @@ export class ProductDetailComponent {
   error = '';
   map: any;
   recommendedProducts: Product[] = [];
+  isCurrentUsersProduct: boolean = false;
+
   private apiUrl = 'http://localhost:8089/BarkachniPI/marketplace';
 
   constructor(
@@ -49,12 +51,15 @@ export class ProductDetailComponent {
       this.loading = false;
       return;
     }
-
+  
     this.productService.getProductById(id).subscribe({
       next: (data) => {
         this.product = data;
         this.loading = false;
-
+        
+        // Check if product belongs to user with ID 1 (for testing)
+        this.isCurrentUsersProduct = this.product.productSeller?.idUser === 2;
+  
         if (this.product.productSeller?.latitude && this.product.productSeller?.longitude) {
           setTimeout(() => {
             this.initMap(
@@ -63,8 +68,7 @@ export class ProductDetailComponent {
             );
           }, 0);
         }
-
-        // Now that product is loaded, fetch recommendations
+  
         this.loadRecommendations();
       },
       error: (err) => {

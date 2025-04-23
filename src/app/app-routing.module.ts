@@ -4,12 +4,13 @@ import { HomeComponent } from './components/home/home.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { ProductFormComponent } from './components/product-form/product-form.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
-import { ProductEditComponent } from './product-edit/product-edit.component';
+import { ProductEditComponent } from './components/product-edit/product-edit.component';
 import { MenShopComponent } from './components/men-shop/men-shop.component';
 import { WomenShopComponent } from './components/women-shop/women-shop.component';
 import { KidsShopsComponent } from './components/kids-shops/kids-shops.component';
 import { ReservedProductsComponent } from './components/reserved-products/reserved-products.component';
 import { DashboardComponent } from './shared/dashboard/dashboard.component';
+import { MyProductsComponent } from './components/my-products/my-products.component';
 
 
 const routes: Routes = [
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'products/view/:id', component: ProductDetailComponent },
   { path: 'products/reserved', component: ReservedProductsComponent },
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'products/myProducts', component: MyProductsComponent },
   { path: '**', redirectTo: '' }
 ];
 
