@@ -1,61 +1,70 @@
 <div class="container mt-4">
-  <div *ngIf="loading" class="text-center">
+    <div *ngIf="loading" class="text-center">
       <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
       <p class="mt-2">Loading donation details...</p>
-  </div>
-
-  <div *ngIf="error" class="alert alert-danger">
+    </div>
+  
+    <div *ngIf="error" class="alert alert-danger">
       <i class="fas fa-exclamation-circle me-2"></i>
       {{ error }}
-  </div>
-
-  <div *ngIf="donation && !loading">
+    </div>
+  
+    <div *ngIf="donation && !loading">
       <div class="card shadow-sm" style="max-width: 500px; margin: 0 auto;">
-          <div class="card-header bg-dark text-white py-2">
-              <h2 class="h6 mb-0">
-                  <i class="fas fa-donate me-2"></i>Donation Details
-              </h2>
+        <div class="card-header text-white py-2" style="background-color: #00a79d;">
+          <h2 class="h6 mb-0">
+            <i class="fas fa-donate me-2"></i>Donation Details
+          </h2>
+        </div>
+        
+        <div class="card-body p-3">
+          <!-- Type -->
+          <div class="mb-3">
+            <h6 class="text-muted mb-2">Type</h6>
+            <span class="badge" [ngClass]="{
+              'bg-success': donation.donationType === 'MONEY',
+              'bg-warning': donation.donationType === 'CLOTHING'
+            }">
+              {{ getDonationTypeDisplay(donation.donationType) }}
+            </span>
           </div>
-          
-          <div class="card-body p-3">
-              <!-- Type -->
-              <div class="mb-3">
-                  <h6 class="text-muted mb-2">Type</h6>
-                  <span class="badge bg-{{donation.donationType === 'MONEY' ? 'success' : 'warning'}} p-1">
-                      {{ donation.donationType }}
-                  </span>
-              </div>
-
-              <!-- Amount -->
-              <div class="mb-3" *ngIf="donation.donationType === 'MONEY'">
-                  <h6 class="text-muted mb-2">Amount</h6>
-                  <p class="fs-5 text-success fw-bold">
-                      {{ donation.amount | currency:'EUR':'symbol':'1.2-2' }}
-                  </p>
-              </div>
-
-              <!-- Item Details -->
-              <div class="mb-3">
-                  <h6 class="text-muted mb-2">Item Details</h6>
-                  <div *ngIf="donation.itemDressing; else noItem" class="p-2 bg-light rounded">
-                      <p class="mb-1 small"><strong>Name:</strong> {{ donation.itemDressing.itemName }}</p>
-                      <p class="mb-0 small"><strong>ID:</strong> {{ donation.itemDressing.itemID }}</p>
-                  </div>
-                  <ng-template #noItem>
-                      <p class="text-muted small">N/A</p>
-                  </ng-template>
-              </div>
+  
+          <!-- Amount -->
+          <div class="mb-3" *ngIf="donation.donationType === 'MONEY'">
+            <h6 class="text-muted mb-2">Amount</h6>
+            <p class="fs-5" style="color: #00a79d; font-weight: bold;">
+              {{ donation.amount }} DT
+            </p>
+          </div>
+  
+          <!-- Item Details -->
+          <div class="mb-3" *ngIf="donation.donationType === 'CLOTHING'">
+            <h6 class="text-muted mb-2">Item Details</h6>
+            <div *ngIf="donation.itemDressing" class="p-2 bg-light rounded">
+              <p class="mb-0"><strong>Description:</strong> {{ donation.itemDressing.description || 'N/A' }}</p>
             </div>
-            
-
-          <div class="card-footer bg-transparent border-top py-2">
-              <button (click)="goBack()" class="btn btn-outline-secondary btn-sm">
-                  <i class="fas fa-arrow-left me-1"></i>Back
-              </button>
-              
           </div>
+  
+          <!-- Donor Info -->
+          <div class="mb-3" *ngIf="donation.donor">
+            <h6 class="text-muted mb-2">Donor Information</h6>
+            <div class="p-2 bg-light rounded">
+              <p class="mb-0"><strong>Email:</strong> {{ donation.donor.email || 'N/A' }}</p>
+            </div>
+          </div>
+        </div>
+  
+        <div class="card-footer bg-transparent border-top py-2 d-flex justify-content-between">
+          <button (click)="goBack()" class="btn btn-sm" style="border-color: #00a79d; color: #00a79d;">
+            <i class="fas fa-arrow-left me-1"></i>Back
+          </button>
+          
+          <button [routerLink]="['/donations/edit', donation.donationId]" class="btn btn-sm" style="background-color: #00a79d; color: white;">
+            <i class="fas fa-edit me-1"></i>Edit
+          </button>
+        </div>
       </div>
+    </div>
   </div>
-</div>

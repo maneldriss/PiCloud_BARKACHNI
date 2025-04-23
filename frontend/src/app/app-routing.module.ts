@@ -17,22 +17,24 @@ const routes: Routes = [
       { path: 'donations/add', component: DonationFormComponent },
       { path: 'donations/edit/:id', component: DonationFormComponent },
       { path: 'donations/:id', component: DonationDetailComponent },
+      
     ]
   },
   {
     path: 'admin',
-    component: AdminDashboardComponent, // Utilisez Dashboard comme layout
+    component: AdminDashboardComponent, 
     children: [
       { path: 'dashboard', component: AdminDashboardComponent }
     ]
   },
   {
     path: 'leaderboard',
-    component: LeaderboardComponent, // Utilisez Dashboard comme layout
+    component: LeaderboardComponent, 
     children: [
       { path: 'lead', component: LeaderboardComponent }
     ]
   },
+ 
   { path: '**', redirectTo: '' } 
 ];
 

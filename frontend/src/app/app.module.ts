@@ -18,6 +18,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import  { MatPaginatorModule } from '@angular/material/paginator';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { MatTableModule } from '@angular/material/table';
+import { ChatbotComponent } from './components/chatbot/chatbot.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,6 +28,7 @@ import { MatTableModule } from '@angular/material/table';
     DonationDetailComponent,
     AdminDashboardComponent,
     LeaderboardComponent,
+    ChatbotComponent
   ],
   imports: [
     BrowserModule,

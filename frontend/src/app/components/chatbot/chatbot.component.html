@@ -1,0 +1,23 @@
+<button class="chat-toggle" (click)="toggleChat()">💬</button>
+
+<div *ngIf="chatVisible" class="chatbot-float">
+  <div class="chatbot-container">
+    <div class="chat-messages">
+      <div *ngFor="let message of messages"
+           [class.user-message]="message.isUser"
+           [class.bot-message]="!message.isUser">
+        {{ message.text }}
+      </div>
+      <div *ngIf="loading" class="loading-indicator">
+        Gemini réfléchit...
+      </div>
+    </div>
+
+    <div class="input-area">
+      <input [(ngModel)]="userInput"
+             (keyup.enter)="sendMessage()"
+             placeholder="Posez votre question..." />
+      <button (click)="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+</div>

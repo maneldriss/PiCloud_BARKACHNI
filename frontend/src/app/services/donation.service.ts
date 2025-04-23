@@ -36,9 +36,21 @@ export class DonationService {
       tap(d => console.log('Donations after mapping:', d)) // Debug
     );
   }
-  getDonationById(id: number): Observable<Donation> {
-    return this.http.get<Donation>(`${this.apiUrl}/retrieve-donation/${id}`).pipe(
-      map(this.parseDonation))
+  getDonationById(id: string | number): Observable<Donation> {
+    // Convertir en number si nécessaire
+    const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+    
+    if (isNaN(numericId)) {
+      return throwError(() => new Error('Invalid donation ID'));
+    }
+  
+    return this.http.get<Donation>(`${this.apiUrl}/retrieve-donation/${numericId}`).pipe(
+      map(this.parseDonation),
+      catchError(error => {
+        console.error('Error fetching donation:', error);
+        return throwError(() => new Error('Failed to load donation details'));
+      })
+    );
   }
 
 
@@ -79,12 +91,19 @@ export class DonationService {
   }
   
   // donation.service.ts
-deleteDonation(id: number): Observable<void> {
-  if (!id) {
-    return throwError(() => new Error('Invalid donation ID'));
+  deleteDonation(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/remove-donation/${id}`).pipe(
+      catchError(error => {
+        console.error('Delete error:', error);
+        let errorMsg = 'Failed to delete donation';
+        if (error.error?.message) {
+          errorMsg = error.error.message;
+        }
+        throw new Error(errorMsg);
+      })
+    );
   }
-  return this.http.delete<void>(`${this.apiUrl}/remove-donation/${id}`);
-}
+
 approveDonation(id: number): Observable<Donation> {
   if (!id) {
     return throwError(() => new Error("Invalid ID"));

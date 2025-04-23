@@ -1,51 +1,53 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { LeaderboardServiceService } from 'src/app/services/leaderboard-service.service';
+import { DonationService } from 'src/app/services/donation.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.component.html',
   styleUrls: ['./leaderboard.component.css'],
-  
 })
-export class LeaderboardComponent implements OnInit {
+export class LeaderboardComponent implements OnInit, OnDestroy {
   topDonors: any[] = [];
   currentPage = 0;
   pageSize = 10;
   totalElements = 0;
-  totalItems = 0;
-  displayedColumns: string[] = ['position', 'email', 'points', 'totalDonated', 'badge'];
-  currentDate: Date = new Date();
-  constructor(private leaderboardService: LeaderboardServiceService) {}
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private leaderboardService: LeaderboardServiceService,
+    private donationService: DonationService
+  ) {}
 
   ngOnInit(): void {
     this.loadLeaderboard();
+    
+    this.donationService.donationsUpdated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadLeaderboard();
+      });
   }
 
- // leaderboard.component.ts
- loadLeaderboard(): void {
-  this.leaderboardService.getTopDonors(this.currentPage, this.pageSize).subscribe({
-    next: (response) => {
-      console.log('Réponse complète:', response);
-      this.topDonors = response.content.map((item: any, index: number) => {
-        console.log('Donateur:', item); // Debug détaillé
-        return {
+  loadLeaderboard(): void {
+    this.leaderboardService.getTopDonors(this.currentPage, this.pageSize).subscribe({
+      next: (response) => {
+        this.topDonors = response.content.map((item: any, index: number) => ({
           email: item.email,
           points: item.points,
           totalDonated: item.totalDonated,
           position: (this.currentPage * this.pageSize) + index + 1,
-          isDonatorOfTheMonth: item.points >= 500 // Nouveau champ
+          isDonatorOfTheMonth: item.points >= 500
+        }));
+        this.totalElements = response.totalElements;
+      },
+      error: (err) => console.error('Erreur:', err)
+    });
+  }
 
-        };
-      });
-      this.totalElements = response.totalElements;
-    },
-    error: (err) => console.error('Erreur:', err)
-  });
-}
-
-  onPageChange(event: any): void {
-    this.currentPage = event.pageIndex;
-    this.pageSize = event.pageSize;
-    this.loadLeaderboard();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

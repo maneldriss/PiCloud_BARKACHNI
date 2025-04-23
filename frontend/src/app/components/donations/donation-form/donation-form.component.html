@@ -1,25 +1,25 @@
 <div class="container donation-form-container">
   <!-- Header with accent line -->
   <div class="mb-5">
-    <h2 class="fw-bold mb-3" style="color: #2c3e50;">{{ isEditMode ? 'Edit' : 'Add New' }} Donation</h2>
-    <div class="header-accent-line" style="background-color: #59886b;"></div>
+    <h2 class="fw-bold mb-3" style="color: #00a79d;">{{ isEditMode ? 'Edit' : 'Add New' }} Donation</h2>
+    <div class="header-accent-line" style="background-color: #00a79d; height: 3px;"></div>
   </div>
 
   <!-- Loading state -->
   <div *ngIf="loading" class="text-center py-5">
-    <div class="spinner-border" style="width: 3rem; height: 3rem; color: #59886b;" role="status">
+    <div class="spinner-border" style="width: 3rem; height: 3rem; color: #00a79d;" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
-    <p class="mt-3" style="color: #5a5a5a;">{{ isEditMode ? 'Loading donation details...' : 'Preparing donation form...' }}</p>
+    <p class="mt-3" style="color: black;">{{ isEditMode ? 'Loading donation details...' : 'Preparing donation form...' }}</p>
   </div>
 
   <!-- Error state -->
-  <div *ngIf="error" class="alert alert-custom mb-4" style="background-color: #f8f4e9; border-left: 4px solid #d9534f;">
+  <div *ngIf="error" class="alert alert-custom mb-4" style="background-color: white; border-left: 4px solid #dc3545;">
     <div class="d-flex align-items-center">
-      <i class="fas fa-exclamation-circle me-3" style="color: #d9534f;"></i>
+      <i class="fas fa-exclamation-circle me-3" style="color: #dc3545;"></i>
       <div>
-        <h5 class="alert-heading mb-1" style="color: #d9534f;">Error</h5>
-        <p class="mb-0" style="color: #5a5a5a;">{{ error }}</p>
+        <h5 class="alert-heading mb-1" style="color: #dc3545;">Error</h5>
+        <p class="mb-0" style="color: black;">{{ error }}</p>
       </div>
     </div>
   </div>
@@ -28,8 +28,8 @@
   <form [formGroup]="donationForm" (ngSubmit)="onSubmit()" *ngIf="!loading" class="form-card p-4" style="background-color: white; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.05);">
     <!-- Donation Type Section -->
     <div class="mb-4">
-      <label for="donationType" class="form-label fw-bold" style="color: #2c3e50;">Donation Type</label>
-      <div class="form-text small mb-2" style="color: #7d7d7d;">Select the type of donation you're making</div>
+      <label for="donationType" class="form-label fw-bold" style="color: #00a79d;">Donation Type</label>
+      <div class="form-text small mb-2" style="color: black;">Select the type of donation you're making</div>
       <select class="form-select form-select-lg" id="donationType" formControlName="donationType" 
               [ngClass]="{ 'is-invalid': donationTypeControl?.invalid && (donationTypeControl?.dirty || donationTypeControl?.touched) }">
         <option value="" disabled selected>Select donation type</option>
@@ -37,79 +37,83 @@
       </select>
       <div *ngIf="donationTypeControl?.invalid && (donationTypeControl?.dirty || donationTypeControl?.touched)" 
            class="invalid-feedback d-flex align-items-center mt-2">
-        <i class="fas fa-exclamation-circle me-2"></i>
-        Donation type is required
+        <i class="fas fa-exclamation-circle me-2" style="color: #dc3545;"></i>
+        <span style="color: #dc3545;">Donation type is required</span>
       </div>
     </div>
 
     <!-- Dynamic Fields Section -->
-    <div class="dynamic-fields-section mb-4 p-3" style="background-color: #f9f9f9; border-radius: 6px; border-left: 3px solid #59886b;">
+    <div class="dynamic-fields-section mb-4 p-3" style="background-color: #f8f9fa; border-radius: 6px; border-left: 3px solid #00a79d;">
       <!-- Amount Field (for MONEY) -->
       <div *ngIf="donationTypeControl?.value === 'MONEY'" class="mb-3">
-        <label for="amount" class="form-label fw-bold" style="color: #2c3e50;">Amount</label>
+        <label for="amount" class="form-label fw-bold" style="color: #00a79d;">Amount</label>
         <div class="input-group">
           <input type="number" class="form-control form-control-lg" id="amount" formControlName="amount"
                  [ngClass]="{ 'is-invalid': amountControl?.invalid && (amountControl?.dirty || amountControl?.touched) }">
-          <span class="input-group-text" style="background-color: #e6e4d8; color: #59886b;">DT</span>
+          <span class="input-group-text" style="background-color: #e9ecef; color: #00a79d;">DT</span>
         </div>
         <div *ngIf="amountControl?.errors?.['required']" class="invalid-feedback d-flex align-items-center mt-2">
-          <i class="fas fa-exclamation-circle me-2"></i>
-          Amount is required
+          <i class="fas fa-exclamation-circle me-2" style="color: #dc3545;"></i>
+          <span style="color: #dc3545;">Amount is required</span>
         </div>
         <div *ngIf="amountControl?.errors?.['min']" class="invalid-feedback d-flex align-items-center mt-2">
-          <i class="fas fa-exclamation-circle me-2"></i>
-          Amount must be at least 0.01 DT
+          <i class="fas fa-exclamation-circle me-2" style="color: #dc3545;"></i>
+          <span style="color: #dc3545;">Amount must be at least 0.01 DT</span>
         </div>
         <div *ngIf="amountControl?.errors?.['max']" class="invalid-feedback d-flex align-items-center mt-2">
-          <i class="fas fa-exclamation-circle me-2"></i>
-          Amount is too large
+          <i class="fas fa-exclamation-circle me-2" style="color: #dc3545;"></i>
+          <span style="color: #dc3545;">Amount is too large</span>
         </div>
       </div>
 
-   <!-- Remplacez le select par cette galerie d'images -->
-   <div *ngIf="donationTypeControl?.value === 'CLOTHING'" class="mt-4">
-    <h5 class="fw-bold mb-3">Select Clothing Item</h5>
-    
-    <div class="row row-cols-2 row-cols-md-3 g-3">
-      <div class="col" *ngFor="let item of availableItems">
-        <div class="card h-100 item-card" 
-             [class.border-primary]="isItemSelected(item)"
-             (click)="selectItem(item)">
-          <img [src]="getItemImage(item)" 
-               class="card-img-top p-2" 
-               alt="{{item.itemName}}"
-               onerror="this.src='assets/default-item.jpg'">
-          <div class="card-body text-center p-2">
-            <h6 class="card-title mb-0">{{item.itemName}}</h6>
+      <!-- Clothing Items Gallery -->
+      <div *ngIf="donationTypeControl?.value === 'CLOTHING'" class="mt-4">
+        <h5 class="fw-bold mb-3" style="color: #00a79d;">Select Clothing Item</h5>
+        
+        <div class="row row-cols-2 row-cols-md-3 g-3">
+          <div class="col" *ngFor="let item of availableItems">
+            <div class="card h-100 item-card" 
+                 [class.border-primary]="isItemSelected(item)"
+                 [style.border-color]="isItemSelected(item) ? '#00a79d' : '#dee2e6'"
+                 (click)="selectItem(item)">
+              <img [src]="getItemImage(item)" 
+                   class="card-img-top p-2" 
+                   alt="{{item.itemName}}"
+                   onerror="this.src='assets/default-item.jpg'">
+              <div class="card-body text-center p-2">
+                <h6 class="card-title mb-0">{{item.itemName}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected Item Display -->
+        <div *ngIf="selectedItem" class="selected-item mt-3 p-3 bg-light rounded">
+          <div class="d-flex align-items-center">
+            <img [src]="getItemImage(selectedItem)" 
+                 class="img-thumbnail me-3" 
+                 style="width: 80px; height: 80px;"
+                 onerror="this.src='assets/images/default-item.jpg'">
+            <div>
+              <h6 class="mb-1">{{selectedItem.itemName}}</h6>
+              <small class="text-muted">Selected for donation</small>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Selected Item Display -->
-    <div *ngIf="selectedItem" class="selected-item mt-3 p-3 bg-light rounded">
-      <div class="d-flex align-items-center">
-        <img [src]="getItemImage(selectedItem)" 
-             class="img-thumbnail me-3" 
-             style="width: 80px; height: 80px;"
-             onerror="this.src='assets/images/default-item.jpg'">
-             >
-        <div>
-          <h6 class="mb-1">{{selectedItem.itemName}}</h6>
-          <small class="text-muted">Selected for donation</small>
-        </div>
-      </div>
-    </div>
-  </div>
-
     <!-- Form Actions -->
     <div class="d-flex justify-content-between mt-5 pt-3">
-      <button type="button" routerLink="/donations" class="btn btn-action-cancel px-4 py-2">
+      <button type="button" routerLink="/donations" class="btn btn-action-cancel px-4 py-2" style="background-color: #6c757d; color: white;">
         <i class="fas fa-arrow-left me-2"></i>Cancel
       </button>
-      <button type="submit" class="btn btn-action-submit px-4 py-2" [disabled]="donationForm.invalid">
+      <button type="submit" class="btn btn-action-submit px-4 py-2" 
+              [style.background-color]="isEditMode ? '#00a79d' : '#00a79d'" 
+              [disabled]="donationForm.invalid"
+              style="color: white;">
         <i class="fas fa-save me-2"></i>{{ isEditMode ? 'Update Donation' : 'Create Donation' }}
       </button>
     </div>
-   <!-- Cette balise doit fermer le form ouvert plus haut -->
+  </form>
 </div>

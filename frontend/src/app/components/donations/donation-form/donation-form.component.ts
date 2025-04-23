@@ -19,7 +19,7 @@ export class DonationFormComponent implements OnInit {
   error = '';
   donationTypes = Object.values(DonationType);
   availableItems: ItemDressing[] = [];
-  userId = 1;
+  userId = 2;
   selectedItem: ItemDressing | null = null;
 
   constructor(

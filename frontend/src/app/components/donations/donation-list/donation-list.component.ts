@@ -147,19 +147,33 @@ export class DonationListComponent implements OnInit {
       console.error('Invalid donation ID');
       return;
     }
-
+  
     if (confirm('Are you sure you want to delete this donation?')) {
       this.donationService.deleteDonation(id).subscribe({
         next: () => {
+          // 1. Mise à jour locale des listes
           this.donations = this.donations.filter(d => d.donationId !== id);
           this.filteredDonations = this.filteredDonations.filter(d => d.donationId !== id);
           
+          // 2. Ajustement de la pagination si nécessaire
           if (this.paginatedDonations.length === 0 && this.currentPage > 1) {
             this.currentPage--;
           }
+  
+          // 3. Notifier la suppression pour mettre à jour le leaderboard
+          this.donationService.notifyUpdates();
+          
+          // 4. Optionnel: Afficher un message de confirmation
+          this.snackBar.open('Donation deleted successfully!', 'Close', {
+            duration: 3000
+          });
         },
         error: (err) => {
           console.error('Error deleting donation:', err);
+          this.snackBar.open('Failed to delete donation', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
         }
       });
     }
