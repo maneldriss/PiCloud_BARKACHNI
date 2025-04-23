@@ -1,5 +1,6 @@
 package projet.barkachni.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -43,9 +44,11 @@ public class Outfit {
             joinColumns = @JoinColumn(name = "outfit_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
+    @JsonIgnoreProperties({"user"})
     private List<Item> items;
 
     @ManyToOne
     @JoinColumn(name = "dressing_id")
+    @JsonIgnoreProperties("outfits")
     private Dressing dressing;
 }

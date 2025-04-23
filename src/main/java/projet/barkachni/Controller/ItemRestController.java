@@ -85,4 +85,9 @@ public class ItemRestController {
         }
     }
 
+    @GetMapping("/retrieve-items-by-user/{user-id}")
+    public List<Item> getItemsByUserId(@PathVariable("user-id") Long userID) {
+        return itemService.retrieveItemsByUserId(userID);
+    }
+
 }

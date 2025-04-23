@@ -10,4 +10,5 @@ public interface IItemService {
     Item addItem(Item i);
     void removeItem(long ItemId);
     Item updateItem(Item i);
+    List<Item> retrieveItemsByUserId(Long userID);
 }

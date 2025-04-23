@@ -57,4 +57,8 @@ public class OutfitRestController {
             @PathVariable("item-id") Long itemId) {
         return outfitService.removeItemFromOutfit(outfitId, itemId);
     }
+        @GetMapping("/retrieve-outfits-by-user/{user-id}")
+    public List<Outfit> getOutfitsByUserId(@PathVariable("user-id") Long userID) {
+        return outfitService.retrieveOutfitsByUserId(userID);
+    }
 }

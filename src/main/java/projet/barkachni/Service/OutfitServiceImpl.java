@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import projet.barkachni.Entity.Dressing;
 import projet.barkachni.Entity.Item;
 import projet.barkachni.Entity.Outfit;
+import projet.barkachni.Entity.User;
 import projet.barkachni.Repository.DressingRepository;
 import projet.barkachni.Repository.ItemRepository;
 import projet.barkachni.Repository.OutfitRepository;
+import projet.barkachni.Repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OutfitServiceImpl implements IOutfitService {
     private final OutfitRepository outfitRepository;
+    private final UserRepository userRepository;
     private final DressingRepository dressingRepository;
     private final ItemRepository itemRepository;
 
@@ -32,6 +35,10 @@ public class OutfitServiceImpl implements IOutfitService {
 
     @Override
     public Outfit addOutfit(Outfit o) {
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User not found with id: 1"));
+        Dressing dressing = user.getDressing();
+        o.setDressing(dressing);
         return outfitRepository.save(o);
     }
 
@@ -39,6 +46,10 @@ public class OutfitServiceImpl implements IOutfitService {
     public Outfit updateOutfit(Outfit o) {
         outfitRepository.findById(o.getOutfitID())
                 .orElseThrow(() -> new RuntimeException("Outfit not found with id: " + o.getOutfitID()));
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User not found with id: 1"));
+        Dressing dressing = user.getDressing();
+        o.setDressing(dressing);
         return outfitRepository.save(o);
     }
 
@@ -90,5 +101,10 @@ public class OutfitServiceImpl implements IOutfitService {
         }
 
         return outfitRepository.save(outfit);
+    }
+
+    @Override
+    public List<Outfit> retrieveOutfitsByUserId(Long userID) {
+        return outfitRepository.findByDressing_User_UserID(userID);
     }
 }

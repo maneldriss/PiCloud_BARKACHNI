@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import projet.barkachni.Entity.Dressing;
 import projet.barkachni.Entity.Outfit;
+import projet.barkachni.Entity.User;
 import projet.barkachni.Repository.DressingRepository;
 import projet.barkachni.Repository.OutfitRepository;
+import projet.barkachni.Repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 public class DressingServiceImpl implements IDressingService {
     private final DressingRepository dressingRepository;
     private final OutfitRepository outfitRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<Dressing> retrieveAllDressings() {
@@ -29,6 +32,9 @@ public class DressingServiceImpl implements IDressingService {
 
     @Override
     public Dressing addDressing(Dressing d) {
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User not found with id: 1"));
+        d.setUser(user);
         return dressingRepository.save(d);
     }
 
@@ -36,6 +42,9 @@ public class DressingServiceImpl implements IDressingService {
     public Dressing updateDressing(Dressing d) {
         dressingRepository.findById(d.getId())
                 .orElseThrow(() -> new RuntimeException("Dressing not found with id: " + d.getId()));
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User not found with id: 1"));
+        d.setUser(user);
         return dressingRepository.save(d);
     }
 

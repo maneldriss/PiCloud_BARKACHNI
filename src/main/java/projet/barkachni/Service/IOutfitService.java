@@ -14,4 +14,6 @@ public interface IOutfitService {
     Outfit removeOutfitFromDressing(Long outfitId);
     Outfit addItemToOutfit(Long outfitId, Long itemId);
     Outfit removeItemFromOutfit(Long outfitId, Long itemId);
+
+    List<Outfit> retrieveOutfitsByUserId(Long userID);
 }

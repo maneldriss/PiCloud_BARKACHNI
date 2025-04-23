@@ -1,5 +1,6 @@
 package projet.barkachni.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -51,5 +52,6 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "userID")
+    @JsonIgnoreProperties({"items", "dressing"})
     private User user;
 }

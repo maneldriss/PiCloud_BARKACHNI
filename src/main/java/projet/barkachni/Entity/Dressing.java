@@ -1,5 +1,6 @@
 package projet.barkachni.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -25,8 +26,10 @@ public class Dressing {
 
     @OneToOne
     @JoinColumn(name = "userID")
+    @JsonIgnoreProperties({"items", "dressing"})
     private User user;
 
     @OneToMany(mappedBy = "dressing", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("dressing")
     private List<Outfit> outfits;
 }
