@@ -15,4 +15,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findTop5ByGenderProductAndCategoryProductAndProductIdNot(GenderProduct genderProduct, CategoryProduct categoryProduct, Long id);
 
+    List<Product> findByProductSeller_IdUser(Long sellerId);
 }

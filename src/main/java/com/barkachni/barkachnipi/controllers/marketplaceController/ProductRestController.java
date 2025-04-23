@@ -67,10 +67,62 @@ public class ProductRestController {
 
     }
 
-    @PutMapping("/modify-product/{productId}")
+  /*  @PutMapping("/modify-product/{productId}")
     public Product modifyProduct(@RequestBody Product p, @PathVariable Long productId) {
         p.setProductId(productId); // or whatever your ID field is
         return productService.modifyProduct(p);
+    }*/
+
+    @PostMapping("/update-with-autotag/{productId}")
+    public ResponseEntity<Product> updateWithAutoTag(
+            @PathVariable Long productId,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam("nameProduct") String nameProduct,
+            @RequestParam("genderProduct") GenderProduct genderProduct,
+            @RequestParam("productPrice") float productPrice,
+            @RequestParam("productDescription") String productDescription,
+            @RequestParam("productSize") ProductSize productSize,
+            @RequestParam("productSeller") Long sellerId,
+            @RequestParam("productState") ProductState productState) {
+
+        try {
+            // 1. Get existing product
+            Product existingProduct = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            // 2. Only call AI service if new image is provided
+            CategoryProduct category = existingProduct.getCategoryProduct();
+            if (file != null && !file.isEmpty()) {
+                String aiCategory = pythonTaggingClient.predictCategory(file);
+                category = mapToCategory(aiCategory);
+
+                // Save new image
+                String fileName = saveUploadedImage(file);
+                String imageUrl = "http://localhost:8089/BarkachniPI/uploads/" + fileName;
+                existingProduct.setProductImageURL(imageUrl);
+            }
+
+            // 3. Verify seller (optional - could be removed for updates)
+            User seller = userRepository.findById(sellerId)
+                    .orElseThrow(() -> new RuntimeException("Seller not found"));
+
+            // 4. Update product fields
+            existingProduct.setNameProduct(nameProduct);
+            existingProduct.setCategoryProduct(category);
+            existingProduct.setGenderProduct(genderProduct);
+            existingProduct.setProductPrice(productPrice);
+            existingProduct.setProductDescription(productDescription);
+            existingProduct.setProductSize(productSize);
+            existingProduct.setProductState(productState);
+            // Don't update dateAdded for modifications
+            // existingProduct.setDateProductAdded(new Date());
+
+            Product updatedProduct = productService.modifyProduct(existingProduct);
+            return ResponseEntity.ok(updatedProduct);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     //image upload
@@ -197,6 +249,12 @@ public class ProductRestController {
         Files.createDirectories(filePath.getParent());
         Files.write(filePath, file.getBytes());
         return fileName;
+    }
+
+    @GetMapping("/retrieve-by-seller/{userId}")
+    public ResponseEntity<List<Product>> getProductsBySellerId(@PathVariable Long userId) {
+        List<Product> products = productService.retrieveProductsBySellerId(userId);
+        return ResponseEntity.ok(products);
     }
 }
 

@@ -1,7 +1,6 @@
 package com.barkachni.barkachnipi.services.marketplaceService;
 
 import com.barkachni.barkachnipi.entities.marketplaceEntity.Product;
-import com.barkachni.barkachnipi.entities.marketplaceEntity.ProductState;
 import com.barkachni.barkachnipi.entities.userEntity.User;
 import com.barkachni.barkachnipi.repositories.marketplaceRepository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +84,9 @@ public class ProductService  implements IProductService{
         return false;  // Product not found or not reserved
     }
 
-
+    @Override
+    public List<Product> retrieveProductsBySellerId(Long userId) {
+        return productRepository.findByProductSeller_IdUser(userId);
+    }
 
 }

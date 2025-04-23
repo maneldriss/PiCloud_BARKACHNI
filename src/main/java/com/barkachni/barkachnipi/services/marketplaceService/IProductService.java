@@ -18,4 +18,5 @@ public interface IProductService {
 
     List<Product> getReservedProducts();
 
+    List<Product> retrieveProductsBySellerId(Long userId);
 }

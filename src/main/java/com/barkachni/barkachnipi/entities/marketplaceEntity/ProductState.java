@@ -1,5 +1,5 @@
 package com.barkachni.barkachnipi.entities.marketplaceEntity;
 
 public enum ProductState {
-    SOLD, AVAILABLE,UPCOMING,RESERVED
+    SOLD, AVAILABLE,RESERVED
 }
