@@ -19,22 +19,7 @@ public class LeaderboardService {
     @Autowired
     private DonationRepository donationRepository;
 
-   /* public Page<Map<String, Object>> getTopDonors(int page, int size) {
-        Page<user> users = userRepository.findByOrderByDonationPointsDesc(
-                PageRequest.of(page, size)
-        );
 
-        return users.map(user -> {
-            Double totalApproved = donationRepository.sumApprovedDonationsByUser(user.getIdUser());
-
-            Map<String, Object> donorData = new HashMap<>();
-            donorData.put("email", user.getEmail());
-            donorData.put("points", user.getDonationPoints()); // No null check needed for primitive int
-            donorData.put("totalDonated", totalApproved != null ? totalApproved : 0.0);
-
-            return donorData;
-        });
-    }*/
    public Page<Map<String, Object>> getTopDonors(int page, int size) {
        Pageable pageable = PageRequest.of(page, size);
        Page<Object[]> result = donationRepository.findTopMoneyDonors(pageable);
@@ -47,6 +32,7 @@ public class LeaderboardService {
            data.put("email", donor.getEmail());
            data.put("points", donor.getDonationPoints()); // Assumes this is updated properly
            data.put("totalDonated", totalDonated);
+
 
            return data;
        });
