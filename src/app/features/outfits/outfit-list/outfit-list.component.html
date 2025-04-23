@@ -1,20 +1,41 @@
 <div class="container">
   <div class="header">
     <h1>My Outfits</h1>
-    <button mat-raised-button color="primary" routerLink="/outfits/new">
-      <mat-icon>add</mat-icon>
-      Create New Outfit
-    </button>
+    <div class="button-group">
+      <button mat-raised-button color="primary" routerLink="/outfits/new">
+        <mat-icon>add</mat-icon>
+        Create New Outfit
+      </button>
+      <button mat-raised-button color="accent" routerLink="/outfits/ai-builder">
+        <mat-icon>smart_toy</mat-icon>
+        AI Outfit Builder
+      </button>
+    </div>
   </div>
+
+  <button mat-raised-button color="primary" (click)="launchItemSwiper()">
+    <mat-icon>swap_horiz</mat-icon> Swipe Items to Create Outfit
+  </button>
 
   <div *ngIf="loadingRecommendation" class="recommendation-loading">
     <mat-card>
       <mat-card-content class="loading-content">
         <mat-spinner diameter="30"></mat-spinner>
-        <span>Getting weather-based outfit recommendation...</span>
+        <span>AI is analyzing your outfits and weather data...</span>
+        <p class="loading-subtext">This may take a moment as the AI is processing your wardrobe data.</p>
       </mat-card-content>
     </mat-card>
   </div>
+
+  <mat-card-title>
+  <span class="ai-recommendation-title">
+    <mat-icon>smart_toy</mat-icon>
+    AI-Powered Outfit Recommendation
+  </span>
+    <button mat-icon-button color="primary" (click)="refreshWeather()" matTooltip="Refresh recommendation">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </mat-card-title>
 
   <div *ngIf="!loadingRecommendation && showRecommendation && weatherData && recommendedOutfit" class="recommendation-card">
     <mat-card>
@@ -197,6 +218,9 @@
       </mat-card-content>
 
       <mat-card-actions>
+        <button mat-button color="primary" (click)="launchSwiper()">
+          <mat-icon>swap_horiz</mat-icon> Swipe Similar
+        </button>
         <button mat-button color="primary" [routerLink]="['/outfits', outfit.outfitID]">
           <mat-icon>visibility</mat-icon> View
         </button>
@@ -210,6 +234,13 @@
     </mat-card>
   </div>
 
+  <!-- Add this at the bottom of your item-list.component.html -->
+  <app-outfit-swiper
+    *ngIf="showItemSwiper"
+    [items]="swiperItems"
+    (closed)="onSwiperClosed()">
+  </app-outfit-swiper>
+
   <mat-paginator
     *ngIf="!loading && filteredOutfits.length > 0"
     [length]="filteredOutfits.length"
@@ -218,4 +249,5 @@
     (page)="onPageChange($event)"
     aria-label="Select page">
   </mat-paginator>
+
 </div>

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {HomeComponent} from "./core/home/home.component";
+import {AIOutfitBuilderComponent} from "./features/outfits/ai-outfit-builder/ai-outfit-builder.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -12,6 +13,7 @@ const routes: Routes = [
     path: 'outfits',
     loadChildren: () => import('./features/outfits/outfits.module').then(m => m.OutfitsModule)
   },
+  { path: 'outfits/ai-builder', component: AIOutfitBuilderComponent },
   {
     path: 'dressing',
     loadChildren: () => import('./features/dressing/dressing.module').then(m => m.DressingModule)

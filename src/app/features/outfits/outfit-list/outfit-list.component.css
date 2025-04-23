@@ -252,3 +252,41 @@ mat-paginator {
   font-size: 12px;
   font-weight: 500;
 }
+
+/* Add this to your outfit-list.component.css file */
+.ai-tag {
+  background-color: #673ab7;
+  color: white;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 12px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  background-color: #f0f0f0;
+}
+
+.tag mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  margin-right: 4px;
+}
+
+.season-tag {
+  background-color: #4caf50;
+  color: white;
+}
+
+.occasion-tag {
+  background-color: #2196f3;
+  color: white;
+}
+
+.recommendation-content {
+  padding: 16px 0;
+}

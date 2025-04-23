@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule, HammerModule} from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from "@angular/common/http";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {RouterModule} from "@angular/router";
 import {CoreModule} from "./core/core.module";
 import {SharedModule} from "./shared/shared.module";
+import {AIOutfitRecommendationService} from "./core/services/ai-outfit-recommendation.service";
 
 @NgModule({
   declarations: [
@@ -21,9 +22,12 @@ import {SharedModule} from "./shared/shared.module";
     RouterModule,
     AppRoutingModule,
     CoreModule,
-    SharedModule
+    SharedModule,
+    HammerModule
   ],
-  providers: [],
+  providers: [
+    AIOutfitRecommendationService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

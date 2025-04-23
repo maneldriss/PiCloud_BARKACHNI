@@ -3,6 +3,8 @@ import {Item} from "../../../core/models/item.model";
 import {Category} from "../../../core/models/category.enum";
 import {ItemService} from "../../../core/services/item.service";
 import {PageEvent} from "@angular/material/paginator";
+import {ConfirmDialogComponent} from "../../../Design/confirm-dialog-component/confirm-dialog-component.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-item-list',
@@ -13,7 +15,6 @@ export class ItemListComponent implements OnInit {
   items: Item[] = [];
   filteredItems: Item[] = [];
   paginatedItems: Item[] = [];
-  categories = Object.values(Category);
 
   allBrands: string[] = [];
   allColors: string[] = [];
@@ -39,7 +40,7 @@ export class ItemListComponent implements OnInit {
   showOnlyFavorites: boolean = false;
 
 
-  constructor(private itemService: ItemService) {
+  constructor(private itemService: ItemService, private dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -48,7 +49,7 @@ export class ItemListComponent implements OnInit {
 
   loadItems() {
     this.loading = true;
-    this.itemService.getItems().subscribe(items => {
+    this.itemService.getItemsByUser(1).subscribe(items => {
       this.items = items;
       this.extractAllFilterOptions();
       this.updateAvailableFilterOptions();
@@ -172,16 +173,24 @@ export class ItemListComponent implements OnInit {
   }
 
   deleteItem(id: number) {
-    if (confirm('Are you sure you want to delete this outfit?')) {
-      this.itemService.deleteItem(id).subscribe({
-        next: () => {
-          this.loadItems(); // Make sure this function correctly updates this.items
-        },
-        error: (error) => {
-          console.error('Error deleting item:', error);
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: { message: 'Are you sure you want to delete this item?' }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.itemService.deleteItem(id).subscribe({
+          next: () => {
+            this.items = this.items.filter((item) => item.itemID !== id);
+            this.applyFilters();
+          },
+          error: (error) => {
+            console.error('Error deleting item:', error);
+          },
+        });
+      }
+    });
   }
 
   toggleFavorite(item: Item) {

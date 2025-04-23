@@ -9,4 +9,5 @@ export interface Outfit {
   dressing?: Dressing;
   season?: string;
   occasion?: string;
+  isAiGenerated?: boolean;
 }

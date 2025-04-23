@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, map, of, switchMap } from 'rxjs';
+import {environment} from "../../../environements/environment";
 
 export interface WeatherData {
   temperature: number;
@@ -21,7 +22,7 @@ export interface GeolocationPosition {
   providedIn: 'root'
 })
 export class WeatherService {
-  private apiKey = '8469d5dd8282d2f03d6424f3f6fa5c59';
+  private apiKey = environment.weatherApi;
   private apiUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
   constructor(private http: HttpClient) {}
@@ -129,4 +130,6 @@ export class WeatherService {
         return null;
     }
   }
+
+
 }

@@ -40,6 +40,11 @@ export class ItemService {
       .pipe(catchError(this.handleError));
   }
 
+  getItemsByUser(userId: number) {
+    return this.http.get<Item[]>(`${this.apiUrl}/retrieve-items-by-user/${userId}`)
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
 

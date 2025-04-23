@@ -35,6 +35,10 @@ export class OutfitService {
       .pipe(catchError(this.handleError));
   }
 
+  getOutfitsByUser(userId: number) {
+    return this.http.get<Outfit[]>(`${this.apiUrl}/retrieve-outfits-by-user/${userId}`);
+  }
+
   deleteOutfit(id: number) {
     return this.http.delete(`${this.apiUrl}/remove-outfit/${id}`)
       .pipe(catchError(this.handleError));
@@ -54,3 +58,4 @@ export class OutfitService {
     return throwError(() => new Error('Something went wrong. Please try again later.'));
   }
 }
+
