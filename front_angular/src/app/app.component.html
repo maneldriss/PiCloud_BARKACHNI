@@ -1,0 +1,6 @@
+<!-- app.component.html -->
+<app-layout *ngIf="!isDashboardPage">
+  <router-outlet></router-outlet>
+  <app-chatbot></app-chatbot>
+</app-layout>
+<router-outlet *ngIf="isDashboardPage"></router-outlet>

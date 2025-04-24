@@ -1,0 +1,35 @@
+<div class="container mt-4">
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading reserved products...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-circle me-2"></i>
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && reservedProducts.length > 0">
+    <h3 class="text-center mb-4">Reserved Products</h3>
+    <div *ngFor="let product of reservedProducts" class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ product.nameProduct }}</h5>
+        <p><strong>Reservation Deadline:</strong> {{ product.reservationExpiry | date: 'short' }}</p>
+        <p><strong>Time Remaining:</strong> {{ calculateTimeRemaining(product.reservationExpiry) }}</p>
+        
+        <button *ngIf="calculateTimeRemaining(product.reservationExpiry) !== 'Deadline passed'"
+          (click)="unreserveProduct(product.productId)" class="btn btn-danger">
+          Unreserve Product
+        </button>
+        <button  class="btn btn-pink2">Purchase</button>
+
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && reservedProducts.length === 0">
+    <p>No reserved products found.</p>
+  </div>
+</div>
