@@ -1,0 +1,131 @@
+<div class="container mt-4">
+  <h2 class="text-center mb-4"><strong>Kids Products</strong></h2>
+
+  <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+    <div class="d-flex gap-3">
+      <a routerLink="/products/add" class="btn btn-pink-rect">Add New Product</a>
+      <a routerLink="/products/reserved" class="btn btn-pink-rect">View Reserved</a>
+   
+    <button class="btn btn-pink-rect" (click)="toggleSidebar()">Toggle Filters</button>
+  </div>
+</div>
+
+  <div *ngIf="loading" class="text-center">
+    <p>Loading products...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+<!-- 🧭 Sidebar with Filters -->
+<div class="sidebar bg-light p-4 shadow" [class.active]="showSidebar">
+  <button class="close-btn" (click)="toggleSidebar()">×</button>
+  <h5><strong>Filters</strong></h5>
+
+  <!-- Search -->
+  <label class="form-label mt-3">Search a Product:</label>
+  <input
+    type="text"
+    class="form-control rounded-input"
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="applyFilters()"
+    placeholder="Search products..."
+  />
+
+  <!-- Category Filter -->
+<label class="form-label mt-3">Choose a Category:</label>
+<div *ngFor="let category of staticCategories" class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [value]="category"
+    [checked]="selectedCategory.includes(category)"   
+    (change)="onCategoryChange($event, category)"
+  />
+  <label class="form-check-label">{{ category }}</label>
+</div>
+  <!-- Size Filter -->
+  <label class="form-label mt-3">Choose a Size:</label>
+  <div *ngFor="let size of staticSizes" class="form-check">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      [value]="size"
+      [checked]="selectedSize.includes(size)"   
+      (change)="onSizeChange($event, size)"
+    />
+    <label class="form-check-label">{{ size }}</label>
+  </div>
+
+  <!-- Price Filter -->
+  <label class="form-label mt-3">Choose a Price Range:</label>
+  <input
+    type="number"
+    class="form-control rounded-input"
+    [(ngModel)]="minPrice"
+    (input)="applyFilters()"
+    placeholder="Min Price"
+  />
+  <input
+    type="number"
+    class="form-control rounded-input"
+    [(ngModel)]="maxPrice"
+    (input)="applyFilters()"
+    placeholder="Max Price"
+  />
+</div>
+<div class="row justify-content-center">
+  <div *ngFor="let product of paginatedProducts" class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+    <div class="card product-card m-2 p-3" style="width: 100%; max-width: 350px;">  <!-- Changed from 270px to 320px -->
+      <img [src]="product.productImageURL" alt="Product Image" class="card-img-top clickable-image" (click)="onProductClick(product)" [routerLink]="['/products/view', product.productId]" />
+      <div class="card-body text-center">
+        <h4 class="card-title"><strong>{{ product.nameProduct | uppercase }}</strong> </h4>
+        <p class="card-text"><strong>For:</strong> {{ product.genderProduct }}</p>
+        <p class="card-text"><strong>Size:</strong> {{ product.productSize }}</p>
+        <p class="card-text"><strong>Price:</strong> {{ product.productPrice }} DT</p>
+        <p class="card-text"><strong>State:</strong> {{ product.productState }}</p>
+        <p *ngIf="product.reserved">This product is reserved</p>
+
+        <div class="d-flex flex-column align-items-center gap-2 mt-2">
+          <div class="d-flex justify-content-center gap-3">
+            <button *ngIf="!product.reserved" class="btn btn-pink2-rect">Purchase</button>
+            <button *ngIf="!product.reserved" (click)="reserveProduct(product.productId!)" class="btn btn-pink2-rect">Reserve</button>
+          </div>
+        </div>        
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Add this after your product cards but before the "No products found" message -->
+<div *ngIf="filteredProducts.length > 0" class="d-flex justify-content-center mt-4">
+  <nav aria-label="Product pagination">
+    <ul class="pagination">
+      <li class="page-item" [class.disabled]="currentPage === 0">
+        <a class="page-link" (click)="previousPage()" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      
+      <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
+        <a class="page-link" (click)="goToPage(page)">{{page + 1}}</a>
+      </li>
+      
+      <li class="page-item" [class.disabled]="currentPage === getTotalPages() - 1">
+        <a class="page-link" (click)="nextPage()" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<div *ngIf="filteredProducts.length === 0 && !loading" class="alert alert-info text-center mt-4">
+  No products found. Add a new product to get started.
+</div>
+  
+</div>
+
+  
+  
+  

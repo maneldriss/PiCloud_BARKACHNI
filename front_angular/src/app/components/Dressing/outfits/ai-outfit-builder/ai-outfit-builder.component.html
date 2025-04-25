@@ -1,0 +1,172 @@
+<div class="container">
+  <h1>AI Outfit Builder</h1>
+  <p class="subtitle">Create outfits with AI-powered suggestions</p>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="outfit-builder" *ngIf="!loading">
+    <div class="outfit-form">
+      <form [formGroup]="outfitForm">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Outfit Details</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Outfit Name</mat-label>
+              <input matInput formControlName="name" placeholder="My Casual Summer Outfit">
+              <mat-error *ngIf="outfitForm.get('name')?.hasError('required')">
+                Name is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="3" placeholder="Perfect for warm summer days"></textarea>
+            </mat-form-field>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Season</mat-label>
+                <mat-select formControlName="season">
+                  <mat-option *ngFor="let season of seasons" [value]="season">
+                    {{season}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Occasion</mat-label>
+                <mat-select formControlName="occasion">
+                  <mat-option *ngFor="let occasion of occasions" [value]="occasion">
+                    {{occasion}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </form>
+    </div>
+
+    <div class="current-outfit">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Current Outfit</mat-card-title>
+          <span class="item-count">{{selectedItems.length}} items</span>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div *ngIf="selectedItems.length === 0" class="empty-state">
+            <mat-icon>sentiment_dissatisfied</mat-icon>
+            <p>No items selected yet</p>
+            <small>Select items from the categories below</small>
+          </div>
+
+          <div class="selected-items-grid" *ngIf="selectedItems.length > 0">
+            <div class="selected-item" *ngFor="let item of selectedItems">
+              <div class="item-image">
+                <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+              </div>
+              <div class="item-info">
+                <div class="item-name">{{item.itemName}}</div>
+                <div class="item-category">{{item.category}}</div>
+              </div>
+              <button mat-icon-button color="warn" (click)="removeItemFromOutfit(item)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions *ngIf="selectedItems.length > 0">
+          <button mat-raised-button color="primary" (click)="saveOutfit()" [disabled]="outfitForm.invalid">
+            <mat-icon>save</mat-icon> Save Outfit
+          </button>
+          <button mat-button color="warn" (click)="resetForm()">
+            <mat-icon>delete</mat-icon> Clear All
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <div class="ai-suggestions" *ngIf="selectedItems.length > 0">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            AI Suggestions
+            <mat-icon class="ai-icon">smart_toy</mat-icon>
+          </mat-card-title>
+          <mat-card-subtitle>Items that would complement your current selections</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div *ngIf="recommendationsLoading" class="loading-spinner">
+            <mat-spinner diameter="30"></mat-spinner>
+            <span>Getting AI suggestions...</span>
+          </div>
+
+          <div *ngIf="!recommendationsLoading && suggestedItems.length === 0" class="empty-state">
+            <mat-icon>lightbulb_outline</mat-icon>
+            <p>No suggestions available</p>
+            <small>Try selecting different items</small>
+          </div>
+
+          <div class="suggested-items-grid" *ngIf="!recommendationsLoading && suggestedItems.length > 0">
+            <div class="suggested-item" *ngFor="let item of suggestedItems">
+              <div class="item-image">
+                <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+              </div>
+              <div class="item-info">
+                <div class="item-name">{{item.itemName}}</div>
+                <div class="item-category">{{item.category}}</div>
+              </div>
+              <button mat-raised-button color="accent" (click)="addItemToOutfit(item)">
+                <mat-icon>add</mat-icon> Add
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="item-selector">
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let category of categories">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{category}}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{getItemsByCategory(category).length}} items available
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="items-grid">
+            <div class="item-card" *ngFor="let item of getItemsByCategory(category)">
+              <div class="item-image">
+                <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+              </div>
+              <div class="item-info">
+                <div class="item-name">{{item.itemName}}</div>
+                <div class="item-details">
+                  <span class="item-color" [style.background-color]="item.color"></span>
+                  <span class="item-brand">{{item.brand}}</span>
+                </div>
+              </div>
+              <button mat-icon-button color="primary" (click)="addItemToOutfit(item)">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+
+            <div *ngIf="getItemsByCategory(category).length === 0" class="empty-category">
+              <p>No items available in this category</p>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+</div>

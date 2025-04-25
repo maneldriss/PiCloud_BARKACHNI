@@ -1,0 +1,38 @@
+/* Reserved Products Styling */
+.card {
+    border-radius: 8px;
+  }
+  
+  .card-title {
+    font-weight: bold;
+  }
+  
+  .card-body {
+    background-color: #f9f9f9;
+  }
+  
+  button {
+    margin-top: 10px;
+  }
+  
+  button:hover {
+    background-color: #ff4d4d;
+  }
+  
+  .alert {
+    color: #d63384; /* Pink color for errors */
+  }
+  
+  h3 {
+    color: #d63384;
+    font-weight: bold;
+  }
+  .btn-pink2 {
+    background-color: #85caef;;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }

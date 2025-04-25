@@ -1,0 +1,180 @@
+<div class="container py-4">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+      <i class="bi bi-badge-ad me-2"></i>{{ isEditMode ? 'Edit' : 'Add New' }} Advertisement
+    </h2>
+    <a routerLink="/ads" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Back to List
+    </a>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="card shadow-sm mb-4">
+    <div class="card-body text-center py-5">
+      <div class="spinner-grow text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 mb-0">Loading advertisement data...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show shadow-sm mb-4">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    {{ error }}
+    <button type="button" class="btn-close" (click)="error = ''"></button>
+  </div>
+
+  <!-- Advertisement Form -->
+  <form [formGroup]="adForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <div class="card shadow-sm border-0 overflow-hidden">
+      <div class="card-body p-4">
+        <!-- Title -->
+        <div class="mb-4">
+          <label for="title" class="form-label fw-bold">Advertisement Title <span class="text-danger">*</span></label>
+          <input type="text" class="form-control form-control-lg" id="title" formControlName="title"
+                 [ngClass]="{ 'is-invalid': titleControl?.invalid && (titleControl?.dirty || titleControl?.touched) }"
+                 placeholder="Enter advertisement title">
+          <div *ngIf="titleControl?.invalid && (titleControl?.dirty || titleControl?.touched)" 
+               class="invalid-feedback">
+            Title is required
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="description" class="form-label fw-bold">Description</label>
+          <textarea class="form-control" id="description" rows="4" 
+                    formControlName="description"
+                    placeholder="Describe your advertisement"></textarea>
+        </div>
+
+        <!-- Image Section -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Advertisement Image</label>
+          
+          <!-- Toggle between URL and File Upload -->
+          <div class="btn-group w-100 mb-3">
+            <button type="button" 
+                    class="btn" 
+                    [class.btn-primary]="imageInputMethod === 'url'"
+                    [class.btn-outline-primary]="imageInputMethod !== 'url'"
+                    (click)="switchInputMethod('url')">
+              <i class="bi bi-link me-1"></i> Use Image URL
+            </button>
+           
+          </div>
+        
+          <!-- URL Input -->
+          <div *ngIf="imageInputMethod === 'url'" class="mb-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-link"></i></span>
+              <input type="url" 
+                     class="form-control" 
+                     placeholder="https://example.com/image.jpg"
+                     formControlName="image"
+                     [ngClass]="{ 'is-invalid': imageControl?.invalid && (imageControl?.dirty || imageControl?.touched) }">
+            </div>
+            <small *ngIf="imageControl?.invalid && (imageControl?.dirty || imageControl?.touched)" 
+                   class="text-danger">
+              Please enter a valid image URL (jpg, png, gif, svg, webp)
+            </small>
+          </div>
+        
+          <!-- File Upload -->
+          <div *ngIf="imageInputMethod === 'upload'" class="mb-3">
+            <div class="file-upload-container border border-dashed rounded p-3 text-center">
+              <input type="file" 
+                     class="form-control d-none" 
+                     id="adImageUpload"
+                     (change)="onFileSelected($event)" 
+                     accept="image/*">
+              <label for="adImageUpload" class="mb-0 d-block cursor-pointer">
+                <i class="bi bi-cloud-arrow-up fs-3 mb-2"></i>
+                <p class="mb-0">Click to select a file or drag and drop</p>
+                <small class="d-block text-muted mt-1">Max file size: 2MB (JPG, PNG, GIF, SVG, WEBP)</small>
+              </label>
+            </div>
+          </div>
+        
+          <!-- Image Preview -->
+          <div *ngIf="previewUrl" class="logo-preview-container mt-3">
+            <div class="d-flex align-items-center">
+              <div class="logo-thumbnail me-3">
+                <img [src]="previewUrl" alt="Preview" class="img-fluid rounded">
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeImage()">
+                <i class="bi bi-trash me-1"></i> Remove
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Link Field -->
+        <div class="mb-4">
+          <label for="link" class="form-label fw-bold">Advertisement Link <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+            <input type="url" class="form-control" id="link" formControlName="link"
+                   [ngClass]="{ 'is-invalid': linkControl?.invalid && (linkControl?.dirty || linkControl?.touched) }"
+                   placeholder="https://example.com/landing-page">
+          </div>
+          <div *ngIf="linkControl?.invalid && (linkControl?.dirty || linkControl?.touched)" 
+               class="text-danger small mt-1">
+            <i class="bi bi-exclamation-circle me-1"></i>Link is required
+          </div>
+        </div>
+        
+        <!-- Expiration Date Field -->
+        <div class="mb-4">
+          <label for="expDate" class="form-label fw-bold">Expiration Date <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+            <input type="date" class="form-control" id="expDate" formControlName="expDate"
+                   [ngClass]="{ 'is-invalid': expDateControl?.invalid && (expDateControl?.dirty || expDateControl?.touched) }">
+          </div>
+          <div *ngIf="expDateControl?.invalid && (expDateControl?.dirty || expDateControl?.touched)" 
+               class="text-danger small mt-1">
+            <i class="bi bi-exclamation-circle me-1"></i>Expiration date is required
+          </div>
+        </div>
+        
+        <!-- Brand Selection -->
+        <div class="card mb-4 border-0 bg-light">
+          <div class="card-body">
+            <h5 class="card-title mb-3">
+              <i class="bi bi-shop me-2"></i> Associated Brand
+            </h5>
+            
+            <div class="mb-0">
+              <label for="brand" class="form-label">Select Brand <span class="text-danger">*</span></label>
+              <select class="form-select" id="brand" formControlName="brand"
+                      [ngClass]="{ 'is-invalid': brandControl?.invalid && (brandControl?.dirty || brandControl?.touched) }">
+                <option value="">Choose a brand...</option>
+                <option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</option>
+              </select>
+              <div *ngIf="brandControl?.invalid && (brandControl?.dirty || brandControl?.touched)" 
+                   class="invalid-feedback">
+                Brand selection is required
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between border-top pt-4">
+          <button type="button" class="btn btn-outline-secondary" routerLink="/brands">
+            <i class="bi bi-x-lg me-1"></i> Cancel
+          </button>
+          <button type="submit" class="btn btn-primary px-4" 
+                  [disabled]="adForm.invalid"
+                  [ngClass]="{ 'btn-success': isEditMode, 'btn-primary': !isEditMode }">
+            <i class="bi" [class.bi-check-lg]="isEditMode" [class.bi-plus-lg]="!isEditMode"></i>
+            {{ isEditMode ? 'Update Advertisement' : 'Create Advertisement' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

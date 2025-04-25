@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<div class="container">
+    <!-- Notification de succès/erreur -->
+    <div *ngIf="message" class="notification" 
+         [class.success]="isOkay" 
+         [class.error]="!isOkay"
+         [@slideInOut]>
+      <div class="notification-content">
+        <span class="notification-icon">
+          <i *ngIf="isOkay" class="fas fa-check-circle"></i>
+          <i *ngIf="!isOkay" class="fas fa-exclamation-circle"></i>
+        </span>
+        <span>{{ message }}</span>
+      </div>
+      <button class="close-btn" (click)="message = ''">&times;</button>
+    </div>
+  
+    <!-- Formulaire de code -->
+    <div *ngIf="!submitted" class="code-form">
+      <div class="text-center">
+        <h2>Activation du compte</h2>
+        <p class="instruction">Veuillez entrer le code à 6 chiffres reçu par email</p>
+        
+        <code-input 
+          [isCodeHidden]="false"
+          [codeLength]="6"
+          [code]="'number'"
+          (codeCompleted)="onCodeCompleted($event)">
+        </code-input>
+        
+        <div *ngIf="isLoading" class="loading-indicator">
+          <div class="spinner"></div>
+          <span>Activation en cours...</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Résultat après soumission -->
+    <div *ngIf="submitted" class="result-container">
+      <div *ngIf="isOkay" class="success-result">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h2>Activation réussie !</h2>
+        <p>Votre compte a été activé avec succès</p>
+        <button class="btn primary" (click)="redirectToLogin()">
+          Se connecter
+        </button>
+      </div>
+      
+      <div *ngIf="!isOkay" class="error-result">
+        <i class="fas fa-exclamation-circle error-icon"></i>
+        <h2>Échec de l'activation</h2>
+        <p>{{ message }}</p>
+        <button class="btn secondary" (click)="submitted = false">
+          Réessayer
+        </button>
+      </div>
+    </div>
+  </div>

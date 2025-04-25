@@ -1,0 +1,80 @@
+<div
+  class="donor-leaderboard p-3 bg-white rounded shadow-sm mx-auto"
+  style="max-width: 800px"
+>
+  <div class="leaderboard-header mb-3 text-center">
+    <h2
+      class="leaderboard-title text-00a79d fw-bold mb-1"
+      style="font-size: 1.5rem"
+    >
+      Donor Ranking
+    </h2>
+    <div class="leaderboard-subtitle text-black small">
+      Top donors of the month
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-sm">
+      <thead class="table-light">
+        <tr>
+          <th
+            class="text-00a79d border-bottom border-00a79d py-2"
+            style="width: 15%"
+          >
+            RANK
+          </th>
+          <th
+            class="text-00a79d border-bottom border-00a79d py-2"
+            style="width: 30%"
+          >
+            EMAIL
+          </th>
+          <th
+            class="text-00a79d border-bottom border-00a79d py-2"
+            style="width: 15%"
+          >
+            POINTS
+          </th>
+          <th
+            class="text-00a79d border-bottom border-00a79d py-2"
+            style="width: 20%"
+          >
+            TOTAL
+          </th>
+          <th
+            class="text-00a79d border-bottom border-00a79d py-2"
+            style="width: 20%"
+          >
+            REWARD
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let donor of topDonors; let i = index"
+          class="border-bottom border-light"
+        >
+          <td class="fw-bold text-00a79d py-2">
+            <span *ngIf="i !== 0">{{ i + 1 }}</span>
+            <span *ngIf="i === 0" style="font-size: 1.2rem">👑</span>
+          </td>
+          <td class="text-black py-2 text-truncate" style="max-width: 150px">
+            {{ donor.email }}
+          </td>
+          <td class="text-black py-2">{{ donor.points }}</td>
+          <td class="text-black py-2">{{ donor.totalDonated }}</td>
+          <td class="py-2">
+            <div
+              *ngIf="donor.isDonatorOfTheMonth"
+              class="badge bg-light-00a79d text-00a79d px-2 py-1 rounded-pill d-inline-flex align-items-center"
+              style="font-size: 0.8rem"
+            >
+              <span style="font-size: 1rem" class="me-1">🏆</span> Top Donor
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

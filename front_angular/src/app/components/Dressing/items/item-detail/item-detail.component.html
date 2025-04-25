@@ -1,0 +1,60 @@
+<div class="container" *ngIf="!loading && item">
+  <div class="header">
+    <h1>{{ item.itemName }}</h1>
+    <div class="actions">
+      <button mat-button color="primary" [routerLink]="['/items']">
+        <mat-icon>arrow_back</mat-icon> Back to Items
+      </button>
+      <button mat-raised-button color="accent" [routerLink]="['/items/edit', item.itemID]">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+      <button mat-raised-button color="warn" (click)="deleteItem()">
+        <mat-icon>delete</mat-icon> Delete
+      </button>
+    </div>
+  </div>
+
+  <div class="item-detail">
+    <div class="item-image">
+      <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" alt="{{ item.itemName }}">
+    </div>
+
+    <div class="item-info">
+      <mat-card>
+        <mat-card-content>
+          <h2>Item Details</h2>
+
+          <div class="info-row">
+            <span class="info-label">Category & Size:</span>
+            <span class="info-value">{{ item.category }} - {{ item.size }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Brand:</span>
+            <span class="info-value">{{ item.brand }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Color:</span>
+            <span class="info-value">{{ item.color }}</span>
+          </div>
+
+          <div class="info-row" *ngIf="item.dateAdded">
+            <span class="info-label">Added On:</span>
+            <span class="info-value">{{ item.dateAdded | date:'mediumDate' }}</span>
+          </div>
+
+          <div class="description" *ngIf="item.description">
+            <h3>Description</h3>
+            <p>{{ item.description }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<div class="loading-container" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+  <p>Loading item details...</p>
+</div>

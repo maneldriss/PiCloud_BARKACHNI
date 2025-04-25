@@ -1,0 +1,183 @@
+<div class="container py-4">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+      <i class="bi bi-shop me-2"></i>{{ isEditMode ? 'Edit' : 'Add New' }} Brand
+    </h2>
+    <a routerLink="/brands" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Back to List
+    </a>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="card shadow-sm mb-4">
+    <div class="card-body text-center py-5">
+      <div *ngIf="uploadProgress !== null" class="mb-4">
+        <h5 class="mb-3">Uploading Logo</h5>
+        <div class="progress" style="height: 8px;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" 
+               [style.width.%]="uploadProgress">
+          </div>
+        </div>
+        <small class="text-muted">{{ uploadProgress }}% complete</small>
+      </div>
+      <div *ngIf="uploadProgress === null" class="spinner-grow text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 mb-0">{{ loadingMessage }}</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show shadow-sm mb-4">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    {{ error }}
+    <button type="button" class="btn-close" (click)="error = ''"></button>
+  </div>
+
+  <!-- Brand Form -->
+  <form [formGroup]="brandForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <div class="card shadow-sm border-0 overflow-hidden">
+      <div class="card-body p-4">
+        <!-- Brand Name -->
+        <div class="mb-4">
+          <label for="name" class="form-label fw-bold">Brand Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control form-control-lg" id="name" formControlName="name"
+                 [ngClass]="{ 'is-invalid': nameControl?.invalid && (nameControl?.dirty || nameControl?.touched) }"
+                 placeholder="Enter brand name">
+          <div *ngIf="nameControl?.invalid && (nameControl?.dirty || nameControl?.touched)" 
+               class="invalid-feedback">
+            Brand name is required
+          </div>
+        </div>
+
+        <!-- Logo Section -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Brand Logo</label>
+          
+        
+          
+          <!-- URL Input -->
+          <div *ngIf="logoInputMethod === 'url'" class="mb-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-link"></i></span>
+              <input type="url" class="form-control" formControlName="logo" 
+                     placeholder="https://example.com/logo.png"
+                     [ngClass]="{ 'is-invalid': logoControl?.invalid && (logoControl?.dirty || logoControl?.touched) }">
+            </div>
+            <small *ngIf="logoControl?.invalid && (logoControl?.dirty || logoControl?.touched)" 
+                   class="text-danger">
+              Please enter a valid image URL (jpg, png, gif, svg, webp)
+            </small>
+          </div>
+          
+          
+          
+          <!-- Logo Preview -->
+          <div *ngIf="previewUrl" class="logo-preview-container mt-3">
+            <div class="d-flex align-items-center">
+              <div class="logo-thumbnail me-3">
+                <img [src]="previewUrl" alt="Logo preview" class="img-fluid rounded">
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeLogo()">
+                <i class="bi bi-trash me-1"></i> Remove
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description Section -->
+<div class="mb-4">
+  <label for="description" class="form-label fw-bold">Description</label>
+  <textarea class="form-control" id="description" rows="4" 
+            formControlName="description"
+            [ngClass]="{ 'is-invalid': descriptionControl?.invalid }"
+            placeholder="Tell us about this brand"></textarea>
+  
+  <!-- AI Generation Button + Character Counter -->
+  <div class="d-flex justify-content-between align-items-center mt-2">
+    <button type="button" class="btn btn-sm btn-outline-primary" 
+            (click)="generateDescription()"
+            [disabled]="!nameControl?.value || loading">
+      <i class="bi bi-magic me-1"></i> AI Generate Description
+    </button>
+    <small class="text-muted ms-auto"
+           [ngClass]="{ 
+             'text-danger': (descriptionControl?.value?.length || 0) > 900,
+             'text-success': (descriptionControl?.value?.length || 0) > 0 && (descriptionControl?.value?.length || 0) <= 900
+           }">
+      {{ descriptionControl?.value?.length || 0 }}/1000
+    </small>
+  </div>
+
+  <!-- Validation Messages -->
+  <div *ngIf="descriptionControl?.invalid" class="invalid-feedback d-block mt-1">
+    <i class="bi bi-exclamation-circle me-1"></i>
+    Description cannot exceed 1000 characters
+  </div>
+</div>
+
+        <!-- Rating -->
+        <!-- <div class="mb-4">
+          <label for="rating" class="form-label fw-bold">Rating</label>
+          <div class="d-flex align-items-center">
+            <input type="range" class="form-range flex-grow-1 me-3" 
+                   id="rating" min="0" max="5" step="0.5"
+                   formControlName="rating">
+            <span class="badge bg-primary rounded-pill fs-6">
+              {{ brandForm.get('rating')?.value || 0 }}
+            </span>
+          </div>
+        </div>-->
+
+        <!-- Contact Information -->
+        <div class="card mb-4 border-0 bg-light">
+          <div class="card-body">
+            <h5 class="card-title mb-3">
+              <i class="bi bi-envelope me-2"></i>Contact Information
+            </h5>
+            
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-at"></i></span>
+                <input type="email" class="form-control" id="email" 
+                       formControlName="email"
+                       [ngClass]="{ 'is-invalid': emailControl?.invalid && (emailControl?.dirty || emailControl?.touched) }"
+                       placeholder="contact@brand.com">
+              </div>
+              <small *ngIf="emailControl?.invalid && (emailControl?.dirty || emailControl?.touched)" 
+                     class="text-danger">
+                Please enter a valid email address
+              </small>
+            </div>
+            
+            <!-- Address -->
+            <div class="mb-0">
+              <label for="address" class="form-label">Address</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                <input type="text" class="form-control" id="address" 
+                       formControlName="address" placeholder="123 Brand Street">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between border-top pt-4">
+          <button type="button" class="btn btn-outline-secondary" routerLink="/brands">
+            <i class="bi bi-x-lg me-1"></i> Cancel
+          </button>
+          <button type="submit" class="btn btn-primary px-4" 
+                  [disabled]="brandForm.invalid"
+                  [ngClass]="{ 'btn-success': isEditMode, 'btn-primary': !isEditMode }">
+            <i class="bi" [class.bi-check-lg]="isEditMode" [class.bi-plus-lg]="!isEditMode"></i>
+            {{ isEditMode ? 'Update Brand' : 'Create Brand' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

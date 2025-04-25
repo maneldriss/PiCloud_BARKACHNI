@@ -1,0 +1,56 @@
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0"><i class="bi bi-megaphone me-2"></i>Pending Ads Approval</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Ad Title</th>
+              <th>Brand</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr >
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>
+                <button  class="btn btn-success btn-sm me-2">
+                  <i class="bi bi-check-lg"></i> Approve
+                </button>
+                <button class="btn btn-danger btn-sm">
+                  <i class="bi bi-x-lg"></i> Reject
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Reject Modal -->
+  <div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Reject Ad</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Reason for rejection:</label>
+            <textarea class="form-control"  rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" >Confirm Rejection</button>
+        </div>
+      </div>
+    </div>
+  </div>
