@@ -93,10 +93,16 @@ public class CartRestController {
         cartService.removeItemFromCart(cartId, itemId);
         return ResponseEntity.ok(cartService.retrievecart(cartId));
     }
+    @GetMapping("/total/{cartId}")
+    public double getCartTotal(@PathVariable Long cartId) {
+        return cartService.getCartTotal(cartId);
+    }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<cart> getCartByUserId(@PathVariable Integer userId) {
         cart userCart = cartService.retrieveCartByUserId(userId);
         return ResponseEntity.ok(userCart);
     }
+
+
 }

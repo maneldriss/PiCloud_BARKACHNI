@@ -65,20 +65,43 @@
                 <li><a href="./shop-details.html">Shop Details</a></li>
                 <li><a href="./shopping-cart.html">Shopping Cart</a></li>
                 <li><a href="./checkout.html">Check Out</a></li>
-                <li><a href="./blog-details.html">Blog Details</a></li>
+                <li><a routerLink="/post">Blog Details</a></li>
               </ul>
             </li>
-            <li><a class="nav-link" routerLink="/products" routerLinkActive="active">Shop</a>
+            <li>
+              <a
+                class="nav-link"
+                routerLink="/products"
+                routerLinkActive="active"
+                >Shop</a
+              >
               <ul class="dropdown">
-                  <li><a routerLink="/products/women" routerLinkActive="active">Women</a></li>
-                  <li><a routerLink="/products/men" routerLinkActive="active">Men</a></li>
-                  <li><a routerLink="/products/kids" routerLinkActive="active">Kids</a></li>     
-                  <li><a routerLink="/products/myProducts" routerLinkActive="active">My Products</a></li>  
-              </ul></li>
-            <li><a href="./blog.html">Blog</a></li>
+                <li>
+                  <a routerLink="/products/women" routerLinkActive="active"
+                    >Women</a
+                  >
+                </li>
+                <li>
+                  <a routerLink="/products/men" routerLinkActive="active"
+                    >Men</a
+                  >
+                </li>
+                <li>
+                  <a routerLink="/products/kids" routerLinkActive="active"
+                    >Kids</a
+                  >
+                </li>
+                <li>
+                  <a routerLink="/products/myProducts" routerLinkActive="active"
+                    >My Products</a
+                  >
+                </li>
+              </ul>
+            </li>
+            <li><a routerLink="/post">Blog</a></li>
             <li><a routerLink="/brands">My brands</a></li>
             <li><a routerLink="/donations">Donations</a></li>
-
+            <li><a routerLink="/commande">My Orders</a></li>
             <li><a href="./contact.html">Contacts</a></li>
           </ul>
         </nav>
@@ -88,9 +111,13 @@
           <a href="#" class="search-switch"
             ><img src="img/icon/search.png" alt=""
           /></a>
+
           <a href="#"><img src="img/icon/heart.png" alt="" /></a>
-          <a href="#"><img src="img/icon/cart.png" alt="" /> <span>0</span></a>
-          <div class="price">$0.00</div>
+          <!-- Cart icon that links to the cart -->
+          <a routerLink="/cart" class="cart-link">
+            <i class="fas fa-shopping-cart"></i>
+            <!-- Cart icon -->
+          </a>
         </div>
       </div>
     </div>
@@ -102,7 +129,6 @@
 <main>
   <!-- This is where your page-specific content will go -->
   <ng-content></ng-content>
-
 </main>
 
 <footer class="footer">

@@ -29,4 +29,6 @@ List<User> retrieveAllusers();
 
 
     cart retrieveCartByUserId(Integer userId);
+
+    cart getCartByUserId(Integer userId);
 }

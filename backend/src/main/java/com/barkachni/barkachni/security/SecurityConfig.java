@@ -61,7 +61,14 @@ public class SecurityConfig {
                                         "/ad/**",
                                         "/api/donors/**",
                                         "/donation/**",
-                                        "/marketplace/**"
+                                        "/marketplace/**",
+                                        "/posts/**",
+                                        "/commentaires/**",
+                                        "/likes/**",
+                                        "/item/**",
+                                        "/cart/**",
+                                        "/commande/**"
+
 
 
                                 )

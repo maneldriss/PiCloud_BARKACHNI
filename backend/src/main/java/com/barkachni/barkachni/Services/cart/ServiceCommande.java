@@ -7,9 +7,11 @@ import com.barkachni.barkachni.entities.user.User;
 import com.barkachni.barkachni.entities.user.UserRepository;
 import com.barkachni.barkachni.repositories.cart.ICartRepository;
 import com.barkachni.barkachni.repositories.cart.ICommandeRepository;
+
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -94,16 +96,17 @@ public class ServiceCommande implements IServiceCommande {
     }// Get total for a specific commande
 
     @Override
+    @Transactional
     public commande placeOrder(Long cartId, String shippingAddress,
                                String shippingMethod, String paymentMethod,
                                Double discountApplied, String discountType,
-                               Integer UserId) {  // Add UserId parameter
+                               Integer UserId) {
         // Step 1: Fetch the cart
         cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         // Step 2: Fetch the User
-        User User = UserRepository.findById(UserId)
+        User user = UserRepository.findById(UserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (cart.getCartitems().isEmpty()) {
@@ -112,7 +115,7 @@ public class ServiceCommande implements IServiceCommande {
 
         // Step 3: Create a new Commande
         commande commande = new commande();
-        commande.setUser(User);  // Set the user
+        commande.setUser(user);
         commande.setShippingAddress(shippingAddress);
         commande.setStatus("Pending");
         commande.setPaymentStatus("Unpaid");
@@ -130,10 +133,11 @@ public class ServiceCommande implements IServiceCommande {
         commandeRepository.save(commande);
 
         cart.getCartitems().clear();
-        cartRepository.save(cart);
+        cartRepository.save(cart); // clear cart items after placing the order
 
         return commande;
     }
+
     @Override
 
     public void updatePaymentStatus(Long commandeId, String status) {

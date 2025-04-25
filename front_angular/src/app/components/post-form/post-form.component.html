@@ -1,0 +1,100 @@
+<form (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="post-creation-form">
+  <div class="form-group">
+    <label for="title">Titre du post</label>
+    <input
+      type="text"
+      id="title"
+      [(ngModel)]="newPost.title"
+      name="title"
+      required
+      minlength="3"
+      #titleInput="ngModel"
+      class="form-control"
+      placeholder="Un titre percutant..."
+    />
+    <div *ngIf="titleInput.invalid && titleInput.touched" class="text-danger">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span *ngIf="titleInput.errors?.['required']">Ce champ est obligatoire</span>
+      <span *ngIf="titleInput.errors?.['minlength']">Minimum 3 caractères</span>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Description Automatique</label>
+    <div *ngIf="isGenerating" class="loading-indicator">
+      <i class="fas fa-spinner fa-spin"></i> Génération en cours...
+    </div>
+    <div *ngIf="aiGeneratedContent" class="ai-content-wrapper">
+      <textarea 
+        class="form-control mb-2" 
+        [value]="aiGeneratedContent"
+        readonly
+        style="height: 150px; background-color: #f8f9fa;"
+      ></textarea>
+      <div class="ai-content-buttons">
+        <button type="button" class="btn btn-sm btn-success" (click)="useAIContent()">
+          <i class="fas fa-check"></i> Utiliser
+        </button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="clearAIContent()">
+          <i class="fas fa-times"></i> Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label for="content">Votre message</label>
+    <textarea
+      id="content"
+      [(ngModel)]="newPost.content"
+      name="content"
+      required
+      minlength="10"
+      #contentInput="ngModel"
+      class="form-control"
+      placeholder="Exprimez-vous librement..."
+    ></textarea>
+    <div *ngIf="contentInput.invalid && contentInput.touched" class="text-danger">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span *ngIf="contentInput.errors?.['required']">Ce champ est obligatoire</span>
+      <span *ngIf="contentInput.errors?.['minlength']">Minimum 10 caractères</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Image illustrative</label>
+    <div class="file-input-wrapper">
+      <label for="image" class="file-input-label">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <span class="file-label-text">
+          {{ imageFile ? imageFile.name : 'Cliquez pour sélectionner une image' }}
+        </span>
+        <small class="file-hint">Formats: JPG, PNG, GIF (max 5MB)</small>
+      </label>
+      <input type="file" id="image" (change)="onImageSelected($event)" style="display: none;">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Vidéo complémentaire</label>
+    <div class="file-input-wrapper">
+      <label for="video" class="file-input-label">
+        <i class="fas fa-film"></i>
+        <span class="file-label-text">
+          {{ videoFile ? videoFile.name : 'Cliquez pour sélectionner une vidéo' }}
+        </span>
+        <small class="file-hint">Formats: MP4, MOV (max 20MB)</small>
+      </label>
+      <input 
+        type="file" 
+        id="video" 
+        accept=".mp4,.mov" 
+        (change)="onVideoSelected($event)" 
+        style="display: none;"
+      />
+    </div>
+  </div>
+
+  <button type="submit" class="btn-submit">
+    <i class="fas fa-paper-plane"></i> Publier maintenant
+  </button>
+</form>

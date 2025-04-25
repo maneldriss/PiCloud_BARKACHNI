@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 // models/donation.ts
 export enum DonationType {
   MONEY = 'MONEY',

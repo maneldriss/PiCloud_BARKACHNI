@@ -96,7 +96,7 @@ public class DonationService implements IDonationService {
     }
 
     @Transactional
-    public void recalculateUserPoints(int userId) {
+    public void recalculateUserPoints(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 

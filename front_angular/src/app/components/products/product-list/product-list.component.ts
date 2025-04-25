@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Product } from 'src/app/models/product';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { CartService } from 'src/app/services/cart.service';
 import { ProductService } from 'src/app/services/product.service';
 import { RecommendationServiceService } from 'src/app/services/recommendation-service.service';
 
@@ -13,7 +16,8 @@ export class ProductListComponent implements OnInit {
   filteredProducts: Product[] = [];
   paginatedProducts: Product[] = [];
   showSidebar: boolean = false;
-
+  cartId = 2; 
+  userId :number | null = null;
 
   staticCategories: string[] = ['PANTS','TOP','JACKET','DRESS','SKIRT','BAG','ACCESSORIES','SHOES'];
   staticSizes: string[] = ['XXS','XS','S','M','L','XL'];
@@ -34,10 +38,17 @@ export class ProductListComponent implements OnInit {
  currentPage = 0; 
  maxVisiblePages = 5; 
 
-  constructor(private productService: ProductService, private recommendationService: RecommendationServiceService) { }
-
+  constructor(private productService: ProductService, private recommendationService: RecommendationServiceService,    private cartService: CartService,  private router: Router,private authService: AuthService) { }
+  getCurrentUserId(): void {
+    const currentUser = this.authService.getCurrentUser();
+    console.log("Current user data:", currentUser);
+    this.userId = currentUser?.id ?? null;
+    console.log("Fetched user ID:", this.userId);
+  }
   ngOnInit(): void {
+    this.getCurrentUserId();
     this.loadProducts();
+    this.getCartId();
 
   }
   toggleSidebar(): void {
@@ -200,4 +211,25 @@ onProductClick(product: any) {
   console.log('Product clicked:', product);
 
 }
+addToCart(productId: number): void {
+  const quantity = 1; // default for now
+  this.cartService.addProductToCart(this.cartId, productId, quantity).subscribe(() => {
+    this.router.navigate(['/cart']);
+  });
+}
+getCartId(): void {
+  this.cartService.getCartByUserId(this.userId!).subscribe(
+    (cart) => {
+      this.cartId = cart.cartID;  // Set the cart ID from the fetched cart
+      console.log("Fetched cart ID:", this.cartId);
+
+      // Now that we have the cart ID, load the cart and get the total
+     // Fetch the total after setting the cart ID
+    },
+    (error) => {
+      console.error("Error fetching cart ID:", error);
+    }
+  );
+}
+
 }

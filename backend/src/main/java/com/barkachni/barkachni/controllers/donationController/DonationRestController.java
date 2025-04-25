@@ -101,7 +101,7 @@ public class DonationRestController {
     }
 
     @GetMapping("/user/{userId}/total-approved")
-    public ResponseEntity<Double> getTotalApprovedDonations(@PathVariable Long userId) {
+    public ResponseEntity<Double> getTotalApprovedDonations(@PathVariable Integer userId) {
         Double total = donationRepository.sumApprovedDonationsByUser(userId);
         return ResponseEntity.ok(total != null ? total : 0.0);
     }

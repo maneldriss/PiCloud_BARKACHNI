@@ -168,5 +168,12 @@ public class ServiceCart implements IServiceCart {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No cart found for User with ID: " + userId));
     }
+    @Override
+    public cart getCartByUserId(Integer userId) {
+        return cartRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new RuntimeException("No cart found for user ID: " + userId));
+    }
+
+
 
 }

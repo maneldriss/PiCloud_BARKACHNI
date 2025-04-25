@@ -1,0 +1,170 @@
+.order-history-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.order-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.order-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1rem;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #555;
+}
+
+.order-status {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.order-status.processing {
+  background: #FFF3CD;
+  color: #856404;
+}
+
+.order-status.shipped {
+  background: #CCE5FF;
+  color: #004085;
+}
+
+.order-status.delivered {
+  background: #D4EDDA;
+  color: #155724;
+}
+
+.order-status.cancelled {
+  background: #F8D7DA;
+  color: #721C24;
+}
+
+.order-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-group {
+  margin-bottom: 0.5rem;
+}
+
+.detail-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 0.25rem;
+}
+
+.detail-group p {
+  margin: 0;
+  font-weight: 500;
+  color: #333;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.order-total {
+  font-size: 1.1rem;
+}
+
+.cancel-btn {
+  background: #FFEBEE;
+  color: #C62828;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #FFCDD2;
+}
+
+.cancel-btn i {
+  margin-right: 0.5rem;
+}
+
+.empty-orders {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 10px;
+  max-width: 500px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: #00A79D;
+  margin-bottom: 1rem;
+}
+
+.empty-orders h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.empty-orders p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.shop-btn {
+  background: #00A79D;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.shop-btn:hover {
+  background: #00A79D;
+  color: white;
+}

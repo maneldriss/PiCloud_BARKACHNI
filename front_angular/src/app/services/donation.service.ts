@@ -4,6 +4,7 @@ import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Donation, DonationStatus } from '../models/donation';
 import { environment } from '../environments/environment';
+import { JwtService } from './jwt/jwt.service';
 
 @
 Injectable({
@@ -13,9 +14,8 @@ export class DonationService {
        private apiUrl = `${environment.apiUrl}/donation`;
 
   private donationsUpdated = new Subject<void>();
-  jwtService: any;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private jwtService:JwtService) { }
   donationsUpdated$ = this.donationsUpdated.asObservable();
 
   getAllDonations(): Observable<Donation[]> {
@@ -25,10 +25,10 @@ export class DonationService {
         // Assurez-vous que les noms de champs correspondent à votre interface
         donationId: d.donation_id || d.donationId,
         donationType: d.donation_type || d.donationType,
-        itemDressing: d.itemDressing ? {
-          itemID: d.itemDressing.itemid || d.itemDressing.itemID,
-          itemName: d.itemDressing.item_name || d.itemDressing.itemName,
-          imageUrl: d.itemDressing.image_url || d.itemDressing.imageUrl
+        itemDressing: d.Item ? {
+          itemID: d.Item.itemid || d.Item.itemID,
+          itemName: d.Item.item_name || d.Item.itemName,
+          imageUrl: d.Item.image_url || d.Item.imageUrl
         } : null,
         donor: d.donor ? {
           name: d.donor.name,
@@ -73,14 +73,14 @@ export class DonationService {
       donationId: d.donationId,
       donationType: d.donationType,
       amount: d.amount,
-      itemDressing: d.itemDressing ? {
-        itemID: d.itemDressing.itemID,
-        itemName: d.itemDressing.itemName,
-        imageUrl: d.itemDressing.imageUrl,
-        description: d.itemDressing.description,
-        condition: d.itemDressing.condition,
-        category: d.itemDressing.category,
-        size: d.itemDressing.size,
+      itemDressing: d.Item ? {
+        itemID: d.Item.itemID,
+        itemName: d.Item.itemName,
+        imageUrl: d.Item.imageUrl,
+        description: d.Item.description,
+        condition: d.Item.condition,
+        category: d.Item.category,
+        size: d.Item.size,
       } : undefined,
       donor: d.donor,
       status: d.status || DonationStatus.PENDING,

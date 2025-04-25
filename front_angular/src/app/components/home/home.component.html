@@ -52,7 +52,7 @@
             <small class="text-muted" style="color: black;">Recent Financial Donations :</small>
             <div class="mt-2">
               <div *ngFor="let donation of recentMoneyDonations" class="d-flex justify-content-between small py-1 border-bottom" style="border-color: #e6e4d8 !important;">
-                <span style="color: black;">{{ donation.donor?.name || 'Anonymous' }}</span>
+                <span style="color: black;">{{ donation.donor?.firstname || 'Anonymous' }}</span>
                 <strong style="color: #00a79d;">{{ donation.amount }} DT</strong>
               </div>
             </div>
@@ -90,7 +90,7 @@
             <small class="text-muted" style="color: black;">Recent Material Donations :</small>
             <div class="mt-2">
               <div *ngFor="let donation of recentClothingDonations" class="d-flex justify-content-between small py-1 border-bottom" style="border-color: #e6e4d8 !important;">
-                <span style="color: black;">{{ donation.donor?.name || 'Anonymous' }}</span>
+                <span style="color: black;">{{ donation.donor?.firstname || 'Anonymous' }}</span>
                 <strong style="color: #00a79d;">{{ donation.itemDressing?.itemName || 'Vêtement' }}</strong>
               </div>
             </div>

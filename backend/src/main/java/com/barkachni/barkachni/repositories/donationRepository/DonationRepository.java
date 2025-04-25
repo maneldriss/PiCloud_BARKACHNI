@@ -21,7 +21,7 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
             "ORDER BY totalDonated DESC")
     Page<Object[]> findTopDonors(Pageable pageable);
     @Query("SELECT COALESCE(SUM(d.amount), 0) FROM Donation d WHERE d.donor.id = :userId AND d.status = 'APPROVED' AND d.donationType = 'MONEY'")
-    Double sumApprovedDonationsByUser(@Param("userId") Long userId);
+    Double sumApprovedDonationsByUser(@Param("userId") Integer userId);
 
     List<Donation> findByDonorAndStatus(User donor, DonationStatus status);
     @Query("SELECT d FROM Donation d WHERE d.donor.id = :userId AND d.status = 'APPROVED'") // Utilisez idUser

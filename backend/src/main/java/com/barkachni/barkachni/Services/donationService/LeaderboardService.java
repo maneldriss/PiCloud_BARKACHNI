@@ -26,7 +26,7 @@ public class LeaderboardService {
        Page<Object[]> result = donationRepository.findTopMoneyDonors(pageable);
 
        return result.map(record -> {
-           User donor = (User) record[0];
+           User donor = (User) record[1];
            Double totalDonated = (Double) record[1];
 
            Map<String, Object> data = new HashMap<>();

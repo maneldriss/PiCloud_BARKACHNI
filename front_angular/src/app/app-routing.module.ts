@@ -30,6 +30,14 @@ import { WomenShopComponent } from './components/products/women-shop/women-shop.
 import { KidsShopsComponent } from './components/products/kids-shops/kids-shops.component';
 import { ReservedProductsComponent } from './components/products/reserved-products/reserved-products.component';
 import { MyProductsComponent } from './components/products/my-products/my-products.component';
+import { PostListComponent } from './components/post-list/post-list.component';
+import { PostFormComponent } from './components/post-form/post-form.component';
+import { CommentaireListComponent } from './components/commentaire-list/commentaire-list.component';
+import { CartComponent } from './components/cart/cart.component';
+import { CommandeComponent } from './components/commande/commande.component';
+import { OrderFormComponent } from './components/order-form/order-form.component';
+import { PaymentComponent } from './components/payment/payment.component';
+import { SpinWheelComponent } from './components/spin-wheel/spin-wheel.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -66,6 +74,14 @@ const routes: Routes = [
       { path: 'donations/:id', component: DonationDetailComponent },
       { path: 'lead', component: LeaderboardComponent },
       {path: 'chat' ,component:ChatbotComponent},
+      { path: 'post', component: PostListComponent },
+  { path: 'add-post', component: PostFormComponent },
+  { path: 'post/:id/commentaires', component: CommentaireListComponent },
+  { path: 'cart', component: CartComponent },
+  { path: 'commande', component: CommandeComponent },
+    { path: 'order-form/:cartId', component: OrderFormComponent },
+    { path: 'wheel', component: SpinWheelComponent },
+    { path: 'payment', component: PaymentComponent },
   { path: '**', redirectTo: '' }
 ];
 

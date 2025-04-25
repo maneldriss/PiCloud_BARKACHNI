@@ -20,9 +20,9 @@ public class cart {
     Long cartID;
     private double total;
     @OneToOne
-   private User User;
+   private User user;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Set<Cartitem> Cartitems;
 
 
@@ -37,11 +37,11 @@ public class cart {
     }
 
     public User getUser() {
-        return User;
+        return user;
     }
 
     public void setUser(User User) {
-        this.User = User;
+        this.user = User;
     }
 
     public Set<Cartitem> getCartitems() {

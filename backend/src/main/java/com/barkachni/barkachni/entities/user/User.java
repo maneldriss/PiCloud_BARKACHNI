@@ -2,6 +2,8 @@ package com.barkachni.barkachni.entities.user;
 
 import com.barkachni.barkachni.entities.Dressing.Dressing;
 import com.barkachni.barkachni.entities.Dressing.Item;
+import com.barkachni.barkachni.entities.blog.Commentaire;
+import com.barkachni.barkachni.entities.blog.Post;
 import com.barkachni.barkachni.entities.donationEntity.Donation;
 import com.barkachni.barkachni.entities.role.Role_user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,6 +33,7 @@ import static jakarta.persistence.FetchType.EAGER;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"posts", "commentaires"})
 public class User implements UserDetails, Principal // Implements Spring Security UserDetails
 {
 
@@ -242,6 +245,11 @@ public class User implements UserDetails, Principal // Implements Spring Securit
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnoreProperties("user")
     private Dressing dressing;
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "user")
+    private List<Commentaire> commentaires;
 
 
     public void setProfilePicture(String profilePicture) {

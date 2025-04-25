@@ -2,6 +2,7 @@ package com.barkachni.barkachni.entities.blog;
 
 import com.barkachni.barkachni.entities.user.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,7 +35,8 @@ public class Commentaire {
 
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonIgnore
     private User user;
 
     public Long getIdCommentaire() {

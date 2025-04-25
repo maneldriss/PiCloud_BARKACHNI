@@ -47,6 +47,17 @@ import { WomenShopComponent } from './components/products/women-shop/women-shop.
 import { KidsShopsComponent } from './components/products/kids-shops/kids-shops.component';
 import { ReservedProductsComponent } from './components/products/reserved-products/reserved-products.component';
 import { MyProductsComponent } from './components/products/my-products/my-products.component';
+import { PostListComponent } from './components/post-list/post-list.component';
+import { PostFormComponent } from './components/post-form/post-form.component';
+import { CommentaireListComponent } from './components/commentaire-list/commentaire-list.component';
+import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
+import { CartComponent } from './components/cart/cart.component';
+import { CommandeComponent } from './components/commande/commande.component';
+import { OrderFormComponent } from './components/order-form/order-form.component';
+import { SpinWheelComponent } from './components/spin-wheel/spin-wheel.component';
+import { RewardmodalComponent } from './components/rewardmodal/rewardmodal.component';
+import { PaymentComponent } from './components/payment/payment.component';
+
 
 
 
@@ -83,7 +94,17 @@ import { MyProductsComponent } from './components/products/my-products/my-produc
     MenShopComponent,
     WomenShopComponent,
     KidsShopsComponent,
-    ReservedProductsComponent
+    ReservedProductsComponent,
+    PostListComponent,
+    PostFormComponent,
+    CommentaireListComponent,
+    LeaderboardComponent,
+    CartComponent,
+    CommandeComponent,
+    OrderFormComponent,
+    SpinWheelComponent,
+    RewardmodalComponent,
+    PaymentComponent
     
   
   ],
@@ -100,7 +121,8 @@ import { MyProductsComponent } from './components/products/my-products/my-produc
     MatSnackBarModule,
     MatTableModule,
     MatPaginatorModule,
-    RouterModule
+    RouterModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent],

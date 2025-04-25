@@ -1,6 +1,7 @@
 package com.barkachni.barkachni.entities.blog;
 
 import com.barkachni.barkachni.entities.user.User;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -47,16 +48,17 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true, fetch = FetchType.EAGER)
 
     private List<Commentaire> Commentaires;
 
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonIgnore
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<LikeDislike> likeDislikes;
 

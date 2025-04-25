@@ -10,13 +10,14 @@ import { environment } from '../environments/environment';
 })
 export class ItemDressingService {
  
-   private apiUrl = `${environment.apiUrl}/itemDressing`;
+   private apiUrl = "http://localhost:8088/barkachni/item";
 
   constructor(private http: HttpClient) { }
 
   getAvailableItems(): Observable<ItemDressing[]> {
     return this.http.get<ItemDressing[]>(`${this.apiUrl}/retrieve-all-items`);
   }
+  
   uploadImage(file: File): Observable<string> {
     const formData = new FormData();
     formData.append('image', file);

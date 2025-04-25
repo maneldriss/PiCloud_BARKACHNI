@@ -1,0 +1,662 @@
+/* Variables de couleurs turquoise, noir et blanc */
+:root {
+  --primary: #00A79D;        /* Turquoise principal */
+  --primary-dark: #008C83;   /* Turquoise foncé */
+  --secondary: #00A79D;      /* Même turquoise pour cohérence */
+  --accent: #000000;         /* Noir pour accent */
+  --accent-light: #333333;   /* Noir légèrement plus clair */
+  --success: #00A79D;        /* Utilisation du turquoise pour succès */
+  --success-light: #00BEB3;  /* Version plus claire du turquoise */
+  --danger: #000000;         /* Noir pour les erreurs/dangers */
+  --warning: #000000;        /* Noir pour les avertissements */
+  --hover: #f0f8f7;          /* Couleur de fond au survol (teinte très légère de turquoise) */
+  --border: #E2E8F0;         /* Couleur de bordure */
+  --text: #000000;           /* Texte principal en noir */
+  --text-secondary: #555555; /* Texte secondaire en gris foncé */
+  --card-bg: #FFFFFF;        /* Fond carte en blanc */
+  --background: #F8F8F8;     /* Fond général légèrement grisé */
+}
+
+/* Conteneur principal des posts */
+.post-container {
+  max-width: 590px;
+  margin: 30px auto;
+}
+
+/* Carte de post */
+.post-card {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(160, 126, 126, 0.1);
+}
+
+/* En-tête du post avec photo de profil */
+.post-metadata {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--primary);
+  color: rgb(255, 255, 255);
+}
+.btn-turquoise {
+  background-color: #00A79D;
+  color: white;
+}
+.btn-turquoise:hover {
+  background-color: #008C83;
+  color: white;
+}
+/* Style pour la photo de profil */
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Nom d'utilisateur */
+.post-user {
+  font-weight: 600;
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+
+/* Date de publication */
+.post-date {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  position: absolute;
+  right: 75px;
+}
+
+/* Icônes d'édition/suppression */
+.post-admin-actions {
+  position: absolute;
+  right: 20px;
+  top: 16px;
+  display: flex;
+  gap: 18px;
+}
+
+.edit-icon, .delete-icon {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.edit-icon:hover, .delete-icon:hover {
+  color: white;
+  transform: scale(1.15);
+}
+
+/* Zone de contenu du post */
+.post-content-wrapper {
+  padding: 18px 20px;
+}
+
+/* Titre du post */
+.post-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: var(--);
+  letter-spacing: 0.2px;
+}
+
+/* Contenu du post */
+.post-content {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text);
+}
+
+/* Conteneur d'image */
+.post-image-container {
+  width: 100%;
+  max-height: 590px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+/* Image */
+.post-image {
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+/* Footer du post avec les icônes d'action */
+.post-footer {
+  display: flex;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  align-items: center;
+  background-color: var(--card-bg);
+}
+
+/* Boutons d'action avec emojis */
+.reaction-buttons {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+}
+
+.reaction-container {
+  position: relative;
+  margin-right: 15px;
+}
+
+.like-button, .dislike-button {
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+  border-radius: 6px;
+}
+
+.like-button:hover {
+  background-color: rgba(0, 167, 157, 0.08);
+  transform: scale(1.05);
+}
+
+.dislike-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
+}
+
+.like-button span, .dislike-button span {
+  margin-left: 6px;
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.comment-button {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  color: var(--secondary);
+  border-radius: 6px;
+}
+
+.comment-button i {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.comment-button:hover {
+  background-color: rgba(11, 223, 209, 0.08);
+}
+
+/* Style pour la section d'édition */
+.edit-form {
+  padding: 20px;
+  background-color: rgba(248, 250, 252, 0.98);
+  border: 1px solid var(--border);
+  margin: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Inputs et textarea dans le formulaire d'édition */
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 15px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 167, 157, 0.15);
+}
+
+/* Boutons d'action enregistrer/annuler pour le mode édition */
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.btn {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+}
+
+.btn-success {
+  background-color: var(--success);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 167, 157, 0.2);
+}
+
+.btn-success:hover {
+  background-color: var(--success-light);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: #e6e9ec;
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  background-color: #d8dde2;
+  transform: translateY(-2px);
+}
+
+.btn-follow {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 13px;
+  display: inline-block;
+}
+
+.btn-follow:hover {
+  background: var(--accent-light);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 3px 8px rgba(0, 167, 157, 0.15);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Style pour la section "Pas de posts" */
+.no-posts {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  color: var(--text-secondary);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.no-posts p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.no-posts p::before {
+  content: '📭';
+  display: block;
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+/* Style pour la carte "Ajouter un post" */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card-header {
+  padding: 16px 20px;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Responsive design pour les appareils mobiles */
+@media (max-width: 700px) {
+  .post-container {
+    width: 100%;
+    padding: 0 12px;
+    margin: 20px auto;
+  }
+  
+  .post-footer {
+    flex-wrap: wrap;
+  }
+  
+  .post-date {
+    right: 65px;
+    font-size: 12px;
+  }
+  
+  .post-admin-actions {
+    gap: 12px;
+  }
+  
+  .card-header {
+    padding: 14px;
+  }
+  
+  .card-body {
+    padding: 14px;
+  }
+  
+  .btn {
+    padding: 9px 14px;
+    font-size: 13px;
+  }
+}
+
+/* Styles pour la pagination */
+.pagination-container {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.page-item {
+  margin: 0 4px;
+}
+
+.page-link {
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--secondary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.page-link:hover {
+  background-color: var(--hover);
+  border-color: var(--primary);
+}
+
+.page-item.active .page-link {
+  background-color: var(--secondary);
+  color: white;
+  border-color: var(--secondary);
+}
+
+/* Style pour le conteneur du filtre */
+.filter-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.2rem;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Style pour le label */
+.filter-label {
+  font-weight: 600;
+  color: var(--primary);
+  margin-right: 1rem;
+  font-size: 0.95rem;
+}
+
+/* Style pour le select */
+.filter-select {
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 2rem 0.6rem 1rem;
+  font-size: 0.95rem;
+  color: var(--text);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300A79D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-grow: 1;
+  max-width: 500px;
+}
+
+/* Barre de recherche */
+input.form-control[type="text"] {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+/* Message pas de résultats */
+.no-results {
+  padding: 25px;
+  text-align: center;
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.no-results p {
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.no-results p::before {
+  content: '🔍';
+  display: block;
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+.tips-section {
+  background-color: var(--hover);
+  border-radius: 6px;
+  padding: 12px 15px;
+  margin: 15px 0;
+}
+
+.tips-title {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.tips-title i {
+  margin-right: 6px;
+  color: var(--primary);
+}
+
+.tips-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.tips-list li {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.tips-list li:last-child {
+  margin-bottom: 0;
+}
+
+.tips-list li strong {
+  color: var(--accent);
+}
+/* Disposition avec sidebar à droite */
+.content-layout {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0; /* Pour éviter que les éléments ne débordent */
+}
+
+.sidebar-filters {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.filter-box {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 20px;
+}
+
+.filter-title {
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-container, .search-container {
+  margin-bottom: 15px;
+}
+
+.search-container {
+  margin-top: 20px;
+}
+
+/* Rendre les options responsives */
+@media (max-width: 768px) {
+  .content-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar-filters {
+    width: 100%;
+    order: -1; /* Place la sidebar en haut sur mobile */
+    margin-bottom: 20px;
+  }
+  
+  .filter-box {
+    position: static;
+  }
+}
+.video-container {
+  position: relative;
+  margin: 1rem 0;
+  max-width: 600px;
+}
+
+.post-video {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.video-controls {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(0,0,0,0.5);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.video-controls button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.video-controls input[type="range"] {
+  flex-grow: 1;
+}

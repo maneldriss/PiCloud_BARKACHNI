@@ -18,5 +18,5 @@ public interface IDonationService {
     public Donation modifyDonation(Donation donation);
     List<Donation> getDonationsByStatus(DonationStatus status);
 
-    void recalculateUserPoints(int userId);
+    void recalculateUserPoints(Integer userId);
 }

@@ -3,6 +3,7 @@ package com.barkachni.barkachni.Services.blog;
 
 import com.barkachni.barkachni.entities.blog.Post;
 import com.barkachni.barkachni.repositories.blog.PostRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,11 +95,14 @@ public class PostServiceImplement  implements IPostService{
         }
     }
 
+    @Transactional
     @Override
     public List<Post> retrieveAllPosts() {
         return postRepository.findAll();
     }
 
+
+    @Transactional
     @Override
     public Post retrievePost(Long id) {
         return postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found!"));

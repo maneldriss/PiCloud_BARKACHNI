@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,32 +57,36 @@ public class PostController {
         }
 
     }
-    @PostMapping(value = "/{userId}/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/add-post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addPost(
-
             @RequestPart("post") Post post,
             @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
-            @RequestPart(value = "videoFile", required = false) MultipartFile videoFile) { // Ajouté
+            @RequestPart(value = "videoFile", required = false) MultipartFile videoFile,
+            @AuthenticationPrincipal User currentUser) {
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("User not authenticated");
+        }
+
 
         try {
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+            // Associer le post à l'utilisateur actuel
+            post.setUser(currentUser);
 
-            post.setUser(user);
-
-
-            Post savedPost = postService.addPost(post, imageFile, videoFile); // Modifié
+            // Ajouter le post
+            Post savedPost = postService.addPost(post, imageFile, videoFile);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
 
         } catch (Exception e) {
-            // Log l'erreur proprement
+            // Log l'erreur pour le débogage
             return ResponseEntity.internalServerError().body(Map.of(
                     "error", "Erreur lors de la création du post",
                     "details", e.getMessage()
             ));
         }
     }
+
     /*@PostMapping("/{userId}/posts")
     public ResponseEntity<Post> addPost(@PathVariable Long userId, @RequestBody Post post) {
         // Récupérer l'utilisateur par son ID
@@ -98,18 +103,18 @@ public class PostController {
         return ResponseEntity.ok(savedPost);  // Retourner le post sauvegardé
     }*/
     @PutMapping("/{userId}/posts")
-    public ResponseEntity<Post> updatePost(@PathVariable Long userId, @RequestBody Post post) {
-        // Récupérer l'utilisateur par son ID
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+        public ResponseEntity<Post> updatePost(@PathVariable Long userId, @RequestBody Post post ) {
+            // Récupérer l'utilisateur par son ID
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
-        post.setUser(user); // Make sure the post is linked to the current user
+            post.setUser(user); // Make sure the post is linked to the current user
 
-        // Sauvegarder le post mis à jour
-        Post updatedPost = postRepository.save(post);
+            // Sauvegarder le post mis à jour
+            Post updatedPost = postRepository.save(post);
 
-        return ResponseEntity.ok(updatedPost);  // Retourner le post mis à jour
+            return ResponseEntity.ok(updatedPost);  // Retourner le post mis à jour
     }
 
 
@@ -137,7 +142,8 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public Post getPostById(@PathVariable Long id) {
-        return postService.retrievePost(id);
+    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+        Post post = postService.retrievePost(id);
+        return ResponseEntity.ok(post);
     }
 }
