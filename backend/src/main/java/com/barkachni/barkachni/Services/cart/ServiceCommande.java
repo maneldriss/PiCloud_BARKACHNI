@@ -1,6 +1,7 @@
 package com.barkachni.barkachni.Services.cart;
 
 
+import com.barkachni.barkachni.entities.cart.Cartitem;
 import com.barkachni.barkachni.entities.cart.cart;
 import com.barkachni.barkachni.entities.cart.commande;
 import com.barkachni.barkachni.entities.user.User;
@@ -8,6 +9,7 @@ import com.barkachni.barkachni.entities.user.UserRepository;
 import com.barkachni.barkachni.repositories.cart.ICartRepository;
 import com.barkachni.barkachni.repositories.cart.ICommandeRepository;
 
+import com.barkachni.barkachni.repositories.cart.IitemRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class ServiceCommande implements IServiceCommande {
 
@@ -25,6 +30,8 @@ public class ServiceCommande implements IServiceCommande {
 
     @Autowired
     private ICartRepository cartRepository;
+    @Autowired
+    private IitemRepository cartItemRepository;
     @Autowired
     private UserRepository UserRepository;
 
@@ -56,10 +63,18 @@ public class ServiceCommande implements IServiceCommande {
 
     // Remove a commande by ID
     @Override
+    @Transactional
     public void removecommande(Long commandeId) {
-        commandeRepository.deleteById(commandeId);
-    }
+        commandeRepository.findById(commandeId).ifPresent(commande -> {
+            // Explicitly clear and delete items if needed
+            Set<Cartitem> items = new HashSet<>(commande.getCommandeItems());
+            commande.getCommandeItems().clear();
+            cartItemRepository.deleteAll(items);  // You'll need this repository
 
+            // Then delete the commande
+            commandeRepository.delete(commande);
+        });
+    }
     // Modify an existing commande
     @Override
     public commande modifycommande(commande c) {
@@ -145,5 +160,33 @@ public class ServiceCommande implements IServiceCommande {
                 .orElseThrow(() -> new RuntimeException("Commande not found with ID: " + commandeId));
         commande.setPaymentStatus(status);
         commandeRepository.save(commande);
+    }
+
+    @Override
+    public commande getCommandeByUserId(Integer userId) {
+        return null;
+    }
+
+    @Override
+    public commande retrieveCartByUserId(Integer userId) {
+        return null;
+    }
+
+    @Override
+    public commande retrieveCommandeByUserId(Integer userId) {
+        return null;
+    }
+
+
+    @Override
+    public List<commande> retrieveCommandesByUserId(Integer userId) {
+        // Verify user exists
+        User user = UserRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        // Return all commandes for this user
+        return commandeRepository.findAll().stream()
+                .filter(commande -> commande.getUser() != null && commande.getUser().getId().equals(userId))
+                .collect(Collectors.toList());
     }
 }

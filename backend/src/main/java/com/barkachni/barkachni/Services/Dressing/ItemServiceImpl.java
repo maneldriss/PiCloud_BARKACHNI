@@ -38,13 +38,12 @@ public class ItemServiceImpl implements IItemService {
 
     @Override
     public Item updateItem(Item i) {
-        itemRepository.findById(i.getItemID())
+        Item existingItem = itemRepository.findById(i.getItemID())
                 .orElseThrow(() -> new RuntimeException("Item not found with id: " + i.getItemID()));
-        User user = userRepository.findById(1)
-                .orElseThrow(() -> new RuntimeException("User not found with id: 1"));
-        i.setUser(user);
+        i.setUser(existingItem.getUser());
         return itemRepository.save(i);
     }
+
 
     @Override
     public void removeItem(long itemId) {

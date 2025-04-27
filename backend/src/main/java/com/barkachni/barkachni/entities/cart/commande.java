@@ -37,7 +37,7 @@ public class commande {
     private Double discountApplied;  // New field
     private String discountType;     // New field (percentage/fixed)
 
-    @OneToMany(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.EAGER)
     private Set<Cartitem> Commandeitems;
 
     @OneToOne

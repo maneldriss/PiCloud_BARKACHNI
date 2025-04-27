@@ -2,7 +2,8 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Commentaire } from 'src/app/models/commentaire';
 import { Post } from 'src/app/models/post';
-import { User } from 'src/app/models/user';
+
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { CommentaireService } from 'src/app/services/commentaire.service';
 import { PostService } from 'src/app/services/post.service';
 
@@ -20,25 +21,15 @@ export class CommentaireListComponent implements OnInit {
   badWordsDetected: string[] = [];
   newCommentContent: string = '';
   isCommentFormVisible: boolean = false;
-  currentUser: User = {
-    email: '',
-    id: 0,
-    firstname: '',
-    lastname: '',
-    accountLocked: false,
-    enabled: false,
-    roles: [],
-    currentlyOnline: false,
-    lastConnection: '',
-    latitude: 0,
-    longitude: 0
-  };
+  userId :number | null = null;
+  currentUserId: number |null=null;
   
 
   constructor(
     private route: ActivatedRoute,
     private postService: PostService,
-    private commentaireService: CommentaireService
+    private commentaireService: CommentaireService,
+     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -46,10 +37,16 @@ export class CommentaireListComponent implements OnInit {
     
     this.postId = Number(this.route.snapshot.paramMap.get('id'));
     console.log('ID du post récupéré depuis l\'URL:', this.postId);
-    
+    this.getCurrentUserId();
     this.loadPost();
     this.loadComments();
   }
+  getCurrentUserId(): void {
+    const currentUser = this.authService.getCurrentUser();
+    console.log("Current user data:", currentUser);
+    this.currentUserId = currentUser?.id ?? null;
+    console.log("Fetched user ID:", this.currentUserId); // Corrigé pour logguer currentUserId
+}
 // Ajoutez ces propriétés à votre classe de composant
 showEmojiPicker = false;
 currentEmojiTarget = '';

@@ -57,6 +57,10 @@ import { OrderFormComponent } from './components/order-form/order-form.component
 import { SpinWheelComponent } from './components/spin-wheel/spin-wheel.component';
 import { RewardmodalComponent } from './components/rewardmodal/rewardmodal.component';
 import { PaymentComponent } from './components/payment/payment.component';
+import { DressingModule } from './components/Dressing/dressing/dressing.module';
+import { ItemsModule } from './components/Dressing/items/items.module';
+import { OutfitsModule } from './components/Dressing/outfits/outfits.module';
+import { AIOutfitBuilderComponent } from './components/Dressing/outfits/ai-outfit-builder/ai-outfit-builder.component';
 
 
 
@@ -122,9 +126,14 @@ import { PaymentComponent } from './components/payment/payment.component';
     MatTableModule,
     MatPaginatorModule,
     RouterModule,
+    DressingModule,
+    ItemsModule,
+    OutfitsModule
 
   ],
-  providers: [],
+  providers: [
+    AIOutfitBuilderComponent
+  ],
   bootstrap: [AppComponent],
   exports: [
     ChatbotComponent, // Export ChatbotComponent so it can be used in other modules

@@ -1,5 +1,5 @@
-import { Category } from "./category.enum";
-import { User } from "./user";
+import {User} from "./user.model";
+import {Category} from "./category.enum";
 
 export interface Item {
   itemID?: number;

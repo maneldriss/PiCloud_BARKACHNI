@@ -8,11 +8,7 @@ export interface Commentaire {
     idPost: number;
     // autres propriétés si nécessaire
   };
-  user?: {
-    idUser: number;
-    username: string;
-    // autres propriétés si nécessaire
-  };
+  user?: User;
   // Pour l'édition frontend
   editing?: boolean;
   updatedContent?: string;

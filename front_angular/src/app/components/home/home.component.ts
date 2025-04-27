@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ItemDressingService } from '../../services/item-dressing.service';
-import { ItemDressing } from '../../models/item-dressing';
 import { DonationService } from '../../services/donation.service';
 import { Donation } from '../../models/donation';
+import { ItemService } from 'src/app/services/Dressing/item.service';
+import { Item } from 'src/app/models/Dressing/item.model';
 
 @Component({
   selector: 'app-home',
@@ -12,13 +12,13 @@ import { Donation } from '../../models/donation';
 export class HomeComponent implements OnInit {
   donations: Donation[] = [];
   recentDonations: Donation[] = [];
-  availableItems: ItemDressing[] = [];
+  availableItems: Item[] = [];
   loading = true;
   error = '';
 
   constructor(
     private donationService: DonationService,
-    private itemService: ItemDressingService
+    private itemService: ItemService
   ) {}
 
   ngOnInit(): void {
@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
   }
 
   private loadAvailableItems(): void {
-    this.itemService.getAvailableItems().subscribe({
+    this.itemService.getItemsByUser().subscribe({
       next: (items) => {
         this.availableItems = items;
       },

@@ -55,7 +55,7 @@ public class Post {
 
     @ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
-    @JsonIgnore
+
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

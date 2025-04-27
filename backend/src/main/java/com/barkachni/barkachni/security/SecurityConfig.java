@@ -67,7 +67,11 @@ public class SecurityConfig {
                                         "/likes/**",
                                         "/item/**",
                                         "/cart/**",
-                                        "/commande/**"
+                                        "/commande/**",
+                                        "/item/**",
+                                        "/dressing/**",
+                                        "/outfit/**",
+                                        "/images/**"
 
 
 

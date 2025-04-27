@@ -4,6 +4,9 @@ import { AdminComponent } from './admin.component';
 import{ DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { AdminGuard } from '../admin.guard';
+import { AdManagementComponent } from './ad-management/ad-management.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { CommandeBackComponent } from './commande-back/commande-back.component';
 
 const routes: Routes = [{
   path: '', 
@@ -12,7 +15,10 @@ const routes: Routes = [{
   children: [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent },
-    // other admin routes...
+    // other admin routes
+    { path: 'ads', component: AdManagementComponent },
+    { path: 'donation', component: AdminDashboardComponent },
+    { path: 'commande', component: CommandeBackComponent }
   ]
 }];
    

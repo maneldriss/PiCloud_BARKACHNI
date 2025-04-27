@@ -82,8 +82,23 @@ const routes: Routes = [
     { path: 'order-form/:cartId', component: OrderFormComponent },
     { path: 'wheel', component: SpinWheelComponent },
     { path: 'payment', component: PaymentComponent },
-  { path: '**', redirectTo: '' }
-];
+    {
+      path: 'dressing',
+      loadChildren: () => import('./components/Dressing/dressing/dressing.module').then(m => m.DressingModule)
+    },
+  
+    {
+      path: 'items',
+      loadChildren: () => import('./components/Dressing/items/items.module').then(m => m.ItemsModule)
+    },
+  
+    {
+      path: 'outfits',
+      loadChildren: () => import('./components/Dressing/outfits/outfits.module').then(m => m.OutfitsModule)
+    },
+  
+    { path: '**', redirectTo: '' }
+  ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

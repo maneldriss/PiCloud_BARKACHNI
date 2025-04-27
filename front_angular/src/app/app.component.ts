@@ -19,7 +19,7 @@ export class AppComponent  implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(event => {
-      this.isDashboardPage = this.router.url.includes('/dashboard');
+      this.isDashboardPage = this.router.url.includes('/admin');
     });
   }
 

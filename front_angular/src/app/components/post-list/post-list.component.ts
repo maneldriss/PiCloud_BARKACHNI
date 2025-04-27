@@ -20,7 +20,7 @@ export class PostListComponent implements OnInit {
 
   hoveredPostId: number | null = null;
   hoverType: 'like' | 'dislike' | null = null;
-
+//zidou hedhom
   userId: number = 1;
   currentUserId: number |null=null;
   // Pagination
@@ -35,6 +35,8 @@ export class PostListComponent implements OnInit {
   editedPost: Post = this.createEmptyPost();
 
   constructor(private postService: PostService, private likeService: LikeDislikeService,    private authService: AuthService) {}
+
+  //w hedhiya
   getCurrentUserId(): void {
     const currentUser = this.authService.getCurrentUser();
     console.log("Current user data:", currentUser);
@@ -103,25 +105,7 @@ export class PostListComponent implements OnInit {
 
   }
 
-  applyFilter(): void {
-    if (this.selectedFilter === 'date') {
-      this.posts.sort((a, b) =>
-        new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
-      );
-    } else if (this.selectedFilter === 'likes') {
-      this.posts.sort((a, b) =>
-        (b.likeCount || 0) - (a.likeCount || 0)
-      );
-    }
-    this.currentPage = 1;
-  }
 
-  updateTopLikedPosts(): void {
-    this.topLikedPosts = this.posts
-      .filter(p => (p.likeCount ?? 0) > 0)
-      .sort((a, b) => (b.likeCount ?? 0) - (a.likeCount ?? 0))
-      .slice(0, 4);
-  }
 
   onDeletePost(postId?: number): void {
     if (!postId) return;
@@ -163,17 +147,35 @@ export class PostListComponent implements OnInit {
 
   // Like/Dislike
   like(postId: number): void {
-    this.likeService.likePost(this.userId, postId).subscribe(() => {
+    this.likeService.likePost(this.currentUserId!, postId).subscribe(() => {
       this.refreshPost(postId);
     });
   }
 
   dislike(postId: number): void {
-    this.likeService.dislikePost(this.userId, postId).subscribe(() => {
+    this.likeService.dislikePost(this.currentUserId!, postId).subscribe(() => {
       this.refreshPost(postId);
     });
   }
+  applyFilter(): void {
+    if (this.selectedFilter === 'date') {
+      this.posts.sort((a, b) =>
+        new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+      );
+    } else if (this.selectedFilter === 'likes') {
+      this.posts.sort((a, b) =>
+        (b.likeCount || 0) - (a.likeCount || 0)
+      );
+    }
+    this.currentPage = 1;
+  }
 
+  updateTopLikedPosts(): void {
+    this.topLikedPosts = this.posts
+      .filter(p => (p.likeCount ?? 0) > 0)
+      .sort((a, b) => (b.likeCount ?? 0) - (a.likeCount ?? 0))
+      .slice(0, 4);
+  }
   refreshPost(postId: number): void {
     this.loadLikes();
     this.loadLikedUsers(postId);

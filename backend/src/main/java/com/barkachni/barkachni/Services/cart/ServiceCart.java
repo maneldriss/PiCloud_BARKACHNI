@@ -12,11 +12,13 @@ import com.barkachni.barkachni.repositories.cart.IitemRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class ServiceCart implements IServiceCart {
 
@@ -130,17 +132,29 @@ public class ServiceCart implements IServiceCart {
     @Override
     public void removeItemFromCart(Long cartId, Long itemId) {
         cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Cart not found with ID: " + cartId));
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
         Cartitem item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found with ID: " + itemId));
-        if (cart.getCartitems().remove(item)) {
-            itemRepository.delete(item);
-            updateCartTotal(cart);
-            cartRepository.save(cart);
-        } else {
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        // Check if the item exists in the cart's items
+        boolean removed = cart.getCartitems().stream()
+                .anyMatch(i -> i.getItemID().equals(itemId));
+
+        if (!removed) {
             throw new RuntimeException("Item not part of the cart");
         }
+
+        // Remove and delete
+        cart.removeItem(item);
+        itemRepository.delete(item);
+
+        // Recalculate total
+        updateCartTotal(cart);
+        cartRepository.save(cart);
     }
+
+
 
     // Compute total of the cart
     public void updateCartTotal(cart cart) {

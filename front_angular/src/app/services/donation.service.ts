@@ -5,6 +5,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Donation, DonationStatus } from '../models/donation';
 import { environment } from '../environments/environment';
 import { JwtService } from './jwt/jwt.service';
+import { AuthService } from './auth/auth.service';
 
 @
 Injectable({
@@ -15,10 +16,10 @@ export class DonationService {
 
   private donationsUpdated = new Subject<void>();
 
-  constructor(private http: HttpClient, private jwtService:JwtService) { }
+  constructor(private http: HttpClient, private jwtService:JwtService,private authService:AuthService) { }
   donationsUpdated$ = this.donationsUpdated.asObservable();
 
-  getAllDonations(): Observable<Donation[]> {
+ /* getAllDonations(): Observable<Donation[]> {
     return this.http.get<Donation[]>(`${this.apiUrl}/retrieve-all-donations`).pipe(
       map((donations: any[]) => donations.map(d => ({
         ...d,
@@ -31,6 +32,7 @@ export class DonationService {
           imageUrl: d.Item.image_url || d.Item.imageUrl
         } : null,
         donor: d.donor ? {
+          id:d.donor.id,
           name: d.donor.name,
           email: d.donor.email,
           donationPoints: d.donor.donationPoints
@@ -38,7 +40,12 @@ export class DonationService {
       }))),
       tap(d => console.log('Donations after mapping:', d)) // Debug
     );
+  }*/
+  // Function to retrieve all donations
+  getAllDonations(): Observable<Donation[]> {
+    return this.http.get<Donation[]>(`${this.apiUrl}/retrieve-all-donations`);
   }
+
   getDonationById(id: string | number): Observable<Donation> {
     // Convertir en number si nécessaire
     const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
@@ -99,7 +106,7 @@ export class DonationService {
       ...donation,
       status: DonationStatus.PENDING, // Statut par défaut
       donationDate: new Date().toISOString(), // Ajout de la date si nécessaire
-      donor: { id: userId } // Format correct pour le backend
+      donor:userId // Format correct pour le backend
     };
   
     // Envoyer la requête avec l'URL correcte

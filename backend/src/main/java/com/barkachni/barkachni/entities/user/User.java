@@ -6,8 +6,10 @@ import com.barkachni.barkachni.entities.blog.Commentaire;
 import com.barkachni.barkachni.entities.blog.Post;
 import com.barkachni.barkachni.entities.donationEntity.Donation;
 import com.barkachni.barkachni.entities.role.Role_user;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -121,6 +123,10 @@ public class User implements UserDetails, Principal // Implements Spring Securit
 
     public String getFirstname() {
         return firstname;
+    }
+
+    public User(Integer id) {
+        this.id = id;
     }
 
     public void setFirstname(String firstname) {
@@ -245,6 +251,7 @@ public class User implements UserDetails, Principal // Implements Spring Securit
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnoreProperties("user")
     private Dressing dressing;
+
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
 

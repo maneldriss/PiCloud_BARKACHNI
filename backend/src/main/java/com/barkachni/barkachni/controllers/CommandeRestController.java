@@ -3,6 +3,7 @@ package com.barkachni.barkachni.controllers;
 
 import com.barkachni.barkachni.Services.cart.IServiceCommande;
 import com.barkachni.barkachni.dto.PlaceOrderRequest;
+import com.barkachni.barkachni.entities.cart.cart;
 import com.barkachni.barkachni.entities.cart.commande;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,10 @@ public class CommandeRestController {
         return ResponseEntity.ok().build();
     }
 
-
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<commande>> getCommandesByUserId(@PathVariable Integer userId) {
+        List<commande> userCommandes = CommandeService.retrieveCommandesByUserId(userId);
+        return ResponseEntity.ok(userCommandes);
+    }
 
 }

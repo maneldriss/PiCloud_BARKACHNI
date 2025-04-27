@@ -21,22 +21,22 @@ public class LeaderboardService {
     private DonationRepository donationRepository;
 
 
-   public Page<Map<String, Object>> getTopDonors(int page, int size) {
-       Pageable pageable = PageRequest.of(page, size);
-       Page<Object[]> result = donationRepository.findTopMoneyDonors(pageable);
+    public Page<Map<String, Object>> getTopDonors(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Object[]> result = donationRepository.findTopMoneyDonors(pageable);
 
-       return result.map(record -> {
-           User donor = (User) record[1];
-           Double totalDonated = (Double) record[1];
+        return result.map(record -> {
+            User donor = (User) record[0]; // Le donateur est à l'index 0
+            Double totalDonated = (Double) record[1]; // Le montant total est à l'index 1
 
-           Map<String, Object> data = new HashMap<>();
-           data.put("email", donor.getEmail());
-           data.put("points", donor.getDonationPoints()); // Assumes this is updated properly
-           data.put("totalDonated", totalDonated);
+            Map<String, Object> data = new HashMap<>();
+            data.put("email", donor.getEmail());
+            data.put("points", donor.getDonationPoints()); // Assurez-vous que les points sont bien mis à jour
+            data.put("totalDonated", totalDonated);
 
+            return data;
+        });
+    }
 
-           return data;
-       });
-   }
 
 }

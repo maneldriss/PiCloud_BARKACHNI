@@ -22,9 +22,10 @@ public class cart {
     @OneToOne
    private User user;
 
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,  orphanRemoval = true,fetch = FetchType.EAGER)
     private Set<Cartitem> Cartitems;
-
+    public boolean removeItem(Cartitem item) {
+        return Cartitems.remove(item);}
 
     // Getters and Setters
 

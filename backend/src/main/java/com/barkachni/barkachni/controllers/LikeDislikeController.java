@@ -11,11 +11,13 @@ import com.barkachni.barkachni.repositories.blog.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -34,62 +36,68 @@ public class LikeDislikeController {
     @Autowired
     private PostRepository postRepository;
 
-    @PostMapping("/{userId}/post/{postId}/like")
-    public ResponseEntity<Map<String, String>> likePost(@PathVariable Long userId, @PathVariable Long postId, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    @PostMapping("/post/{postId}/like")
+    public ResponseEntity<Map<String, String>> likePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal User currentUser) {
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "User not authenticated"));
+        }
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
-        LikeDislike existing = likeDislikeRepository.findByUserAndPost(user, post).orElse(null);
+        LikeDislike existing = likeDislikeRepository.findByUserAndPost(currentUser, post).orElse(null);
         String message;
 
         if (existing == null) {
-            // Créer un nouveau like
             LikeDislike like = new LikeDislike();
-            like.setUser(user);
+            like.setUser(currentUser);
             like.setPost(post);
             like.setLiked(true);
             like.setDisliked(false);
             likeDislikeRepository.save(like);
             message = "Post liked";
         } else if (existing.isLiked()) {
-            // Si le post est déjà liké, renvoyez une réponse différente
             message = "Post already liked";
         } else {
-            // Si le post était disliké, on le met à jour pour le liker
             existing.setLiked(true);
             existing.setDisliked(false);
             likeDislikeRepository.save(existing);
             message = "Post updated to like";
         }
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", message);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Collections.singletonMap("message", message));
     }
 
+    @PostMapping("/post/{postId}/dislike") // Même structure que le like
+    public ResponseEntity<Map<String, String>> dislikePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal User currentUser) {
 
-    @PostMapping("/{userId}/post/{postId}/dislike")
-    public ResponseEntity<Map<String, String>> dislikePost(@PathVariable Long userId, @PathVariable Long postId,Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "User not authenticated"));
+        }
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        LikeDislike existing = likeDislikeRepository.findByUserAndPost(user, post).orElse(null);
+        LikeDislike existing = likeDislikeRepository.findByUserAndPost(currentUser, post).orElse(null);
         String message;
 
         if (existing == null) {
             LikeDislike dislike = new LikeDislike();
-            dislike.setUser(user);
+            dislike.setUser(currentUser);
             dislike.setPost(post);
             dislike.setLiked(false);
             dislike.setDisliked(true);
             likeDislikeRepository.save(dislike);
             message = "Post disliked";
+        } else if (existing.isDisliked()) {
+            message = "Post already disliked";
         } else {
             existing.setLiked(false);
             existing.setDisliked(true);
@@ -97,9 +105,7 @@ public class LikeDislikeController {
             message = "Post updated to dislike";
         }
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", message);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Collections.singletonMap("message", message));
     }
 
     @GetMapping("/count/post/{postId}")

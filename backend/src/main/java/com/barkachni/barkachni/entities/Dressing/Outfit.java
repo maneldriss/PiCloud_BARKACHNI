@@ -39,7 +39,7 @@ public class Outfit {
 
     private String occasion;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "outfit_item",
             joinColumns = @JoinColumn(name = "outfit_id"),

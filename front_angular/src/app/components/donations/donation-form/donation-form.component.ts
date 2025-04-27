@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Donation, DonationStatus, DonationType } from '../../../models/donation';
 import { DonationService } from '../../../services/donation.service';
-import { ItemDressingService } from '../../../services/item-dressing.service';
-import { ItemDressing } from 'src/app/models/item-dressing';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { Item } from 'src/app/models/Dressing/item.model';
+import { ItemService } from 'src/app/services/Dressing/item.service';
 
 @Component({
   selector: 'app-donation-form',
@@ -18,16 +19,17 @@ export class DonationFormComponent implements OnInit {
   loading = false;
   error = '';
   donationTypes = Object.values(DonationType);
-  availableItems: ItemDressing[] = [];
-  userId = 2;
-  selectedItem: ItemDressing | null = null;
+  availableItems: Item[] = [];
+  currentUserId: number |null=null;
+  selectedItem: Item | null = null;
 
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
-    private itemService: ItemDressingService,
+    private itemService: ItemService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService:AuthService
   ) {
     this.donationForm = this.fb.group({
       donationType: ['', Validators.required],
@@ -39,6 +41,7 @@ export class DonationFormComponent implements OnInit {
     const idParam = this.route.snapshot.params['id'];
     this.donationId = idParam ? Number(idParam) : undefined;
     this.isEditMode = !!this.donationId;
+    this.getCurrentUserId();
 
     if (this.isEditMode && isNaN(this.donationId!)) {
       this.error = "Invalid donation ID";
@@ -55,13 +58,16 @@ export class DonationFormComponent implements OnInit {
     });
   }
 
+  getCurrentUserId():void{
+    this.currentUserId=this.authService.getCurrentUser()?.id ?? null;
+  }
   // Méthodes pour la galerie d'images
-  selectItem(item: ItemDressing): void {
+  selectItem(item: Item): void {
     this.selectedItem = item;
     this.donationForm.patchValue({ itemDressing: item });
   }
 
-  getItemImage(item: ItemDressing): string {
+  getItemImage(item: Item): string {
     if (!item?.imageUrl) return 'assets/images/default-item.jpg';
     
     if (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('assets/')) {
@@ -76,7 +82,7 @@ export class DonationFormComponent implements OnInit {
     return `assets/images/${item.imageUrl}`;
   }
 
-  isItemSelected(item: ItemDressing): boolean {
+  isItemSelected(item: Item): boolean {
     return this.selectedItem?.itemID === item.itemID;
   }
 
@@ -99,7 +105,7 @@ export class DonationFormComponent implements OnInit {
   }
 
   loadAvailableItems(callback?: () => void): void {
-    this.itemService.getAvailableItems().subscribe({
+    this.itemService.getItems().subscribe({
       next: items => {
         this.availableItems = items;
         callback?.();
@@ -122,7 +128,11 @@ export class DonationFormComponent implements OnInit {
           this.selectedItem = {
             itemID: matchedItem.itemID,
             itemName: matchedItem.itemName,
-            imageUrl: matchedItem.imageUrl
+            imageUrl: matchedItem.imageUrl,
+            brand: matchedItem.brand,
+            size: matchedItem.size,
+            color: matchedItem.color,
+            category: matchedItem.category,
           };
         }
   
@@ -140,6 +150,10 @@ export class DonationFormComponent implements OnInit {
     });
   }
   onSubmit(): void {
+    if (!this.currentUserId) {
+      this.error = 'Vous devez être connecté pour effectuer un don';
+      return;
+    }
     if (this.donationForm.invalid) return;
   
     const formData = this.donationForm.value;
@@ -174,7 +188,8 @@ export class DonationFormComponent implements OnInit {
   
     const operation = this.isEditMode && this.donationId
       ? this.donationService.updateDonation({ ...payload, donationId: this.donationId })
-      : this.donationService.addDonation(payload, this.userId);
+      : this.donationService.addDonation(payload, this.currentUserId!);
+      console.log(this.currentUserId)
   
     operation.subscribe({
       next: () => this.handleSuccess(),

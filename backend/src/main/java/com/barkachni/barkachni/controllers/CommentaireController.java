@@ -12,11 +12,13 @@ import com.barkachni.barkachni.entities.user.UserRepository;
 import com.barkachni.barkachni.repositories.blog.CommentaireRepository;
 import com.barkachni.barkachni.repositories.blog.PostRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.net.URLDecoder;
@@ -53,17 +55,18 @@ public class CommentaireController {
     @PostMapping("/{postId}/commentaires")
     public ResponseEntity<?> addCommentaireToPost(
             @PathVariable Long postId,
-            @RequestBody Commentaire commentaire, Authentication authentication){
-
+            @RequestBody Commentaire commentaire,
+    @AuthenticationPrincipal User currentUser){
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("User not authenticated");
+        }
         try {
             // 1. Récupération et décodage du contenu
+            commentaire.setUser(currentUser);
             String content = commentaire.getContent();
             logger.info("Contenu reçu brut: {}", content);
 
-            // 2. Récupération de l'utilisateur
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            User currentUser = userRepository.findByEmail(userDetails.getUsername())
-                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
             // 3. Vérification des mots interdits
             if (purgoMalumFilterService.containsBadWords(content)) {

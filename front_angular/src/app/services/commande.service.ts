@@ -52,4 +52,8 @@ export class CommandeService {
     const url = `${this.baseUrl}/${commandeId}/payment-status/${status}`;
     return this.http.put<void>(url, {});
   }
+  getCommandesByUserId(userId: number): Observable<Commande[]> {
+    return this.http.get<Commande[]>(`${this.baseUrl}/user/${userId}`);
+  }
+
 }

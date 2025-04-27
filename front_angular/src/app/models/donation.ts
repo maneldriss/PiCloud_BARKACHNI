@@ -26,6 +26,6 @@ export interface Donation {
     category: string;
     size?: string;
   };
-  donor?: any;
+  donor?: User;
   status?: DonationStatus | string;
 }

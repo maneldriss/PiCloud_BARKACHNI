@@ -29,7 +29,7 @@
         @Value("${removebg.api.key:8UfaMFzLZD6NpdJMtHJzbAYx}")
         private String removeBgApiKey;
 
-        @Value("${app.base.url:http://localhost:8080}")
+        @Value("${app.base.url:http://localhost:8088}")
         private String baseUrl;
 
         @Value("${server.servlet.context-path:/}")

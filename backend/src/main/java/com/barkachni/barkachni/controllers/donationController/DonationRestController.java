@@ -99,7 +99,7 @@ public class DonationRestController {
                     .body("Erreur lors du recalcul: " + e.getMessage());
         }
     }
-
+///
     @GetMapping("/user/{userId}/total-approved")
     public ResponseEntity<Double> getTotalApprovedDonations(@PathVariable Integer userId) {
         Double total = donationRepository.sumApprovedDonationsByUser(userId);

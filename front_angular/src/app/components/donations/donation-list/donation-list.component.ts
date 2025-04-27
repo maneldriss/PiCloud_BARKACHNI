@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Donation, DonationType } from '../../../models/donation';
 import { DonationService } from '../../../services/donation.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-donation-list',
@@ -17,7 +18,7 @@ export class DonationListComponent implements OnInit {
   // Pagination
   currentPage = 1;
   itemsPerPage = 6;
-  currentUserId: number = 1;
+  currentUserId: number |null=null;
   // Filters and sorting
   searchType: string = '';
   sortField: string = '';
@@ -26,12 +27,18 @@ export class DonationListComponent implements OnInit {
 
   constructor(private donationService: DonationService,
   private snackBar: MatSnackBar
+  , private authService:AuthService
   ) { }
 
   ngOnInit(): void {
     this.loadDonations();
+    this.getCurrentUserId();
+
   }
 
+  getCurrentUserId():void{
+    this.currentUserId=this.authService.getCurrentUser()?.id ?? null;
+  }
   toggleSort(field: string): void {
     if (this.sortField === field) {
       this.sortDesc = !this.sortDesc;
@@ -52,6 +59,7 @@ export class DonationListComponent implements OnInit {
       next: (donations) => {
         console.log('Raw donations data:', donations); // Debug
         this.donations = donations;
+        console.log(this.donations)
         console.log('Donations assigned:', this.donations); // Debug
         this.applyFilters();
         this.loading = false;
@@ -180,7 +188,7 @@ export class DonationListComponent implements OnInit {
   }
 
   addNewDonation(newDonation: Donation) {
-    this.donationService.addDonation(newDonation, this.currentUserId).subscribe({
+    this.donationService.addDonation(newDonation, this.currentUserId!).subscribe({
       next: (addedDonation) => {
         this.donations = [...this.donations, addedDonation];
         this.loadDonations();

@@ -36,21 +36,16 @@ public class OutfitServiceImpl implements IOutfitService {
 
     @Override
     public Outfit addOutfit(Outfit o) {
-        User user = userRepository.findById(1)
-                .orElseThrow(() -> new RuntimeException("User not found with id: 1"));
-        Dressing dressing = user.getDressing();
+        Dressing dressing = dressingRepository.getById(1L);
         o.setDressing(dressing);
         return outfitRepository.save(o);
     }
 
     @Override
     public Outfit updateOutfit(Outfit o) {
-        outfitRepository.findById(o.getOutfitID())
+        Outfit existingOutfit = outfitRepository.findById(o.getOutfitID())
                 .orElseThrow(() -> new RuntimeException("Outfit not found with id: " + o.getOutfitID()));
-        User user = userRepository.findById(1)
-                .orElseThrow(() -> new RuntimeException("User not found with id: 1"));
-        Dressing dressing = user.getDressing();
-        o.setDressing(dressing);
+        o.setDressing(existingOutfit.getDressing());
         return outfitRepository.save(o);
     }
 

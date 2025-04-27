@@ -1,61 +1,63 @@
 <div class="sidebar">
     <div class="logo">
-        <img src="/api/placeholder/28/28" alt="Career Coaches" />
-        <h2>Career Coaches</h2>
+        <img src="/assets/img/logoApp/bar9achni1.png" alt="Career Coaches" />
     </div>
 
     <div class="sidebar-menu">
-        <div class="menu-item active">
+        <button routerLink="/admin/dashboard" class="menu-item active" (click)="setActive($event)">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
-        </div>
+        </button>
 
-        <div class="menu-item">
+        <button routerLink="/admin/ads" class="menu-item" (click)="setActive($event)">
             <i class="fas fa-tasks"></i>
-            <span>Checklist</span>
-        </div>
+            <span>Ad management</span>
+        </button>
 
-        <div class="menu-item">
+        <button routerLink="/admin/donation" class="menu-item" (click)="setActive($event)">
             <i class="fas fa-calendar-times"></i>
-            <span>Time off</span>
-        </div>
+            <span>Donation management</span>
+        </button>
+        <button routerLink="/admin/commande" class="menu-item" (click)="setActive($event)">
+            <i class="fas fa-calendar-times"></i>
+            <span>Order Management</span>
+        </button>
 
-        <div class="menu-item">
+        <button class="menu-item" (click)="setActive($event)">
             <i class="fas fa-clock"></i>
             <span>Attendance</span>
-        </div>
+        </button>
 
-        <div class="menu-item">
+        <button class="menu-item" (click)="setActive($event)">
             <i class="fas fa-wallet"></i>
             <span>Payroll</span>
-        </div>
+        </button>
 
-        <div class="menu-item">
+        <button class="menu-item" (click)="setActive($event)">
             <i class="fas fa-chart-line"></i>
             <span>Performance</span>
-        </div>
+        </button>
 
-        <div class="menu-item">
+        <button class="menu-item" (click)="setActive($event)">
             <i class="fas fa-file-alt"></i>
             <span>Requirement</span>
-        </div>
+        </button>
 
         <div class="menu-section" style="margin-top: auto; border-top: 1px solid #f0f0f0; padding-top: 15px;">
-            <div class="menu-item">
+            <button class="menu-item" (click)="setActive($event)">
                 <i class="fas fa-question-circle"></i>
                 <span>Help Center</span>
-            </div>
+            </button>
 
-            <div class="menu-item">
+            <button class="menu-item" (click)="setActive($event)">
                 <i class="fas fa-cog"></i>
                 <span>Setting</span>
-            </div>
+            </button>
 
-            <div class="menu-item logout">
+            <button class="menu-item logout" (click)="setActive($event)">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
-            </div>
+            </button>
         </div>
     </div>
 </div>
-

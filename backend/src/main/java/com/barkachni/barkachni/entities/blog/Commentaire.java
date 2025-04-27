@@ -36,7 +36,7 @@ public class Commentaire {
 
     @ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
-    @JsonIgnore
+
     private User user;
 
     public Long getIdCommentaire() {

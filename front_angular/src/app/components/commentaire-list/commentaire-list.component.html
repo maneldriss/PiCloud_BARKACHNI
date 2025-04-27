@@ -73,13 +73,13 @@
   <div *ngFor="let commentaire of commentaires" class="comment-card" [attr.data-comment-id]="commentaire.idCommentaire">
     <div class="comment-header">
       <span class="comment-user">
-        {{ commentaire.user ? commentaire.user.username : 'Anonyme' }}
+        {{ commentaire.user ?  commentaire.user?.firstname : 'Anonyme' }}
       </span>
       <div class="comment-actions">
         <small class="comment-date">
           Posté le {{ commentaire.createdAt | date:'short' }}
         </small>
-        <div class="action-buttons">
+        <div class="action-buttons" *ngIf="commentaire.user?.id === currentUserId">
           <button (click)="startEdit(commentaire)" class="btn-edit" *ngIf="!commentaire.editing">
             <i class="edit-icon">✏️</i>
           </button>

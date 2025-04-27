@@ -31,4 +31,12 @@ public interface IServiceCommande {
                         Integer UserId);
 
     void updatePaymentStatus(Long commandeId, String  status);
+
+    commande getCommandeByUserId(Integer userId);
+
+    commande retrieveCartByUserId(Integer userId);
+
+    commande retrieveCommandeByUserId(Integer userId);
+
+    List<commande> retrieveCommandesByUserId(Integer userId);
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+/*import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-chatbot',
@@ -127,8 +127,8 @@ export class ChatbotComponent {
                         "- Chaussures\n\n" +
                         "Tous les dons sont vérifiés avant acceptation."
   };
-}
-/*import { Component } from '@angular/core';
+}*/
+import { Component } from '@angular/core';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 @Component({
@@ -141,17 +141,16 @@ export class ChatbotComponent {
   userInput = '';
   loading = false;
   chatVisible = false;
-  private genAI = new GoogleGenerativeAI('');
+
+  private genAI = new GoogleGenerativeAI('AIzaSyDvj2ttNqLLQ2zLiixKCt6QNbY2u5zOU3c');
 
   private model = this.genAI.getGenerativeModel({
-    model: 'gemini-1.5-pro-latest', 
+    model: 'gemini-1.5-pro-latest',
     generationConfig: {
       maxOutputTokens: 1000,
       temperature: 0.7,
     }
   });
-
- 
 
   toggleChat() {
     this.chatVisible = !this.chatVisible;
@@ -160,43 +159,29 @@ export class ChatbotComponent {
   async sendMessage() {
     if (!this.userInput.trim()) return;
 
-    const userMessage = this.userInput.toLowerCase();
-    this.messages.push({ text: this.userInput, isUser: true });
+    const userMessage = this.userInput.trim();
+    this.messages.push({ text: userMessage, isUser: true });
     this.userInput = '';
     this.loading = true;
 
     try {
-      // Vérifier si la question concerne les dons
-      let responseText = '';
-      
-      if (userMessage.includes('comment faire un don') || userMessage.includes('faire un don')) {
-        responseText = this.donationResponses["comment faire un don"];
-      } 
-      else if (userMessage.includes('traitement du don') || userMessage.includes('traitement dons')) {
-        responseText = this.donationResponses["traitement du don"];
-      }
-      else if (userMessage.includes('points') && (userMessage.includes('don') || userMessage.includes('dons'))) {
-        responseText = this.donationResponses["points des dons"];
-      }
-      else if (userMessage.includes('types de don') || userMessage.includes('type de dons')) {
-        responseText = this.donationResponses["types de dons"];
-      }
+      // Prompt contextuel : assistant de mode
+      const promptIntro = `Tu es un assistant personnel de mode appelé Barkachni. 
+Tu aides les utilisateurs à choisir des tenues à partir de leurs vêtements, marques préférées, occasions ou saisons. 
+Sois amical, donne des conseils stylés, recommande des combinaisons et propose des articles en vente si possible.`;
 
-      if (responseText) {
-        this.messages.push({ text: responseText, isUser: false });
-      } else {
-        //  utiliser Gemini
-        const result = await this.model.generateContent({
-          contents: [{
+      const result = await this.model.generateContent({
+        contents: [
+          {
             role: 'user',
-            parts: [{ text: userMessage }]
-          }]
-        });
+            parts: [{ text: `${promptIntro}\n\nQuestion de l'utilisateur : ${userMessage}` }]
+          }
+        ]
+      });
 
-        const response = await result.response;
-        responseText = response.text();
-        this.messages.push({ text: responseText, isUser: false });
-      }
+      const response = await result.response;
+      const responseText = response.text();
+      this.messages.push({ text: responseText, isUser: false });
     } catch (error) {
       console.error('Erreur complète:', error);
       this.messages.push({ text: '❌ Une erreur est survenue lors de la communication avec Gemini.', isUser: false });
@@ -204,44 +189,4 @@ export class ChatbotComponent {
       this.loading = false;
     }
   }
-  private donationResponses = {
-    "comment faire un don": "Pour faire un don sur Barkachni, voici les étapes :\n\n" +
-                        "1. Don d'argent :\n" +
-                        "   - Cliquez sur 'Faire un don'\n" +
-                        "   - Choisissez le montant\n" +
-                        "   - Validez le paiement\n\n" +
-                        "2. Don de vêtements :\n" +
-                        "   - Sélectionnez 'Don de vêtements'\n" +
-                        "   - Ajoutez des photos\n" +
-                        "   - Soumettez votre don",
-    
-    "traitement du don": "Le traitement de votre don suit ces étapes :\n\n" +
-                        "1. Réception et vérification initiale\n" +
-                        "2. Validation par nos administrateurs\n" +
-                        "3. Attribution des points à votre compte\n" +
-                        "4. Notification par email\n" +
-                        "5. Distribution aux bénéficiaires\n\n" +
-                        "Vous pouvez suivre l'état de votre don dans votre espace personnel.",
-    
-    "points des dons": "Notre système de points fonctionne ainsi :\n\n" +
-                        "🎁 Dons d'argent :\n" +
-                        "- 1 point par dinar donné\n\n" +
-                        "👕 Dons de vêtements :\n" +
-                        "- 50 points par article en bon état\n" +
-                        "- Bonus de 20 points pour les articles neufs\n\n" +
-                        "♻️ Bonus mensuels :\n" +
-                        "- +100 points pour 3 dons dans le mois\n" +
-                        "- Classement mensuel des donateurs",
-    
-    "types de dons": "Barkachni accepte deux types de dons :\n\n" +
-                        "💰 Dons d'argent :\n" +
-                        "- Montant minimum : 1 dinar\n" +
-                        "- Paiement sécurisé\n" +
-                        "- Reçu fiscal disponible\n\n" +
-                        "👔 Dons de vêtements :\n" +
-                        "- Vêtements en bon état\n" +
-                        "- Accessoires\n" +
-                        "- Chaussures\n\n" +
-                        "Tous les dons sont vérifiés avant acceptation."
-  };
-}*/
+}

@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable, Subject, throwError } from 'rxjs';
+import { catchError, map, Observable, of, Subject, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
+import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -14,16 +15,22 @@ export class LeaderboardServiceService {
 
   getTopDonors(page: number, size: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/leaderboard?page=${page}&size=${size}`).pipe(
-      map(response => ({
-        content: response.content.map((donor: any) => ({
-          email: donor.email,
-          points: donor.donationPoints || donor.points || 0, // Plusieurs noms possibles
-          totalDonated: donor.totalDonated || 0
+        map(response => ({
+            content: response.content?.map((item: any) => ({
+                email: item.email,
+                points: item.points || 0,
+                totalDonated: item.totalDonated || 0
+            })) || [],
+            totalElements: response.totalElements || 0
         })),
-        totalElements: response.totalElements
-      }))
+        catchError(error => {
+            console.error('Error fetching top donors:', error);
+            return of({ content: [], totalElements: 0 });
+        })
     );
-  }
+}
+
+
 
   private calculateUserPoints(donor: any): number {
     let totalPoints = 0;

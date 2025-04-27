@@ -6,6 +6,8 @@ import com.barkachni.barkachni.auth.ConnectionTrackingService;
 import com.barkachni.barkachni.auth.RegistrationRequest;
 import com.barkachni.barkachni.email.EmailTemplateName;
 import com.barkachni.barkachni.email.EmailService;
+import com.barkachni.barkachni.entities.Dressing.Dressing;
+import com.barkachni.barkachni.entities.Dressing.Outfit;
 import com.barkachni.barkachni.entities.role.RoleName;
 import com.barkachni.barkachni.entities.role.RoleRepository;
 import com.barkachni.barkachni.entities.user.Token;
@@ -16,6 +18,7 @@ import com.barkachni.barkachni.repositories.cart.ICartRepository;
 import com.barkachni.barkachni.security.JwtService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.barkachni.barkachni.entities.cart.cart;
 import org.springframework.transaction.annotation.Transactional;
+import com.barkachni.barkachni.repositories.Dressing.DressingRepository;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -39,6 +43,8 @@ public class AuthenticationService {
     @Autowired
     private ICartRepository cartRepository;
 
+    private final DressingRepository dressingRepository;
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -47,6 +53,7 @@ public class AuthenticationService {
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
     private final ConnectionTrackingService connectionTrackingService;
+
 
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
@@ -74,10 +81,17 @@ public class AuthenticationService {
         cart.setUser(user); // Associate cart with the user
        cartRepository.save(cart);
 
+        Dressing dressing = new Dressing();
+        dressing.setName(user.getFirstname()+"'s dressing");
+        dressing.setUser(user);
+
+        dressingRepository.save(dressing);
+
         // Ensuite générez et sauvegardez le token
         sendValidationEmail(user);
     }
 
+    @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -87,6 +101,12 @@ public class AuthenticationService {
         );
 
         var user = (User) auth.getPrincipal();
+        if (user.getDressing() !=null && user.getDressing().getOutfits() !=null) {
+            Hibernate.initialize(user.getDressing().getOutfits());
+            for (Outfit outfit : user.getDressing().getOutfits()){
+                Hibernate.initialize(outfit.getItems());
+            }
+        }
 
         // Update connection status
         connectionTrackingService.userConnected(user.getId());

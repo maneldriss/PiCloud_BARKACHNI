@@ -1,3 +1,5 @@
+import { Dressing } from './Dressing/dressing.model';
+import { Item } from './Dressing/item.model';
 import { Role } from './role.model';
 export interface User {
 [x: string]: any;
@@ -18,4 +20,6 @@ export interface User {
     lastConnection: string | Date;
     latitude: number;
     longitude: number;
+    items?: Item[];
+    dressing?: Dressing;
   }

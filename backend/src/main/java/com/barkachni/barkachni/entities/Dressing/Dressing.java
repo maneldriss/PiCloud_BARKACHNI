@@ -32,7 +32,7 @@ public class Dressing {
     @JsonIgnoreProperties({"items", "dressing"})
     private User user;
 
-    @OneToMany(mappedBy = "dressing", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "dressing", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("dressing")
     private List<Outfit> outfits;
 

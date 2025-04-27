@@ -1,0 +1,97 @@
+<div class="container">
+  <div class="header">
+    <h1>{{ isEditMode ? 'Edit' : 'Create New' }} Outfit</h1>
+  </div>
+
+  <form [formGroup]="outfitForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Outfit Name</mat-label>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="outfitForm.get('name')?.hasError('required')">
+          Outfit name is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="2"></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Outfit Creator Layout -->
+    <div class="outfit-creator">
+      <!-- Category Selector -->
+      <div class="category-selector">
+        <h3>Categories</h3>
+        <div class="categories-list">
+          <button
+            *ngFor="let category of categories"
+            mat-raised-button
+            [color]="activeCategory === category ? 'primary' : undefined"
+            (click)="selectCategory(category)"
+            class="category-button">
+            {{ category }}
+          </button>
+        </div>
+      </div>
+
+      <div class="selected-items">
+        <h3>Your Outfit</h3>
+        <div class="outfit-preview" *ngIf="selectedItems.length > 0">
+          <div *ngFor="let item of selectedItems" class="selected-item">
+            <div class="item-card">
+              <div class="item-image">
+                <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+              </div>
+              <div class="item-info">
+                <div class="item-name">{{ item.itemName }}</div>
+                <div class="item-category">{{ item.category }}</div>
+              </div>
+              <button mat-icon-button color="warn" (click)="removeItem(item)" class="remove-button">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="selectedItems.length === 0">
+          <p>No items selected yet</p>
+          <p class="hint">Select items from categories on the left to build your outfit</p>
+        </div>
+      </div>
+
+      <div class="items-picker">
+        <h3>{{ activeCategory }} Items</h3>
+        <div class="items-grid">
+          <div *ngFor="let item of filteredItems" class="item-card" [class.selected]="isItemSelected(item)" (click)="toggleItemSelection(item)">
+            <div class="item-image">
+              <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+            </div>
+            <div class="item-info">
+              <div class="item-name">{{ item.itemName }}</div>
+              <div class="item-details">{{ item.brand }} · {{ item.color }}</div>
+            </div>
+            <div class="select-indicator">
+              <mat-icon *ngIf="isItemSelected(item)">check_circle</mat-icon>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="filteredItems.length === 0" class="no-items">
+          <p>No {{ activeCategory }} items found in your wardrobe</p>
+          <button mat-stroked-button color="primary" [routerLink]="['/items/new']" [queryParams]="{category: activeCategory}">
+            <mat-icon>add</mat-icon> Add {{ activeCategory }} Item
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button mat-button type="button" routerLink="/outfits">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="outfitForm.invalid || selectedItems.length === 0">
+        {{ isEditMode ? 'Update' : 'Save' }} Outfit
+      </button>
+    </div>
+  </form>
+</div>

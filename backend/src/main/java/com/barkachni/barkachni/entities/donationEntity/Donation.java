@@ -3,12 +3,11 @@ package com.barkachni.barkachni.entities.donationEntity;
 
 import com.barkachni.barkachni.entities.Dressing.Item;
 import com.barkachni.barkachni.entities.user.User;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.ToString;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 
 @Entity
@@ -41,7 +40,7 @@ public class Donation {
 
     @ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
-    @JsonIgnore
+
     private User donor;
 
 

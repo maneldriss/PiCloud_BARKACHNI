@@ -30,7 +30,7 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  loadLeaderboard(): void {
+  /*loadLeaderboard(): void {
     this.leaderboardService.getTopDonors(this.currentPage, this.pageSize).subscribe({
       next: (response) => {
         this.topDonors = response.content.map((item: any, index: number) => ({
@@ -44,8 +44,34 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Erreur:', err)
     });
-  }
-
+  }*/
+    loadLeaderboard(): void {
+      this.leaderboardService.getTopDonors(this.currentPage, this.pageSize).subscribe({
+        next: (response) => {
+          console.log('API Response:', response); // Log the full response for debugging
+          
+          this.topDonors = response.content.map((item: any, index: number) => {
+            const donorData = {
+              email: item.email,
+              points: item.points || 0,
+              totalDonated: item.totalDonated || 0,
+              position: (this.currentPage * this.pageSize) + index + 1,
+              isDonatorOfTheMonth: item.totalDonated >= 500
+            };
+    
+            console.log(`Processed Donor ${index + 1}:`, donorData); // Log individual donor data
+            return donorData;
+          });
+    
+          this.totalElements = response.totalElements;
+          console.log('Total Donors:', this.totalElements); // Log total donors
+        },
+        error: (err) => {
+          console.error('Error Fetching Leaderboard Data:', err); // Log errors
+        }
+      });
+    }
+    
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

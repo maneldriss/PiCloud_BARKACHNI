@@ -28,9 +28,10 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
     List<Donation> findApprovedDonationsByUser(@Param("userId") int userId);
     @Query("SELECT d.donor AS donor, SUM(d.amount) AS totalDonated " +
             "FROM Donation d " +
-            "WHERE d.donationType = 'MONEY' AND d.status =' APPROVED' " +
+            "WHERE d.donationType = 'MONEY' AND d.status = 'APPROVED' " +
             "GROUP BY d.donor " +
             "ORDER BY SUM(d.amount) DESC")
     Page<Object[]> findTopMoneyDonors(Pageable pageable);
+
 
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Commande } from 'src/app/models/commande';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { CommandeService } from 'src/app/services/commande.service';
 
 
@@ -12,17 +13,26 @@ export class CommandeComponent implements OnInit {
   commandes: Commande[] = [];
   total: number = 0;
   selectedCommandeId: number = 1; // Example commande ID, dynamically set this
+  userId :number | null = null;
 
-  constructor(private commandeService: CommandeService) {}
+  constructor(private commandeService: CommandeService ,private authService: AuthService) {}
+  getCurrentUserId(): void {
+    const currentUser = this.authService.getCurrentUser();
+    console.log("Current user data:", currentUser);
+    this.userId = currentUser?.id ?? null;
+    console.log("Fetched user ID:", this.userId);
+  }
+  
 
   ngOnInit(): void {
+    this.getCurrentUserId();
     this.getAllCommandes();
     this.getCommandeTotal();
   }
 
   // Fetch all commandes
   getAllCommandes(): void {
-    this.commandeService.getAllCommandes().subscribe(
+    this.commandeService.getCommandesByUserId(this.userId!).subscribe(
       (commandes) => {
         this.commandes = commandes;
         console.log('Commandes:', this.commandes);

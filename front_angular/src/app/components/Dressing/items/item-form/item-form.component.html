@@ -1,0 +1,158 @@
+<div class="container">
+  <h1>{{ isEditMode ? 'Edit' : 'Add New' }} Item</h1>
+
+  <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Item Name</mat-label>
+        <input matInput formControlName="itemName" required>
+        <mat-error *ngIf="itemForm.get('itemName')?.hasError('required')">
+          Item name is required
+        </mat-error>
+        <mat-error *ngIf="itemForm.get('itemName')?.hasError('maxlength')">
+          Item name cannot exceed 50 characters
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+        <mat-error *ngIf="itemForm.get('description')?.hasError('maxlength')">
+          Description cannot exceed 500 characters
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row two-columns">
+      <div class="category-size-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category" required>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="itemForm.get('category')?.hasError('required')">
+            Category is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Size</mat-label>
+          <mat-select formControlName="size" required>
+            <mat-option *ngFor="let size of sizeOptions" [value]="size.value">
+              {{ size.label }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="itemForm.get('size')?.hasError('required')">
+            Size is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Brand</mat-label>
+        <input matInput formControlName="brand" required>
+        <mat-error *ngIf="itemForm.get('brand')?.hasError('required')">
+          Brand is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <div class="image-upload-container">
+        <div class="image-upload-area" (click)="fileInput.click()" [class.has-preview]="imagePreview">
+          <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none">
+          <div *ngIf="!imagePreview" class="upload-prompt">
+            <mat-icon>cloud_upload</mat-icon>
+            <p>Click to upload image</p>
+            <small>or drag and drop (JPG, PNG)</small>
+          </div>
+          <div *ngIf="imagePreview" class="image-preview-container">
+            <img #imagePreviewElem [src]="imagePreview" alt="Image preview">
+            <div class="image-actions">
+              <button mat-icon-button type="button" color="warn" (click)="removeImage($event)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="processingImage" class="processing-indicator">
+          <mat-spinner diameter="30"></mat-spinner>
+          <span>Processing image...</span>
+        </div>
+        <div *ngIf="imageProcessed" class="image-preview-processed">
+          <h4>Background Removed</h4>
+          <img [src]="processedImageUrl" alt="Processed image">
+        </div>
+      </div>
+      <mat-error *ngIf="uploadError">{{ uploadError }}</mat-error>
+    </div>
+
+    <div class="form-row">
+      <div class="color-selection">
+        <h3>Color</h3>
+        <div class="color-picker-container">
+          <div class="color-input-section">
+            <div class="selected-color-display" [style.background-color]="selectedColor">
+              <span [style.color]="getContrastColor(selectedColor)">✓</span>
+            </div>
+            <div class="color-tools">
+              <button type="button" mat-icon-button
+                      [class.active]="eyedropperActive"
+                      (click)="toggleEyedropper($event)"
+                      [disabled]="!imagePreview"
+                      matTooltip="Pick color from image">
+                <mat-icon>colorize</mat-icon>
+              </button>
+              <input type="color" [(ngModel)]="selectedColor" [ngModelOptions]="{standalone: true}"
+                     (change)="selectColor(selectedColor)">
+            </div>
+            <div class="color-text">
+              <span class="color-hex">{{selectedColor}}</span>
+              <span class="color-name" *ngIf="displayColorName">({{displayColorName}})</span>
+            </div>
+          </div>
+          <div class="color-swatches-section">
+            <div class="extracted-colors" *ngIf="extractedColors.length > 0">
+              <p class="color-label">From image:</p>
+              <div class="color-options">
+                <div *ngFor="let color of extractedColors"
+                     class="color-swatch"
+                     [style.background-color]="color"
+                     [class.selected]="selectedColor === color"
+                     (click)="selectColor(color)">
+                  <span [style.color]="getContrastColor(color)" *ngIf="selectedColor === color">✓</span>
+                </div>
+              </div>
+            </div>
+            <div class="predefined-colors">
+              <p class="color-label">Common:</p>
+              <div class="color-options">
+                <div *ngFor="let color of predefinedColors"
+                     class="color-swatch"
+                     [style.background-color]="color"
+                     [class.selected]="selectedColor === color"
+                     (click)="selectColor(color)">
+                  <span [style.color]="getContrastColor(color)" *ngIf="selectedColor === color">✓</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <mat-error *ngIf="itemForm.get('color')?.hasError('required') && itemForm.get('color')?.touched">
+          Color is required
+        </mat-error>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button mat-button type="button" routerLink="/items">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="itemForm.invalid || processingImage">
+        {{ isEditMode ? 'Update' : 'Save' }} Item
+      </button>
+    </div>
+  </form>
+</div>
