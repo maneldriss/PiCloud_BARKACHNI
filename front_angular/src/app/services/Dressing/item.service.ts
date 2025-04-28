@@ -55,7 +55,21 @@ export class ItemService {
   deleteItem(id: number): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.delete(`${this.apiUrl}/remove-item/${id}`, { headers })
-      .pipe(catchError(this.handleError));
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 409) {
+            return throwError(() => new Error(error.error));
+          }
+          if (error.status === 404) {
+            // Item was already deleted or doesn't exist
+            return new Observable(subscriber => {
+              subscriber.next({});
+              subscriber.complete();
+            });
+          }
+          return throwError(() => new Error('Something went wrong. Please try again later.'));
+        })
+      );
   }
 
   getItemsByUser(userId?: number): Observable<Item[]> {

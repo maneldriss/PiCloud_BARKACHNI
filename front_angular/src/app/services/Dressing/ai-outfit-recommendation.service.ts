@@ -152,7 +152,7 @@ export class AIOutfitRecommendationService {
     // Prepare outfit descriptions for AI embedding
     const outfitDescriptions = outfits.map(outfit => {
       const itemDescriptions = outfit.items?.map(item => this.getItemDescription(item)).join(' ') || '';
-      return `Outfit: ${outfit.name}. ${outfit.description || ''}. Season: ${outfit.season || ''}. Occasion: ${outfit.occasion || ''}. Items: ${itemDescriptions}`;
+      return `Outfit: ${outfit.outfitName}. ${outfit.description || ''}. Season: ${outfit.season || ''}. Occasion: ${outfit.occasion || ''}. Items: ${itemDescriptions}`;
     });
 
     // Add weather prompt as the first item
@@ -180,7 +180,7 @@ export class AIOutfitRecommendationService {
         scores.sort((a, b) => b.similarity - a.similarity);
 
         console.log('AI Recommendation Scores:', scores.map(s =>
-          ({ name: s.outfit.name, score: s.similarity.toFixed(3) })));
+          ({ name: s.outfit.outfitName, score: s.similarity.toFixed(3) })));
 
         // Return the most similar outfit
         return scores.length > 0 ? scores[0].outfit : null;

@@ -1,6 +1,6 @@
 <div class="container">
   <div class="header">
-    <h1>My Wardrobe Items</h1>
+    <h1>Your Wardrobe Collection</h1>
     <button mat-raised-button color="primary" routerLink="/items/new">
       <mat-icon>add</mat-icon>
       Add New Item
@@ -9,8 +9,8 @@
 
   <div class="search-bar">
     <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Search items</mat-label>
-      <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by name or description">
+      <mat-label>Search your wardrobe</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by name, brand, or category">
       <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>
@@ -19,10 +19,28 @@
   </div>
 
   <div class="filters">
-    <button mat-button color="primary" (click)="toggleAdvancedFilters()">
-      <mat-icon>filter_list</mat-icon>
-      {{ showAdvancedFilters ? 'Hide Advanced Filters' : 'Show Advanced Filters' }}
-    </button>
+    <div class="filter-buttons">
+      <button mat-button [class.active]="showOnlyFavorites" (click)="showOnlyFavorites = !showOnlyFavorites; applyFilters()">
+        <mat-icon>favorite</mat-icon>
+        Favorite Items
+      </button>
+      <button mat-button [class.active]="showOnlyInOutfits" (click)="toggleOutfitFilter('in')">
+        <mat-icon>checkroom</mat-icon>
+        Items in Outfits
+      </button>
+      <button mat-button [class.active]="showOnlyNotInOutfits" (click)="toggleOutfitFilter('not')">
+        <mat-icon>inventory_2</mat-icon>
+        Unused Items
+      </button>
+      <button mat-button (click)="toggleAdvancedFilters()">
+        <mat-icon>filter_list</mat-icon>
+        Advanced Filters
+      </button>
+      <button mat-button (click)="resetFilters()">
+        <mat-icon>clear_all</mat-icon>
+        Reset Filters
+      </button>
+    </div>
 
     <div *ngIf="showAdvancedFilters" class="advanced-filters">
       <mat-form-field appearance="fill">
@@ -95,6 +113,9 @@
       <mat-card-header>
         <mat-card-title>{{ item.itemName }}</mat-card-title>
         <mat-card-subtitle>{{ item.brand }} - {{ item.category }}</mat-card-subtitle>
+        <div class="item-status" *ngIf="item.outfits && item.outfits.length > 0">
+          <mat-icon matTooltip="This item is used in {{ item.outfits.length }} outfit(s)">checkroom</mat-icon>
+        </div>
       </mat-card-header>
       <mat-card-content>
         <p><strong>Color:</strong> {{ item.color }}</p>
@@ -106,7 +127,7 @@
           <mat-icon>{{ item.favorite ? 'favorite' : 'favorite_border' }}</mat-icon>
         </button>
         <button mat-button color="primary" [routerLink]="['/items', item.itemID]">
-          <mat-icon>visibility</mat-icon> View
+          <mat-icon>visibility</mat-icon> View Details
         </button>
         <button mat-button color="accent" [routerLink]="['/items/edit', item.itemID]">
           <mat-icon>edit</mat-icon> Edit
@@ -121,7 +142,7 @@
   <div *ngIf="!loading && filteredItems.length === 0" class="no-items">
     <div class="empty-state">
       <mat-icon>search_off</mat-icon>
-      <h2>No items found</h2>
+      <h2>No Items Found</h2>
       <p>Try adjusting your filters or add new items to your wardrobe</p>
       <button mat-raised-button color="primary" (click)="resetFilters()">
         <mat-icon>refresh</mat-icon> Reset Filters

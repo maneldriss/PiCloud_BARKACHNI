@@ -3,43 +3,27 @@
     <h1>{{ isEditMode ? 'Edit' : 'Create New' }} Outfit</h1>
   </div>
 
-  <form [formGroup]="outfitForm" (ngSubmit)="onSubmit()">
-    <div class="form-row">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Outfit Name</mat-label>
-        <input matInput formControlName="name" required>
-        <mat-error *ngIf="outfitForm.get('name')?.hasError('required')">
-          Outfit name is required
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <div class="form-row">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description" rows="2"></textarea>
-      </mat-form-field>
-    </div>
-
+  <form [formGroup]="outfitForm" (ngSubmit)="$event.preventDefault(); onSubmit()" novalidate>
     <!-- Outfit Creator Layout -->
     <div class="outfit-creator">
       <!-- Category Selector -->
       <div class="category-selector">
-        <h3>Categories</h3>
+        <h3><mat-icon>category</mat-icon> Categories</h3>
         <div class="categories-list">
           <button
             *ngFor="let category of categories"
             mat-raised-button
-            [color]="activeCategory === category ? 'primary' : undefined"
+            [class.active]="activeCategory === category"
             (click)="selectCategory(category)"
             class="category-button">
+            <mat-icon>{{ getCategoryIcon(category) }}</mat-icon>
             {{ category }}
           </button>
         </div>
       </div>
 
+      <!-- Selected Items -->
       <div class="selected-items">
-        <h3>Your Outfit</h3>
         <div class="outfit-preview" *ngIf="selectedItems.length > 0">
           <div *ngFor="let item of selectedItems" class="selected-item">
             <div class="item-card">
@@ -48,7 +32,10 @@
               </div>
               <div class="item-info">
                 <div class="item-name">{{ item.itemName }}</div>
-                <div class="item-category">{{ item.category }}</div>
+                <div class="item-category">
+                  <mat-icon>label</mat-icon>
+                  {{ item.category }}
+                </div>
               </div>
               <button mat-icon-button color="warn" (click)="removeItem(item)" class="remove-button">
                 <mat-icon>close</mat-icon>
@@ -57,13 +44,15 @@
           </div>
         </div>
         <div class="empty-state" *ngIf="selectedItems.length === 0">
+          <mat-icon>checkroom</mat-icon>
           <p>No items selected yet</p>
           <p class="hint">Select items from categories on the left to build your outfit</p>
         </div>
       </div>
 
+      <!-- Items Picker -->
       <div class="items-picker">
-        <h3>{{ activeCategory }} Items</h3>
+        <h3><mat-icon>style</mat-icon> {{ activeCategory }} Items</h3>
         <div class="items-grid">
           <div *ngFor="let item of filteredItems" class="item-card" [class.selected]="isItemSelected(item)" (click)="toggleItemSelection(item)">
             <div class="item-image">
@@ -71,10 +60,13 @@
             </div>
             <div class="item-info">
               <div class="item-name">{{ item.itemName }}</div>
-              <div class="item-details">{{ item.brand }} · {{ item.color }}</div>
+              <div class="item-details">
+                <mat-icon>business</mat-icon>
+                {{ item.brand }} · {{ item.color }}
+              </div>
             </div>
-            <div class="select-indicator">
-              <mat-icon *ngIf="isItemSelected(item)">check_circle</mat-icon>
+            <div class="select-indicator" *ngIf="isItemSelected(item)">
+              <mat-icon>check_circle</mat-icon>
             </div>
           </div>
         </div>
@@ -87,11 +79,39 @@
       </div>
     </div>
 
-    <div class="form-actions">
-      <button mat-button type="button" routerLink="/outfits">Cancel</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="outfitForm.invalid || selectedItems.length === 0">
-        {{ isEditMode ? 'Update' : 'Save' }} Outfit
-      </button>
+    <div class="bottom-form-row">
+      <div class="form-fields-container">
+        <mat-form-field appearance="outline" class="bottom-field">
+          <mat-label>Outfit Name</mat-label>
+          <input matInput formControlName="outfitName" required (keydown.enter)="$event.preventDefault()">
+          <mat-icon matPrefix>label</mat-icon>
+          <mat-hint>Give your outfit a memorable name</mat-hint>
+          <mat-error *ngIf="outfitForm.get('outfitName')?.hasError('required')">
+            Outfit name is required
+          </mat-error>
+          <mat-error *ngIf="outfitForm.get('outfitName')?.hasError('maxlength')">
+            Name must be less than 50 characters
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="bottom-field">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3" (keydown.enter)="$event.preventDefault()"></textarea>
+          <mat-icon matPrefix>description</mat-icon>
+          <mat-hint>Describe the occasion or style of this outfit (optional)</mat-hint>
+          <mat-error *ngIf="outfitForm.get('description')?.hasError('maxlength')">
+            Description must be less than 500 characters
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-button type="button" routerLink="/outfits">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="outfitForm.invalid || selectedItems.length === 0">
+          <mat-icon>{{ isEditMode ? 'update' : 'save' }}</mat-icon>
+          {{ isEditMode ? 'Update' : 'Save' }} Outfit
+        </button>
+      </div>
     </div>
   </form>
 </div>

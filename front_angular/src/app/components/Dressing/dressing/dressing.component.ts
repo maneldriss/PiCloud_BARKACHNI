@@ -22,6 +22,7 @@ export class DressingComponent implements OnInit, OnDestroy {
   totalOutfits: number = 0;
   private userSubscription: Subscription | null = null;
   currentUser: User | null = null;
+  dressingName: string = '';
 
   constructor(
     private itemService: ItemService,
@@ -35,6 +36,7 @@ export class DressingComponent implements OnInit, OnDestroy {
 
     if (currentUser && currentUser.id) {
       this.currentUser = currentUser;
+      this.dressingName = currentUser.dressing?.name || `${currentUser.firstname}'s Dressing`;
       this.loadRecentItems();
       this.loadRecentOutfits();
     } else {

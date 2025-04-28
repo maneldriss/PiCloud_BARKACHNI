@@ -3,7 +3,7 @@ import {catchError, of, switchMap, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {Outfit} from "../../models/Dressing/outfit.model";
 import {JwtService} from "../jwt/jwt.service";
-import {UserService} from "../user/user.service";
+import {AuthService} from "../auth/auth.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class OutfitService {
 
   constructor(private http: HttpClient,
               private jwtService: JwtService,
-              private userService: UserService) {
+              private authService: AuthService) {
   }
 
   private getAuthHeaders() {
@@ -38,25 +38,70 @@ export class OutfitService {
 
   addOutfit(outfit: Outfit) {
     const headers = this.getAuthHeaders();
-
-    return this.userService.getCurrentUser().pipe(
-      switchMap(user => {
-        if (!user || !user.dressing) {
-          return throwError(() => new Error('User or dressing information is missing.'));
-        }
-        outfit.dressing = user.dressing;
-        return this.http.post<Outfit>(`${this.apiUrl}/add-outfit`, outfit, { headers });
-      }),
-      catchError(this.handleError)
-    );
+    const currentUser = this.authService.getCurrentUser();
+    
+    if (!currentUser || !currentUser.dressing) {
+      return throwError(() => new Error('User or dressing information is missing.'));
+    }
+    
+    // Create a clean outfit object with only necessary properties
+    const cleanOutfit = {
+      outfitName: outfit.outfitName,
+      description: outfit.description,
+      season: outfit.season,
+      occasion: outfit.occasion,
+      isAiGenerated: outfit.isAiGenerated,
+      imageUrl: outfit.imageUrl,
+      items: outfit.items?.map(item => ({
+        itemID: item.itemID,
+        itemName: item.itemName,
+        category: item.category,
+        brand: item.brand,
+        color: item.color,
+        imageUrl: item.imageUrl
+      })),
+      dressing: {
+        id: currentUser.dressing.id
+      }
+    };
+    
+    console.log('Sending outfit data:', JSON.stringify(cleanOutfit));
+    return this.http.post<Outfit>(`${this.apiUrl}/add-outfit`, cleanOutfit, { headers })
+      .pipe(catchError(this.handleError));
   }
 
-
   updateOutfit(outfit: Outfit) {
-    console.log('Sending update request to:', `${this.apiUrl}/update-outfit`);
-    console.log('With data:', JSON.stringify(outfit));
+    const headers = this.getAuthHeaders();
+    const currentUser = this.authService.getCurrentUser();
+    
+    if (!currentUser || !currentUser.dressing) {
+      return throwError(() => new Error('User or dressing information is missing.'));
+    }
 
-    return this.http.put<Outfit>(`${this.apiUrl}/update-outfit`, outfit)
+    // Create a clean outfit object with only necessary properties
+    const updatedOutfit = {
+      outfitID: outfit.outfitID,
+      outfitName: outfit.outfitName,
+      description: outfit.description,
+      season: outfit.season,
+      occasion: outfit.occasion,
+      isAiGenerated: outfit.isAiGenerated,
+      imageUrl: outfit.imageUrl,
+      items: outfit.items?.map(item => ({
+        itemID: item.itemID,
+        itemName: item.itemName,
+        category: item.category,
+        brand: item.brand,
+        color: item.color,
+        imageUrl: item.imageUrl
+      })),
+      dressing: {
+        id: currentUser.dressing.id
+      }
+    };
+
+    console.log('Updating outfit with data:', JSON.stringify(updatedOutfit));
+    return this.http.put<Outfit>(`${this.apiUrl}/update-outfit`, updatedOutfit, { headers })
       .pipe(catchError(this.handleError));
   }
 
@@ -69,6 +114,7 @@ export class OutfitService {
     return this.http.delete(`${this.apiUrl}/remove-outfit/${id}`)
       .pipe(catchError(this.handleError));
   }
+
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
 

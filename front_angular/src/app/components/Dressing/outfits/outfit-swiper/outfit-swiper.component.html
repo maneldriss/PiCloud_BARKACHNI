@@ -3,10 +3,8 @@
   <div class="ai-loading-overlay" *ngIf="loadingAI">
     <div class="ai-loading-content">
       <div class="ai-loading-animation">
-        <div class="ai-brain-icon">
-          <mat-icon class="brain-icon">psychology</mat-icon>
-          <div class="ai-pulse"></div>
-        </div>
+        <mat-icon class="brain-icon">psychology</mat-icon>
+        <div class="ai-pulse"></div>
       </div>
       <mat-spinner diameter="50"></mat-spinner>
       <p class="ai-message">{{ loadingMessage }}</p>
@@ -15,6 +13,16 @@
         <span></span>
         <span></span>
       </div>
+    </div>
+  </div>
+
+  <!-- Game Stats -->
+  <div class="game-stats" *ngIf="!loadingAI">
+    <div class="streak-counter">
+      <div class="streak-progress">
+        <div class="streak-bar" [style.width.%]="(likedItems.size / 4) * 100"></div>
+      </div>
+      <span>Streak: {{ likedItems.size }}/4</span>
     </div>
   </div>
 
@@ -75,18 +83,6 @@
     <button mat-fab color="primary" class="control-button" (click)="like()">
       <mat-icon>favorite</mat-icon>
     </button>
-  </div>
-
-  <!-- Stats -->
-  <div class="ai-stats" *ngIf="(likedItems.size > 0 || dislikedItems.size > 0) && !loadingAI">
-    <div class="ai-stat">
-      <mat-icon class="like-icon">favorite</mat-icon>
-      <span>{{ likedItems.size }}</span>
-    </div>
-    <div class="ai-stat">
-      <mat-icon class="dislike-icon">close</mat-icon>
-      <span>{{ dislikedItems.size }}</span>
-    </div>
   </div>
 
   <!-- Empty State -->

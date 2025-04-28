@@ -1,5 +1,6 @@
 import {User} from "./user.model";
 import {Category} from "./category.enum";
+import {Outfit} from "./outfit.model";
 
 export interface Item {
   itemID?: number;
@@ -13,4 +14,5 @@ export interface Item {
   dateAdded?: Date;
   user?: User;
   favorite?: boolean;
+  outfits?: Outfit[];
 }

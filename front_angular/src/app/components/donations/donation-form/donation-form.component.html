@@ -70,7 +70,12 @@
       <div *ngIf="donationTypeControl?.value === 'CLOTHING'" class="mt-4">
         <h5 class="fw-bold mb-3" style="color: #00a79d;">Select Clothing Item</h5>
         
-        <div class="row row-cols-2 row-cols-md-3 g-3">
+        <div *ngIf="availableItems.length === 0" class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          You don't have any items available for donation. Items that are part of outfits cannot be donated.
+        </div>
+        
+        <div class="row row-cols-2 row-cols-md-3 g-3" *ngIf="availableItems.length > 0">
           <div class="col" *ngFor="let item of availableItems">
             <div class="card h-100 item-card" 
                  [class.border-primary]="isItemSelected(item)"
@@ -79,7 +84,7 @@
               <img [src]="getItemImage(item)" 
                    class="card-img-top p-2" 
                    alt="{{item.itemName}}"
-                   onerror="this.src='assets/default-item.jpg'">
+                   (error)="handleImageError($event)">
               <div class="card-body text-center p-2">
                 <h6 class="card-title mb-0">{{item.itemName}}</h6>
               </div>
@@ -93,7 +98,7 @@
             <img [src]="getItemImage(selectedItem)" 
                  class="img-thumbnail me-3" 
                  style="width: 80px; height: 80px;"
-                 onerror="this.src='assets/images/default-item.jpg'">
+                 (error)="handleImageError($event)">
             <div>
               <h6 class="mb-1">{{selectedItem.itemName}}</h6>
               <small class="text-muted">Selected for donation</small>

@@ -5,6 +5,8 @@ import { Donation, DonationStatus, DonationType } from '../../../models/donation
 import { DonationService } from '../../../services/donation.service';
 import {Item} from "../../../models/Dressing/item.model";
 import {ItemService} from "../../../services/Dressing/item.service";
+import { AuthService } from '../../../services/auth/auth.service';
+import { User } from '../../../models/user';
 
 @Component({
   selector: 'app-donation-form',
@@ -27,7 +29,8 @@ export class DonationFormComponent implements OnInit {
     private donationService: DonationService,
     private itemService: ItemService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {
     this.donationForm = this.fb.group({
       donationType: ['', Validators.required],
@@ -45,9 +48,17 @@ export class DonationFormComponent implements OnInit {
       return;
     }
 
-    this.loadAvailableItems(() => {
-      if (this.isEditMode) this.loadDonationDetails();
-    });
+    // Get the current user's ID
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.userId = currentUser.id;
+      console.log('Current user ID:', this.userId);
+      this.loadAvailableItems(() => {
+        if (this.isEditMode) this.loadDonationDetails();
+      });
+    } else {
+      this.error = 'User not authenticated';
+    }
 
     this.donationForm.get('donationType')?.valueChanges.subscribe(type => {
       this.updateFormValidation(type);
@@ -62,9 +73,13 @@ export class DonationFormComponent implements OnInit {
   }
 
   getItemImage(item: Item): string {
-    if (!item?.imageUrl) return 'assets/images/default-item.jpg';
+    if (!item?.imageUrl) return '';
 
-    if (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('assets/')) {
+    if (item.imageUrl.startsWith('http')) {
+      return item.imageUrl.replace('localhost:8080', 'localhost:8088');
+    }
+
+    if (item.imageUrl.startsWith('assets/')) {
       return item.imageUrl;
     }
 
@@ -99,12 +114,28 @@ export class DonationFormComponent implements OnInit {
   }
 
   loadAvailableItems(callback?: () => void): void {
-    this.itemService.getItems().subscribe({
+    console.log('Loading items for user ID:', this.userId);
+    this.itemService.getItemsByUser(this.userId).subscribe({
       next: items => {
-        this.availableItems = items;
+        console.log('All items received:', items);
+        // Filter items that aren't in any outfits
+        this.availableItems = items.filter(item => {
+          const isNotInOutfit = !item.outfits || item.outfits.length === 0;
+          console.log('Item:', item.itemName, {
+            userID: item.user?.userID,
+            currentUserId: this.userId,
+            outfits: item.outfits,
+            isNotInOutfit
+          });
+          return isNotInOutfit;
+        });
+        console.log('Filtered available items:', this.availableItems);
         callback?.();
       },
-      error: err => this.handleError(err)
+      error: err => {
+        console.error('Error loading items:', err);
+        this.handleError(err);
+      }
     });
   }
 
@@ -207,4 +238,17 @@ export class DonationFormComponent implements OnInit {
   get donationTypeControl() { return this.donationForm.get('donationType'); }
   get amountControl() { return this.donationForm.get('amount'); }
   get itemDressingControl() { return this.donationForm.get('itemDressing'); }
+
+  handleImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    const parent = img.parentElement;
+    if (parent) {
+      parent.style.backgroundColor = '#f8f9fa';
+      parent.style.display = 'flex';
+      parent.style.alignItems = 'center';
+      parent.style.justifyContent = 'center';
+      parent.innerHTML = '<i class="fas fa-image text-muted" style="font-size: 2rem;"></i>';
+    }
+  }
 }

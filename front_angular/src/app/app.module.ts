@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -49,6 +49,7 @@ import {AIOutfitRecommendationService} from "./services/Dressing/ai-outfit-recom
 import {DressingModule} from "./components/Dressing/dressing/dressing.module";
 import {ItemsModule} from "./components/Dressing/items/items.module";
 import {OutfitsModule} from "./components/Dressing/outfits/outfits.module";
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 
 
@@ -108,7 +109,12 @@ import {OutfitsModule} from "./components/Dressing/outfits/outfits.module";
     OutfitsModule
   ],
   providers: [
-    AIOutfitRecommendationService
+    AIOutfitRecommendationService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent],
   exports: [

@@ -51,9 +51,36 @@ export class OutfitFormComponent implements OnInit {
 
   initForm(): void {
     this.outfitForm = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(100)]],
+      outfitName: ['', [Validators.required, Validators.maxLength(50)]],
       description: ['', Validators.maxLength(500)]
     });
+  }
+
+  getCategoryIcon(category: string): string {
+    switch(category) {
+      case Category.TOPS:
+        return 'loyalty';
+      case Category.PANTS:
+        return 'format_line_spacing';
+      case Category.SHIRTS:
+        return 'dry_cleaning';
+      case Category.SHOES:
+        return 'hiking';
+      case Category.DRESSES:
+        return 'style';
+      case Category.ACCESSORIES:
+        return 'watch';
+      case Category.OUTERWEAR:
+        return 'layers';
+      case Category.UNDERWEAR:
+        return 'diamond';
+      case Category.JEWELRY:
+        return 'diamond';
+      case Category.BAGS:
+        return 'work';
+      default:
+        return 'checkroom';
+    }
   }
 
   loadItems(): void {
@@ -83,7 +110,7 @@ export class OutfitFormComponent implements OnInit {
     this.outfitService.getOutfitById(id).subscribe(outfit => {
       if (outfit) {
         this.outfitForm.patchValue({
-          name: outfit.name,
+          outfitName: outfit.outfitName,
           description: outfit.description
         });
 
@@ -100,7 +127,10 @@ export class OutfitFormComponent implements OnInit {
   }
 
   filterItemsByCategory(): void {
-    this.filteredItems = this.allItems.filter(item => item.category === this.activeCategory);
+    this.filteredItems = this.allItems.filter(item =>
+      item.category === this.activeCategory &&
+      (!item.outfits || item.outfits.length === 0 || item.outfits.some(outfit => outfit.outfitID === this.outfitId))
+    );
   }
 
   toggleItemSelection(item: Item): void {
@@ -120,7 +150,18 @@ export class OutfitFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.outfitForm.invalid) {
+    // Prevent submission if the form is invalid or no items are selected
+    if (this.outfitForm.invalid || this.selectedItems.length === 0) {
+      if (this.outfitForm.invalid) {
+        this.snackBar.open('Please fill in all required fields correctly', 'Close', { duration: 3000 });
+      } else if (this.selectedItems.length === 0) {
+        this.snackBar.open('Please select at least one item for the outfit', 'Close', { duration: 3000 });
+      }
+      return;
+    }
+
+    // Prevent automatic submission
+    if (!this.outfitForm.get('outfitName')?.value) {
       return;
     }
 
@@ -131,14 +172,26 @@ export class OutfitFormComponent implements OnInit {
 
     if (this.isEditMode && this.outfitId) {
       outfit.outfitID = this.outfitId;
-      this.outfitService.updateOutfit(outfit).subscribe(() => {
-        this.snackBar.open('Outfit updated successfully', 'Close', { duration: 3000 });
-        this.router.navigate(['/outfits']);
+      this.outfitService.updateOutfit(outfit).subscribe({
+        next: () => {
+          this.snackBar.open('Outfit updated successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/outfits']);
+        },
+        error: (error) => {
+          console.error('Error updating outfit:', error);
+          this.snackBar.open('Failed to update outfit', 'Close', { duration: 3000 });
+        }
       });
     } else {
-      this.outfitService.addOutfit(outfit).subscribe(() => {
-        this.snackBar.open('Outfit created successfully', 'Close', { duration: 3000 });
-        this.router.navigate(['/outfits']);
+      this.outfitService.addOutfit(outfit).subscribe({
+        next: () => {
+          this.snackBar.open('Outfit created successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/outfits']);
+        },
+        error: (error) => {
+          console.error('Error creating outfit:', error);
+          this.snackBar.open('Failed to create outfit', 'Close', { duration: 3000 });
+        }
       });
     }
   }

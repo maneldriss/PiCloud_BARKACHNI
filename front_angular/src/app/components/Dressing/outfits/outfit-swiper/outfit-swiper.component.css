@@ -4,29 +4,37 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85);
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.97), rgba(22, 33, 62, 0.97));
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .current-card, .next-card {
   position: absolute;
   width: 90%;
   max-width: 380px;
+  height: 600px;
   transition: transform 0.3s ease;
   border-radius: 12px;
   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .current-card {
   z-index: 2;
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease-out;
   will-change: transform, opacity;
   touch-action: pan-y;
-  cursor: grab;
+  transform-origin: center center;
 }
 
 .current-card:active {
@@ -36,9 +44,9 @@
 .next-card {
   z-index: 1;
   transform: scale(0.92) translateY(10px);
-  opacity: 0.5;
-  filter: blur(1px);
-  transition: all 0.5s ease;
+  opacity: 0.6;
+  filter: blur(2px);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 mat-card {
@@ -46,27 +54,84 @@ mat-card {
   overflow: hidden;
   border-radius: 12px;
   padding: 0;
+  height: 100%;
+  background: #ffffff;
+}
+
+/* Swipe Handle */
+.swipe-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 3;
+  cursor: grab;
+  user-select: none;
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.swipe-handle:active {
+  cursor: grabbing;
+}
+
+.swipe-handle mat-icon {
+  color: #3f51b5;
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.swipe-handle span {
+  color: #3f51b5;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 mat-card-header {
   padding: 16px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+  backdrop-filter: blur(10px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
 mat-card img {
   width: 100%;
   height: 340px;
   object-fit: cover;
+  transition: transform 0.3s ease;
+  pointer-events: none;
 }
 
 mat-card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
+  color: white;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+  pointer-events: none;
 }
 
 .item-description {
   margin-bottom: 12px;
   font-size: 14px;
   line-height: 1.5;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .item-meta {
@@ -74,6 +139,7 @@ mat-card-content {
   flex-wrap: wrap;
   gap: 12px;
   font-size: 14px;
+  opacity: 0.9;
 }
 
 .like-indicator, .nope-indicator {
@@ -85,92 +151,26 @@ mat-card-content {
   font-weight: bold;
   font-size: 1.8em;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 10;
   transform: rotate(-15deg);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  pointer-events: none;
 }
 
 .like-indicator {
   left: 20px;
   color: #4CAF50;
   border-color: #4CAF50;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .nope-indicator {
   right: 20px;
   color: #F44336;
   border-color: #F44336;
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-.streak-counter {
-  position: absolute;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 8px 12px;
-  border-radius: 24px;
-  font-weight: bold;
-  color: #3f51b5;
-  width: 80%;
-  max-width: 320px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.streak-progress {
-  height: 6px;
-  background-color: #e0e0e0;
-  border-radius: 3px;
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-
-.streak-bar {
-  height: 100%;
-  background-color: #3f51b5;
-  transition: width 0.3s ease;
-}
-
-.empty-state {
-  color: white;
-  text-align: center;
-  padding: 24px;
-  max-width: 400px;
-}
-
-.empty-icon {
-  font-size: 64px;
-  height: 64px;
-  width: 64px;
-  color: #aaaaaa;
-  margin-bottom: 16px;
-}
-
-.empty-state h2 {
-  margin-bottom: 16px;
-  font-size: 24px;
-  font-weight: 300;
-}
-
-.empty-state p {
-  margin-bottom: 24px;
-  color: #aaaaaa;
-}
-
-.empty-state button {
-  margin-top: 20px;
-}
-
-.close-button {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 10;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
 }
 
 .swipe-controls {
@@ -187,16 +187,65 @@ mat-card-content {
   width: 56px;
   height: 56px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-@keyframes bounce-back {
-  0%   { transform: translateX(var(--x)) rotate(var(--r)); }
-  50%  { transform: translateX(calc(var(--x) * -0.1)) rotate(0deg); }
-  100% { transform: translateX(0px) rotate(0deg); }
+.control-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
 }
 
-.current-card.bounce {
-  animation: bounce-back 0.3s ease-out;
+.control-button:active {
+  transform: scale(0.95);
+}
+
+@keyframes swipe-right {
+  0% { transform: translate(0, 0) rotate(0); }
+  100% { transform: translate(150%, 0) rotate(30deg); }
+}
+
+@keyframes swipe-left {
+  0% { transform: translate(0, 0) rotate(0); }
+  100% { transform: translate(-150%, 0) rotate(-30deg); }
+}
+
+.swipe-right {
+  animation: swipe-right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.swipe-left {
+  animation: swipe-left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Game-like elements */
+.streak-counter {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-weight: bold;
+  color: #3f51b5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.streak-progress {
+  height: 6px;
+  background-color: rgba(0,0,0,0.1);
+  border-radius: 3px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.streak-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3f51b5, #7986cb);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(63, 81, 181, 0.5);
 }
 
 /* AI Loading Effects */
@@ -206,7 +255,7 @@ mat-card-content {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(25, 25, 35, 0.97), rgba(15, 15, 20, 0.97));
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.97), rgba(22, 33, 62, 0.97));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -214,6 +263,7 @@ mat-card-content {
   color: white;
   z-index: 1000;
   text-align: center;
+  backdrop-filter: blur(10px);
 }
 
 .ai-loading-content {
@@ -221,14 +271,19 @@ mat-card-content {
   flex-direction: column;
   align-items: center;
   max-width: 300px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
 .ai-message {
-  margin-top: 24px;
+  margin-top: 16px;
   font-size: 18px;
   font-weight: 500;
   color: #ffffff;
   letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .ai-thinking-dots {
@@ -247,20 +302,14 @@ mat-card-content {
   animation: ai-thinking 1.4s infinite ease-in-out both;
 }
 
-.ai-thinking-dots span:nth-child(1) {
-  animation-delay: -0.32s;
-}
-
-.ai-thinking-dots span:nth-child(2) {
-  animation-delay: -0.16s;
-}
-
 @keyframes ai-thinking {
   0%, 80%, 100% {
     transform: scale(0);
+    opacity: 0.3;
   }
   40% {
     transform: scale(1.0);
+    opacity: 1;
   }
 }
 
@@ -268,7 +317,7 @@ mat-card-content {
 @media (max-width: 600px) {
   .current-card, .next-card {
     width: 95%;
-    max-width: 340px;
+    height: 500px;
   }
 
   mat-card img {
@@ -277,5 +326,10 @@ mat-card-content {
 
   .swipe-controls {
     gap: 40px;
+  }
+
+  .control-button {
+    width: 48px;
+    height: 48px;
   }
 }

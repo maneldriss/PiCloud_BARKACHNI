@@ -7,16 +7,15 @@ import {MatDialog} from "@angular/material/dialog";
 import {UserService} from "../../../../services/user/user.service";
 import {PageEvent} from "@angular/material/paginator";
 import {ConfirmDialogComponent} from "../../Design/confirm-dialog-component/confirm-dialog-component.component";
-import {error} from "@angular/compiler-cli/src/transformers/util";
 import {AuthService} from "../../../../services/auth/auth.service";
-
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-item-list',
   templateUrl: './item-list.component.html',
   styleUrls: ['./item-list.component.css']
 })
-export class ItemListComponent implements OnInit,OnDestroy {
+export class ItemListComponent implements OnInit, OnDestroy {
   items: Item[] = [];
   filteredItems: Item[] = [];
   paginatedItems: Item[] = [];
@@ -37,6 +36,8 @@ export class ItemListComponent implements OnInit,OnDestroy {
   selectedSize: string = 'ALL';
   showAdvancedFilters: boolean = false;
   searchTerm: string = '';
+  showOnlyInOutfits: boolean = false;
+  showOnlyNotInOutfits: boolean = false;
 
   pageSize: number = 10;
   currentPage: number = 0;
@@ -44,12 +45,11 @@ export class ItemListComponent implements OnInit,OnDestroy {
 
   showOnlyFavorites: boolean = false;
 
-  private userSubscription: Subscription | null = null;
-
   constructor(
     private itemService: ItemService,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -57,9 +57,7 @@ export class ItemListComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
+    // No subscriptions to clean up
   }
 
   loadItems() {
@@ -67,9 +65,8 @@ export class ItemListComponent implements OnInit,OnDestroy {
 
     const currentUser = this.authService.getCurrentUser();
 
-    if (currentUser && currentUser.id) {
-      const userId = currentUser.id;
-      this.itemService.getItemsByUser(userId).subscribe({
+    if (currentUser?.id) {
+      this.itemService.getItemsByUser(currentUser.id).subscribe({
         next: (items) => {
           this.items = items;
           this.extractAllFilterOptions();
@@ -79,12 +76,13 @@ export class ItemListComponent implements OnInit,OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching items:', error);
+          this.snackBar.open(`Failed to load items: ${error.message || 'Unknown error'}`, 'Close', { duration: 3000 });
           this.loading = false;
         },
       });
     } else {
-      // Handle case when user is not available
       console.error('No user is logged in');
+      this.snackBar.open('Please log in to view your items', 'Close', { duration: 3000 });
       this.loading = false;
     }
   }
@@ -147,6 +145,14 @@ export class ItemListComponent implements OnInit,OnDestroy {
       result = result.filter(item => item.favorite);
     }
 
+    if (this.showOnlyInOutfits) {
+      result = result.filter(item => item.outfits && item.outfits.length > 0);
+    }
+
+    if (this.showOnlyNotInOutfits) {
+      result = result.filter(item => !item.outfits || item.outfits.length === 0);
+    }
+
     this.filteredItems = result;
     this.updatePaginatedItems();
     this.updateAvailableFilterOptions();
@@ -194,6 +200,8 @@ export class ItemListComponent implements OnInit,OnDestroy {
     this.selectedSize = 'ALL';
     this.searchTerm = '';
     this.showOnlyFavorites = false;
+    this.showOnlyInOutfits = false;
+    this.showOnlyNotInOutfits = false;
     this.applyFilters();
     this.currentPage = 0;
   }
@@ -211,22 +219,30 @@ export class ItemListComponent implements OnInit,OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        this.loading = true;
         this.itemService.deleteItem(id).subscribe({
           next: () => {
-            this.items = this.items.filter((item) => item.itemID !== id);
-            this.applyFilters();
+            this.loadItems();
+            this.snackBar.open('Item deleted successfully', 'Close', { duration: 3000 });
           },
           error: (error) => {
             console.error('Error deleting item:', error);
-          },
+            this.loading = false;
+            this.snackBar.open(error.message || 'Failed to delete item', 'Close', { duration: 5000 });
+          }
         });
       }
     });
   }
 
   toggleFavorite(item: Item) {
+    if (!item.itemID) {
+      this.snackBar.open('Cannot toggle favorite: Item ID is missing', 'Close', { duration: 3000 });
+      return;
+    }
+
     const newStatus = !item.favorite;
-    this.itemService.toggleFavorite(item.itemID || 0, newStatus).subscribe({
+    this.itemService.toggleFavorite(item.itemID, newStatus).subscribe({
       next: (updatedItem) => {
         item.favorite = newStatus;
 
@@ -238,12 +254,33 @@ export class ItemListComponent implements OnInit,OnDestroy {
         if (this.showOnlyFavorites) {
           this.applyFilters();
         }
+
+        this.snackBar.open(
+          `Item ${newStatus ? 'added to' : 'removed from'} favorites`,
+          'Close',
+          { duration: 2000 }
+        );
       },
       error: (error) => {
         console.error('Error toggling favorite status:', error);
+        this.snackBar.open(`Failed to update favorite status: ${error.message || 'Unknown error'}`, 'Close', { duration: 3000 });
       }
     });
   }
 
-
+  toggleOutfitFilter(filterType: 'in' | 'not') {
+    if (filterType === 'in') {
+      this.showOnlyInOutfits = !this.showOnlyInOutfits;
+      if (this.showOnlyInOutfits) {
+        this.showOnlyNotInOutfits = false;
+      }
+    } else {
+      this.showOnlyNotInOutfits = !this.showOnlyNotInOutfits;
+      if (this.showOnlyNotInOutfits) {
+        this.showOnlyInOutfits = false;
+      }
+    }
+    this.applyFilters();
+    this.currentPage = 0;
+  }
 }

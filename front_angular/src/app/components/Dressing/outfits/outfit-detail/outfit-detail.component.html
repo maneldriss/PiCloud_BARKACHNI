@@ -3,7 +3,7 @@
     <a routerLink="/outfits" class="back-link">
       <mat-icon>arrow_back</mat-icon> Back to Outfits
     </a>
-    <h1 *ngIf="outfit">{{ outfit.name }}</h1>
+    <h1 *ngIf="outfit">{{ outfit.outfitName }}</h1>
     <p *ngIf="outfit?.description" class="outfit-description">{{ outfit?.description }}</p>
   </div>
 

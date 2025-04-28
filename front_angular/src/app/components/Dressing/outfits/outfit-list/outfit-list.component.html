@@ -1,6 +1,6 @@
 <div class="container">
   <div class="header">
-    <h1>My Outfits</h1>
+    <h1>Your Outfit Collection</h1>
     <div class="button-group">
       <button mat-raised-button color="primary" routerLink="/outfits/new">
         <mat-icon>add</mat-icon>
@@ -8,30 +8,30 @@
       </button>
       <button mat-raised-button color="accent" routerLink="/outfits/ai-builder">
         <mat-icon>smart_toy</mat-icon>
-        AI Outfit Builder
+        AI Style Assistant
       </button>
     </div>
   </div>
 
   <button mat-raised-button color="primary" (click)="launchItemSwiper()">
-    <mat-icon>swap_horiz</mat-icon> Swipe Items to Create Outfit
+    <mat-icon>swap_horiz</mat-icon> Swipe to Create Outfit
   </button>
 
   <div *ngIf="loadingRecommendation" class="recommendation-loading">
     <mat-card>
       <mat-card-content class="loading-content">
         <mat-spinner diameter="30"></mat-spinner>
-        <span>AI is analyzing your outfits and weather data...</span>
-        <p class="loading-subtext">This may take a moment as the AI is processing your wardrobe data.</p>
+        <span>AI is analyzing your style preferences...</span>
+        <p class="loading-subtext">This may take a moment as we process your wardrobe data.</p>
       </mat-card-content>
     </mat-card>
   </div>
 
   <mat-card-title>
-  <span class="ai-recommendation-title">
-    <mat-icon>smart_toy</mat-icon>
-    AI-Powered Outfit Recommendation
-  </span>
+    <span class="ai-recommendation-title">
+      <mat-icon>smart_toy</mat-icon>
+      AI-Powered Style Recommendation
+    </span>
     <button mat-icon-button color="primary" (click)="refreshWeather()" matTooltip="Refresh recommendation">
       <mat-icon>refresh</mat-icon>
     </button>
@@ -46,7 +46,7 @@
           <mat-icon *ngIf="!weatherData.icon">wb_sunny</mat-icon>
         </div>
         <mat-card-title>
-          Today's Outfit Recommendation
+          Today's Style Recommendation
           <button mat-icon-button color="primary" (click)="refreshWeather()" matTooltip="Refresh weather">
             <mat-icon>refresh</mat-icon>
           </button>
@@ -58,7 +58,7 @@
 
       <mat-card-content class="recommendation-content">
         <div class="outfit-preview">
-          <h3>{{ recommendedOutfit.name }}</h3>
+          <h3>{{ recommendedOutfit.outfitName }}</h3>
           <p *ngIf="recommendedOutfit.description">{{ recommendedOutfit.description }}</p>
 
           <div class="tags">
@@ -72,7 +72,7 @@
 
           <div class="item-previews" *ngIf="recommendedOutfit.items && recommendedOutfit.items.length > 0">
             <div class="item-preview" *ngFor="let item of recommendedOutfit.items?.slice(0, 4)">
-              <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+              <img [src]="item.imageUrl" [alt]="item.itemName" (error)="handleImageError($event)">
             </div>
             <div class="more-items" *ngIf="recommendedOutfit.items && recommendedOutfit.items.length > 4">
               +{{ recommendedOutfit.items.length - 4 }} more
@@ -92,7 +92,6 @@
     </mat-card>
   </div>
 
-  <!-- No recommendation message when weather data exists but no matching outfit -->
   <div *ngIf="!loadingRecommendation && showRecommendation && weatherData && !recommendedOutfit" class="recommendation-card">
     <mat-card>
       <mat-card-header>
@@ -130,7 +129,7 @@
   <div class="search-bar">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Search outfits</mat-label>
-      <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by name or description">
+      <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by name, occasion, or season">
       <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>
@@ -196,7 +195,7 @@
   <div *ngIf="!loading && filteredOutfits.length > 0" class="outfits-grid">
     <mat-card *ngFor="let outfit of paginatedOutfits" class="outfit-card">
       <mat-card-header>
-        <mat-card-title>{{ outfit.name }}</mat-card-title>
+        <mat-card-title>{{ outfit.outfitName }}</mat-card-title>
         <mat-card-subtitle>
           <span *ngIf="outfit.items">{{ outfit.items.length }} items</span>
           <span *ngIf="outfit.season"> • {{ outfit.season }}</span>
@@ -209,7 +208,7 @@
 
         <div class="item-previews" *ngIf="outfit.items && outfit.items.length > 0">
           <div class="item-preview" *ngFor="let item of outfit.items?.slice(0, 4)">
-            <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.itemName">
+            <img [src]="item.imageUrl" [alt]="item.itemName" (error)="handleImageError($event)">
           </div>
           <div class="more-items" *ngIf="outfit.items && outfit.items.length > 4">
             +{{ outfit.items.length - 4 }} more
@@ -219,10 +218,10 @@
 
       <mat-card-actions>
         <button mat-button color="primary" (click)="launchSwiper()">
-          <mat-icon>swap_horiz</mat-icon> Swipe Similar
+          <mat-icon>swap_horiz</mat-icon> Find Similar
         </button>
         <button mat-button color="primary" [routerLink]="['/outfits', outfit.outfitID]">
-          <mat-icon>visibility</mat-icon> View
+          <mat-icon>visibility</mat-icon> View Details
         </button>
         <button mat-button color="accent" [routerLink]="['/outfits/edit', outfit.outfitID]">
           <mat-icon>edit</mat-icon> Edit
@@ -234,7 +233,6 @@
     </mat-card>
   </div>
 
-  <!-- Add this at the bottom of your item-list.component.html -->
   <app-outfit-swiper
     *ngIf="showItemSwiper"
     [items]="swiperItems"
