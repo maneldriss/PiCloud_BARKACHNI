@@ -36,11 +36,21 @@ public class OutfitServiceImpl implements IOutfitService {
 
     @Override
     public Outfit addOutfit(Outfit o) {
-        User user = userRepository.findById(1)
-                .orElseThrow(() -> new RuntimeException("User not found with id: 1"));
-        Dressing dressing = user.getDressing();
-        o.setDressing(dressing);
-        return outfitRepository.save(o);
+        System.out.println("Received outfit to add: " + o);
+        if (o.getDressing() == null) {
+            System.out.println("Dressing is null in the received outfit");
+            throw new RuntimeException("Dressing information is required to add an outfit");
+        }
+        System.out.println("Dressing information: " + o.getDressing());
+        try {
+            Outfit savedOutfit = outfitRepository.save(o);
+            System.out.println("Successfully saved outfit: " + savedOutfit);
+            return savedOutfit;
+        } catch (Exception e) {
+            System.out.println("Error saving outfit: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to save outfit: " + e.getMessage());
+        }
     }
 
     @Override
@@ -53,6 +63,16 @@ public class OutfitServiceImpl implements IOutfitService {
 
     @Override
     public void removeOutfit(long outfitId) {
+        Outfit outfit = retrieveOutfit(outfitId);
+        
+        if (outfit.getItems() != null) {
+            outfit.getItems().clear();
+        }
+        
+        outfit.setDressing(null);
+        
+        outfitRepository.save(outfit);
+        
         outfitRepository.deleteById(outfitId);
     }
 

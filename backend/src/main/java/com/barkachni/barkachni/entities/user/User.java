@@ -235,8 +235,8 @@ public class User implements UserDetails, Principal // Implements Spring Securit
         return enabled;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("user")
     private List<Item> items;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")

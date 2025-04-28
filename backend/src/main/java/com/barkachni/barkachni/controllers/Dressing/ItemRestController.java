@@ -57,8 +57,12 @@ public class ItemRestController {
             itemService.removeItem(iId);
             return ResponseEntity.ok("Item with ID " + iId + " successfully deleted");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Error: " + e.getMessage());
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("foreign key constraint fails")) {
+                errorMessage = "Cannot delete this item because it is being used in one or more outfits. Please remove it from the outfits first.";
+            }
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errorMessage);
         }
     }
     @PutMapping("/update-item")

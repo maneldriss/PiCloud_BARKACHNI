@@ -2,6 +2,7 @@ package com.barkachni.barkachni.entities.Dressing;
 
 import com.barkachni.barkachni.entities.user.User;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -57,7 +59,9 @@ public class Item {
     @JsonIgnoreProperties({"items", "dressing"})
     private User user;
 
-
+    @ManyToMany(mappedBy = "items", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("items")
+    private List<Outfit> outfits;
 
     public Long getItemID() {
         return itemID;
@@ -145,5 +149,13 @@ public class Item {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Outfit> getOutfits() {
+        return outfits;
+    }
+
+    public void setOutfits(List<Outfit> outfits) {
+        this.outfits = outfits;
     }
 }

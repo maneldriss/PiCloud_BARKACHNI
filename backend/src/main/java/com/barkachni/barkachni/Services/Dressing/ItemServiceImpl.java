@@ -7,8 +7,9 @@ import com.barkachni.barkachni.repositories.Dressing.ItemRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -44,14 +45,35 @@ public class ItemServiceImpl implements IItemService {
         return itemRepository.save(i);
     }
 
-
     @Override
+    @Transactional
     public void removeItem(long itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
+        
+        if (item.getOutfits() != null && !item.getOutfits().isEmpty()) {
+            throw new RuntimeException("Cannot delete item because it is being used in one or more outfits");
+        }
+        
+        if (item.getUser() != null) {
+            User user = item.getUser();
+            user.getItems().removeIf(i -> i.getItemID().equals(itemId));
+            userRepository.save(user);
+        }
+        
         itemRepository.deleteById(itemId);
     }
 
     @Override
     public List<Item> retrieveItemsByUser(Integer userID) {
-        return itemRepository.findByUserId(userID);
+        List<Item> items = itemRepository.findByUserId(userID);
+        // Initialize the outfits collection for each item
+        items.forEach(item -> {
+            if (item.getOutfits() == null) {
+                item.setOutfits(new ArrayList<>());
+            }
+            item.getOutfits().size(); // This will trigger the lazy loading
+        });
+        return items;
     }
 }

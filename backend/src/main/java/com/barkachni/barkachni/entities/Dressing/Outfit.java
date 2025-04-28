@@ -45,7 +45,7 @@ public class Outfit {
             joinColumns = @JoinColumn(name = "outfit_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
-    @JsonIdentityReference(alwaysAsId = true)
+    @JsonIgnoreProperties("outfits")
     private List<Item> items;
 
     @ManyToOne
