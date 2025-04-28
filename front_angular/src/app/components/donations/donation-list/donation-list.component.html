@@ -46,9 +46,9 @@
             <!-- Section Image - Visible seulement pour CLOTHING -->
             <div *ngIf="donation.donationType === 'CLOTHING'" class="text-center mb-3">
               <div class="image-container">
-                <img [src]="donation.itemDressing?.imageUrl" 
+                <img [src]="getItemImageUrl(donation.itemDressing)" 
                      class="donation-image"
-                     alt="{{donation.itemDressing?.itemName || 'Don de vêtements'}}"
+                     alt="{{donation.itemDressing?.itemName || 'Clothing donation'}}"
                      (error)="handleImageError($event)">
               </div>
             </div>

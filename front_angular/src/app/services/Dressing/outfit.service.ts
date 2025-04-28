@@ -5,6 +5,11 @@ import {Outfit} from "../../models/Dressing/outfit.model";
 import {JwtService} from "../jwt/jwt.service";
 import {AuthService} from "../auth/auth.service";
 
+// Create a simple interface that matches what the backend expects for an item reference
+interface ItemReference {
+  itemID: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,23 +50,18 @@ export class OutfitService {
     }
     
     // Create a clean outfit object with only necessary properties
+    // Make sure to use the correct field name "dressingID" to match backend expectation
     const cleanOutfit = {
       outfitName: outfit.outfitName,
-      description: outfit.description,
-      season: outfit.season,
-      occasion: outfit.occasion,
-      isAiGenerated: outfit.isAiGenerated,
-      imageUrl: outfit.imageUrl,
-      items: outfit.items?.map(item => ({
-        itemID: item.itemID,
-        itemName: item.itemName,
-        category: item.category,
-        brand: item.brand,
-        color: item.color,
-        imageUrl: item.imageUrl
-      })),
+      description: outfit.description || '',
+      season: outfit.season || '',
+      occasion: outfit.occasion || '',
+      isAiGenerated: outfit.isAiGenerated || false,
+      imageUrl: outfit.imageUrl || '',
+      // Convert items to simple objects with just itemID property to prevent deserialization errors
+      items: outfit.items ? outfit.items.map(item => ({ itemID: item.itemID } as ItemReference)) : [],
       dressing: {
-        id: currentUser.dressing.id
+        id: currentUser.dressing.id // Use id to match the Dressing entity field in backend
       }
     };
     
@@ -82,21 +82,15 @@ export class OutfitService {
     const updatedOutfit = {
       outfitID: outfit.outfitID,
       outfitName: outfit.outfitName,
-      description: outfit.description,
-      season: outfit.season,
-      occasion: outfit.occasion,
-      isAiGenerated: outfit.isAiGenerated,
-      imageUrl: outfit.imageUrl,
-      items: outfit.items?.map(item => ({
-        itemID: item.itemID,
-        itemName: item.itemName,
-        category: item.category,
-        brand: item.brand,
-        color: item.color,
-        imageUrl: item.imageUrl
-      })),
+      description: outfit.description || '',
+      season: outfit.season || '',
+      occasion: outfit.occasion || '',
+      isAiGenerated: outfit.isAiGenerated || false,
+      imageUrl: outfit.imageUrl || '',
+      // Convert items to simple objects with just itemID property to prevent deserialization errors
+      items: outfit.items ? outfit.items.map(item => ({ itemID: item.itemID } as ItemReference)) : [],
       dressing: {
-        id: currentUser.dressing.id
+        id: currentUser.dressing.id // Use id to match the Dressing entity field in backend
       }
     };
 

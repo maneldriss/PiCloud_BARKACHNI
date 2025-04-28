@@ -49,3 +49,22 @@
   max-width: 100%;
   object-fit: contain;
 }
+
+/* Fix for donation images */
+.image-container {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.donation-image {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+}

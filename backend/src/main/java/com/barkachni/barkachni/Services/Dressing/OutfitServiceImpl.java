@@ -42,7 +42,64 @@ public class OutfitServiceImpl implements IOutfitService {
             throw new RuntimeException("Dressing information is required to add an outfit");
         }
         System.out.println("Dressing information: " + o.getDressing());
+        
+        // Debug items being received
+        if (o.getItems() != null) {
+            System.out.println("Items count: " + o.getItems().size());
+            o.getItems().forEach(item -> {
+                System.out.println("Item ID: " + item.getItemID());
+            });
+        } else {
+            System.out.println("No items in outfit");
+        }
+        
         try {
+            // Fix TransientObjectException by retrieving the actual Dressing entity from database
+            if (o.getDressing() != null) {
+                // The Dressing entity has a field 'id' but frontend sends 'dressingID'
+                Long dressingId = null;
+                
+                // Try to get the ID using reflection to handle different field names
+                try {
+                    if (o.getDressing().getId() != null) {
+                        dressingId = o.getDressing().getId();
+                        System.out.println("Found dressing ID using getId(): " + dressingId);
+                    } else if (o.getDressing().getClass().getDeclaredField("dressingID") != null) {
+                        java.lang.reflect.Field field = o.getDressing().getClass().getDeclaredField("dressingID");
+                        field.setAccessible(true);
+                        dressingId = (Long) field.get(o.getDressing());
+                        System.out.println("Found dressing ID using reflection: " + dressingId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error getting dressing ID: " + e.getMessage());
+                }
+                
+                if (dressingId != null) {
+                    Long finalDressingId = dressingId;
+                    Dressing existingDressing = dressingRepository.findById(dressingId)
+                        .orElseThrow(() -> new RuntimeException("Dressing not found with id: " + finalDressingId));
+                    o.setDressing(existingDressing);
+                    System.out.println("Successfully set existing dressing with ID: " + existingDressing.getId());
+                } else {
+                    throw new RuntimeException("Could not find dressing ID in the request");
+                }
+            }
+            
+            // Handle attached items - replace with persistent entities
+            if (o.getItems() != null && !o.getItems().isEmpty()) {
+                List<Item> persistentItems = new ArrayList<>();
+                
+                for (Item item : o.getItems()) {
+                    if (item.getItemID() != null) {
+                        Item persistentItem = itemRepository.findById(item.getItemID())
+                            .orElseThrow(() -> new RuntimeException("Item not found with id: " + item.getItemID()));
+                        persistentItems.add(persistentItem);
+                    }
+                }
+                
+                o.setItems(persistentItems);
+            }
+            
             Outfit savedOutfit = outfitRepository.save(o);
             System.out.println("Successfully saved outfit: " + savedOutfit);
             return savedOutfit;

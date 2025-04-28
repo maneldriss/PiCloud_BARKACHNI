@@ -78,13 +78,24 @@ public class DonationRestController {
         }
 
         try {
+            // Handle clothing donations with item
+            if (donation.getDonationType() == DonationType.CLOTHING) {
+                if (donation.getItemDressing() == null || donation.getItemDressing().getItemID() == 0) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Item ID is required for clothing donations");
+                }
+                
+                // Fetch the actual item from the database
+                Item item = itemService.retrieveItem(donation.getItemDressing().getItemID());
+                donation.setItemDressing(item);
+            }
+            
             // Call the service method with the donation and the user's ID
             Donation savedDonation = donationService.addDonation(donation, currentUser.getId());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedDonation);
         } catch (Exception e) {
             log.error("Error while adding donation: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding donation");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding donation: " + e.getMessage());
         }
     }
 

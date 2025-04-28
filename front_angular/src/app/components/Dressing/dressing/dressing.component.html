@@ -3,6 +3,7 @@
     <div class="welcome-message">
       <h1>Welcome to {{ dressingName }}</h1>
       <p class="subtitle">Your Personal Style Command Center</p>
+      <div class="accent-line"></div>
     </div>
 
     <div class="action-buttons">
@@ -26,6 +27,7 @@
           <p>Total Wardrobe Items</p>
         </div>
       </div>
+      <div class="stat-card-background"></div>
     </mat-card>
 
     <mat-card class="stat-card">
@@ -36,6 +38,7 @@
           <p>Curated Outfits</p>
         </div>
       </div>
+      <div class="stat-card-background"></div>
     </mat-card>
   </div>
 
@@ -43,11 +46,15 @@
     <h2>Recently Added Items</h2>
     <div class="items-grid" *ngIf="recentItems.length > 0">
       <div *ngFor="let item of recentItems" class="item-card">
+        <div class="item-category-tag">{{ item.category }}</div>
         <div class="item-image">
           <img [src]="item.imageUrl || 'assets/images/placeholder.jpg'" alt="{{ item.itemName }}">
           <div class="item-overlay">
             <button mat-icon-button color="primary" [routerLink]="['/items', item.itemID]">
               <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" [routerLink]="['/items/edit', item.itemID]">
+              <mat-icon>edit</mat-icon>
             </button>
           </div>
         </div>
@@ -69,6 +76,12 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <div class="section-divider">
+    <div class="divider-line"></div>
+    <mat-icon>style</mat-icon>
+    <div class="divider-line"></div>
   </div>
 
   <div class="cta-section">

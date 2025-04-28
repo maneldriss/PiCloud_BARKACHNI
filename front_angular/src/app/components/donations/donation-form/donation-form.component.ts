@@ -179,9 +179,10 @@ export class DonationFormComponent implements OnInit {
 
     const formData = this.donationForm.value;
     if (formData.donationType === DonationType.MONEY && formData.amount <= 0) {
-    this.error = 'Amount must be a positive number';
-    return;
-  }
+      this.error = 'Amount must be a positive number';
+      return;
+    }
+
     // Construction du payload selon les exigences du backend
     const payload: any = {
       donationType: formData.donationType,
@@ -194,18 +195,23 @@ export class DonationFormComponent implements OnInit {
     }
     else if (formData.donationType === DonationType.CLOTHING) {
       if (!this.selectedItem) {
-        this.error = 'Veuillez sélectionner un article';
+        this.error = 'Please select an item';
         return;
       }
 
-      // Structure minimale attendue par le backend
+      // Make sure we're passing the complete item object with itemID
       payload.itemDressing = {
-        itemID: this.selectedItem.itemID
-        // Ne pas inclure user ici - le backend le gère
+        itemID: this.selectedItem.itemID,
+        itemName: this.selectedItem.itemName,
+        category: this.selectedItem.category,
+        size: this.selectedItem.size,
+        color: this.selectedItem.color,
+        brand: this.selectedItem.brand,
+        imageUrl: this.selectedItem.imageUrl
       };
     }
 
-    console.log("Payload envoyé :", JSON.stringify(payload, null, 2));
+    console.log("Payload being sent:", JSON.stringify(payload, null, 2));
 
     const operation = this.isEditMode && this.donationId
       ? this.donationService.updateDonation({ ...payload, donationId: this.donationId })
@@ -214,10 +220,10 @@ export class DonationFormComponent implements OnInit {
     operation.subscribe({
       next: () => this.handleSuccess(),
       error: (err) => {
-        console.error("Erreur complète :", err);
+        console.error("Complete error:", err);
         this.error = err.error?.message ||
                    err.error?.error ||
-                   'Erreur lors de l\'envoi du don';
+                   'Error while submitting donation';
         this.loading = false;
       }
     });

@@ -189,48 +189,36 @@ export class DonationListComponent implements OnInit {
     });
   }
 
-  getSafeImageUrl(imageUrl: string | undefined): string {
-    if (!imageUrl) return 'assets/images/default-donation.jpg';
-    
-    if (imageUrl.startsWith('https')) {
-      return imageUrl;
-    }
-    
-    if (imageUrl.includes('\\')) {
-      const filename = imageUrl.split('\\').pop() || 'default-item.jpg';
-      return `assets/images/${filename}`;
-    }
-    
-    if (imageUrl.startsWith('assets/')) {
-      return imageUrl;
-    }
-    
-    if (imageUrl.includes('.jpg') || imageUrl.includes('.png') || imageUrl.includes('.jpeg')) {
-      return `assets/images/${imageUrl}`;
-    }
-    
-    return 'assets/images/default-item.jpg';
-  }
-  
   handleImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    img.src = 'assets/images/default-donation.jpg';
-    img.style.opacity = '0.8';
-    img.style.border = '1px solid #e6e4d8';
+    img.src = 'assets/images/default-item.jpg';
+    // Maintain the image dimensions and avoid layout shift to prevent flickering
+    img.style.width = '100%';
+    img.style.height = 'auto';
+    img.style.maxHeight = '170px';
+    img.style.objectFit = 'contain';
   }
 
   getItemImageUrl(item: any): string {
-    if (!item?.imageUrl) return 'assets/images/default-donation.jpg';
+    if (!item?.imageUrl) return 'assets/images/default-item.jpg';
     
-    if (item.imageUrl.startsWith('https')) {
+    // Check for full URLs
+    if (item.imageUrl.startsWith('http')) {
       return item.imageUrl;
     }
     
+    // Handle Windows paths
     if (item.imageUrl.includes('\\')) {
       const filename = item.imageUrl.split('\\').pop();
-      return `assets/images/${filename}`;
+      return filename ? `assets/images/${filename}` : 'assets/images/default-item.jpg';
     }
     
+    // Handle relative paths
+    if (item.imageUrl.startsWith('assets/')) {
+      return item.imageUrl;
+    }
+    
+    // Handle just filenames
     return `assets/images/${item.imageUrl}`;
   }
  // Modifiez les méthodes

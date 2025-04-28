@@ -36,7 +36,6 @@ public class Donation {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "item_id")
-    @JsonIgnore
     private Item itemDressing;
 
     @ManyToOne

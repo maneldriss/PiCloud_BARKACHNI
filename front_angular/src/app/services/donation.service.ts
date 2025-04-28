@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { Donation, DonationStatus } from '../models/donation';
+import { Donation, DonationStatus, DonationType } from '../models/donation';
 import { environment } from '../environments/environment';
 import {JwtService} from "./jwt/jwt.service";
 
@@ -20,22 +20,30 @@ export class DonationService {
 
   getAllDonations(): Observable<Donation[]> {
     return this.http.get<Donation[]>(`${this.apiUrl}/retrieve-all-donations`).pipe(
-      map((donations: any[]) => donations.map(d => ({
-        ...d,
-        // Assurez-vous que les noms de champs correspondent à votre interface
-        donationId: d.donation_id || d.donationId,
-        donationType: d.donation_type || d.donationType,
-        itemDressing: d.item ? {
-          itemID: d.item.itemid || d.item.itemID,
-          itemName: d.item.item_name || d.item.itemName,
-          imageUrl: d.item.image_url || d.item.imageUrl
-        } : null,
-        donor: d.donor ? {
-          name: d.donor.name,
-          email: d.donor.email,
-          donationPoints: d.donor.donationPoints
-        } : null
-      }))),
+      map((donations: any[]) => donations.map(d => {
+        console.log('Raw donation data:', d); // Debug to see the actual structure
+        return {
+          ...d,
+          // Standardize field names
+          donationId: d.donationId,
+          donationType: d.donationType,
+          // Properly map the item - check both 'item' and 'itemDressing' fields
+          itemDressing: d.itemDressing ? {
+            itemID: d.itemDressing.itemID,
+            itemName: d.itemDressing.itemName,
+            imageUrl: d.itemDressing.imageUrl,
+            description: d.itemDressing.description,
+            condition: d.itemDressing.condition,
+            category: d.itemDressing.category,
+            size: d.itemDressing.size
+          } : null,
+          donor: d.donor ? {
+            name: d.donor.name,
+            email: d.donor.email,
+            donationPoints: d.donor.donationPoints
+          } : null
+        };
+      })),
       tap(d => console.log('Donations after mapping:', d)) // Debug
     );
   }
@@ -90,19 +98,26 @@ export class DonationService {
   addDonation(donation: Omit<Donation, 'donationId'>, userId: number): Observable<Donation> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.jwtService.getToken()}`,
-      'Content-Type': 'application/json', // Utilisez uniquement application/json
+      'Content-Type': 'application/json',
       'Accept': 'application/json'
     });
 
     // Préparation du payload
-    const payload = {
+    const payload: any = {
       ...donation,
-      status: DonationStatus.PENDING, // Statut par défaut
-      donationDate: new Date().toISOString(), // Ajout de la date si nécessaire
-      donor: { id: userId } // Format correct pour le backend
+      status: DonationStatus.PENDING,
+      donationDate: new Date().toISOString(),
+      donor: { id: userId }
     };
 
-    // Envoyer la requête avec l'URL correcte
+    // Ensure itemDressing is properly formatted for the backend
+    if (donation.donationType === DonationType.CLOTHING && donation.itemDressing) {
+      // Override with just the itemID which is what the backend needs
+      payload.itemDressing = {
+        itemID: donation.itemDressing.itemID
+      };
+    }
+
     return this.http.post<Donation>(`${this.apiUrl}/add-donation`, payload, { headers });
   }
 

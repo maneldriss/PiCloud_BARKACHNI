@@ -25,23 +25,28 @@
           <h2>Item Details</h2>
 
           <div class="info-row">
-            <span class="info-label">Category & Size:</span>
-            <span class="info-value">{{ item.category }} - {{ item.size }}</span>
+            <span class="info-label"><mat-icon>category</mat-icon> Category:</span>
+            <span class="info-value">{{ item.category }}</span>
           </div>
 
           <div class="info-row">
-            <span class="info-label">Brand:</span>
+            <span class="info-label"><mat-icon>straighten</mat-icon> Size:</span>
+            <span class="info-value">{{ item.size }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label"><mat-icon>business</mat-icon> Brand:</span>
             <span class="info-value">{{ item.brand }}</span>
           </div>
 
           <div class="info-row">
-            <span class="info-label">Color:</span>
+            <span class="info-label"><mat-icon>palette</mat-icon> Color:</span>
             <span class="info-value">{{ item.color }}</span>
           </div>
 
           <div class="info-row" *ngIf="item.dateAdded">
-            <span class="info-label">Added On:</span>
-            <span class="info-value">{{ item.dateAdded | date:'mediumDate' }}</span>
+            <span class="info-label"><mat-icon>event</mat-icon> Added On:</span>
+            <span class="info-value">{{ item.dateAdded | date:'longDate' }}</span>
           </div>
 
           <div class="description" *ngIf="item.description">
@@ -50,11 +55,23 @@
           </div>
         </mat-card-content>
       </mat-card>
+
+      <mat-card *ngIf="item.outfits && item.outfits.length > 0">
+        <mat-card-content>
+          <h2>Used in Outfits</h2>
+          <div class="outfit-list">
+            <div *ngFor="let outfit of item.outfits" class="outfit-item">
+              <mat-icon>style</mat-icon>
+              <a [routerLink]="['/outfits', outfit.outfitID]">{{ outfit.outfitName }}</a>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
 </div>
 
 <div class="loading-container" *ngIf="loading">
-  <mat-spinner></mat-spinner>
+  <mat-spinner diameter="60"></mat-spinner>
   <p>Loading item details...</p>
 </div>
