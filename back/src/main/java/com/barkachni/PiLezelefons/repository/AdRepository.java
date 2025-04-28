@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -25,4 +26,7 @@ public interface AdRepository extends JpaRepository<Ad, Long> {
     // Add this method to find pending ads specifically
     @Query("SELECT a FROM Ad a WHERE a.status = 'PENDING'")
     List<Ad> findPendingAds();
+
+    @Query("SELECT a FROM Ad a WHERE a.status = 'APPROVED' AND a.expDate > :currentDate AND a.deleted = false")
+    List<Ad> findApprovedActiveAds(@Param("currentDate") Date currentDate);
 }

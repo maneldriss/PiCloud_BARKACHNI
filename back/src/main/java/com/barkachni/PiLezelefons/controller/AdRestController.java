@@ -144,4 +144,9 @@ public class AdRestController {
         }
         return ResponseEntity.ok(adRepository.findByBrandId(brandId));
     }
+
+    @GetMapping("/approved-for-homepage")
+    public List<Ad> getApprovedAdsForHomepage() {
+        return adRepository.findApprovedActiveAds(new Date());
+    }
 }

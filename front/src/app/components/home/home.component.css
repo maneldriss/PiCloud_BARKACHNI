@@ -447,3 +447,189 @@
     cursor: pointer;
     border-radius: 50%;
   }
+  /* Brand Ads Section */
+.brand-ads-section {
+  padding: 40px 0;
+  background: #f9f9f9;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.ads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.ad-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.ad-card:hover {
+  transform: translateY(-5px);
+}
+
+.image-container {
+  height: 180px;
+  overflow: hidden;
+}
+
+.ad-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.ad-card:hover .ad-image {
+  transform: scale(1.05);
+}
+
+.ad-content {
+  padding: 15px;
+}
+
+.ad-content h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.brand-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.error-message, .no-ads-message {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+  font-size: 1rem;
+}
+
+.error-message {
+  color: #d32f2f;
+}
+/* Brand Ads Section Updates */
+.brand-ads-section {
+  padding: 60px 0;
+  background: #f9f9f9;
+}
+
+.ads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.ad-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.ad-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.image-container {
+  height: 180px;
+  overflow: hidden;
+}
+
+.ad-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.ad-card:hover .ad-image {
+  transform: scale(1.05);
+}
+
+.ad-content {
+  padding: 20px;
+}
+
+.ad-content h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* New Description Styles */
+.ad-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 15px;
+  line-height: 1.5;
+}
+
+.brand-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.brand-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+/* Changed brand name color from blue to dark gray */
+.brand-name {
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #0066cc;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+  background-color: #0052a3;
+}
+
+.error-message {
+  color: #d32f2f;
+  text-align: center;
+  padding: 20px;
+}
+
+.no-ads-message {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}

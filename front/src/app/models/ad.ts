@@ -8,10 +8,13 @@ export interface Ad {
   nbClicks?: number;
   brand?: { 
     id: number;
-    name: string;  // Add this
+    name: string;
+    logo: string;  // Add this
     // Add other brand properties if needed
   };
   AdStatus?: AdStatus;
+  deleted?: boolean; // Add this to match backend
+
 }
 
 export enum AdStatus {

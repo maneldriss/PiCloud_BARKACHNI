@@ -14,6 +14,7 @@ import { AdDetailComponent } from './components/ads/ad-detail/ad-detail.componen
 import { HomeComponent } from './components/home/home.component';
 import { LayoutComponent } from './shared/layout/layout.component';
 import { TruncatePipe } from './truncate.pipe';
+import { HomepageAdComponent } from './components/homepage-ad/homepage-ad.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { TruncatePipe } from './truncate.pipe';
     AdDetailComponent,
     HomeComponent,
     LayoutComponent,
-    TruncatePipe
+    TruncatePipe,
+    HomepageAdComponent
   ],
   imports: [
     BrowserModule,

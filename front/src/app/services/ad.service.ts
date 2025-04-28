@@ -1,16 +1,53 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-import { Ad } from '../models/ad';
+import { Observable, of, throwError } from 'rxjs';
+import { tap, catchError, map, shareReplay } from 'rxjs/operators';
+import { Ad, AdStatus } from '../models/ad';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdService {
   private apiUrl = 'http://localhost:8081/pilezelefons/ad';
+  private approvedAdsCache$?: Observable<Ad[]>;
 
   constructor(private http: HttpClient) { }
+
+  // New method for homepage approved ads
+  getApprovedHomepageAds(): Observable<Ad[]> {
+    return this.http.get<Ad[]>(`${this.apiUrl}/approved-for-homepage`).pipe(
+      tap(ads => console.log('Raw API Response:', ads)), // Debugging
+      map(ads => ads || []), // Ensure we always return an array
+      catchError(error => {
+        console.error('Error fetching ads:', error);
+        return of([]); // Return empty array on error
+      })
+    );
+  }
+
+  private filterActiveAds(ads: Ad[]): Ad[] {
+    const now = new Date();
+    console.log('Current time:', now);
+    
+    const filtered = ads.filter(ad => {
+      console.log(`Checking ad ${ad.id}:`, {
+        title: ad.title,
+        expDate: ad.expDate,
+        status: ad.AdStatus,
+        deleted: ad.deleted,
+        isExpired: new Date(ad.expDate) <= now,
+        isApproved: ad.AdStatus === 'APPROVED',
+        isActive: !ad.deleted
+      });
+      
+      return new Date(ad.expDate) > now && 
+             !ad.deleted &&
+             ad.AdStatus === 'APPROVED';
+    });
+    
+    console.log('Filtered ads:', filtered);
+    return filtered;
+  }
 
   getAllAds(): Observable<Ad[]> {
     return this.http.get<Ad[]>(`${this.apiUrl}/retrieve-all-ads`);

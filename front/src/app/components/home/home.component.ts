@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AdService } from 'src/app/services/ad.service';
+import { Ad } from 'src/app/models/ad';
 
 @Component({
   selector: 'app-home',
@@ -6,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  
   // Slider configuration
   currentSlide = 0;
   slides = [
@@ -25,56 +28,83 @@ export class HomeComponent implements OnInit {
 
   // Categories grid
   categories = [
-    { name: 'Women', image: 'assets/img/categories/women.jpg', slug: 'women' },
-    { name: 'Men', image: 'assets/img/categories/men.jpg', slug: 'men' },
-    { name: 'Accessories', image: 'assets/img/categories/accessories.jpg', slug: 'accessories' },
-    { name: 'Footwear', image: 'assets/img/categories/footwear.jpg', slug: 'footwear' }
+    { name: 'Women', image: 'women.jpg', slug: 'women' },
+    { name: 'Men', image: 'men.jpg', slug: 'men' },
+    { name: 'Accessories', image: 'accessories.jpg', slug: 'accessories' },
+    { name: 'Footwear', image: 'footwear.jpg', slug: 'footwear' }
   ];
 
   // Featured products
   featuredProducts = [
     { 
       name: 'Premium Denim Jacket', 
-      image: 'assets/img/products/product-1.jpg', 
+      image: 'product-1.jpg', 
       price: 89.99,
       oldPrice: 120.00,
       badge: 'Sale'
     },
     { 
       name: 'Silk Summer Dress', 
-      image: 'assets/img/products/product-2.jpg', 
+      image: 'product-2.jpg', 
       price: 65.50,
       badge: 'New'
     },
     { 
       name: 'Leather Crossbody Bag', 
-      image: 'assets/img/products/product-3.jpg', 
+      image: 'product-3.jpg', 
       price: 75.00
     },
     { 
       name: 'Classic White Sneakers', 
-      image: 'assets/img/products/product-4.jpg', 
+      image: 'product-4.jpg', 
       price: 59.99
     }
   ];
 
   // Instagram feed
   instagramPosts = [
-    { image: 'assets/img/instagram/insta-1.jpg' },
-    { image: 'assets/img/instagram/insta-2.jpg' },
-    { image: 'assets/img/instagram/insta-3.jpg' },
-    { image: 'assets/img/instagram/insta-4.jpg' },
-    { image: 'assets/img/instagram/insta-5.jpg' },
-    { image: 'assets/img/instagram/insta-6.jpg' }
+    { image: 'insta-1.jpg' },
+    { image: 'insta-2.jpg' },
+    { image: 'insta-3.jpg' },
+    { image: 'insta-4.jpg' },
+    { image: 'insta-5.jpg' },
+    { image: 'insta-6.jpg' }
   ];
 
-  constructor() { }
+  // Brand ads properties
+  brandAds: any[] = []; // Temporary 'any' type to bypass issues
+  loading = true;
+  error = false;
+
+  constructor(private adService: AdService) { }
 
   ngOnInit(): void {
-    // Auto-rotate slides every 5 seconds
-    setInterval(() => {
-      this.nextSlide();
-    }, 5000);
+    this.loadAds();
+  }
+
+  loadAds(): void {
+    this.adService.getApprovedHomepageAds().subscribe({
+      next: (ads) => {
+        console.log('Ads received:', ads); // Debug
+        this.brandAds = ads;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading ads:', err);
+        this.error = true;
+        this.loading = false;
+      }
+    });
+  }
+
+  trackAdClick(adId: number | undefined): void {
+    if (adId === undefined) {
+      console.warn('Cannot track click - ad ID is missing');
+      return;
+    }
+    this.adService.incrementAdClicks(adId).subscribe({
+      error: (err) => console.error('Error tracking click:', err)
+    });
   }
 
   // Slider navigation methods
@@ -86,8 +116,13 @@ export class HomeComponent implements OnInit {
     this.currentSlide = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
   }
 
-  // Go to specific slide
   goToSlide(index: number): void {
     this.currentSlide = index;
+  }
+  fixUrl(url: string): string {
+    if (!url.match(/^https?:\/\//)) {
+      return 'https://' + url;
+    }
+    return url;
   }
 }
