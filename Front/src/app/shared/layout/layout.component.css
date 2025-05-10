@@ -1,0 +1,40 @@
+.cart-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .price-container {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
+  
+  .price {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .cart-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #000;
+    text-decoration: none;
+  }
+  
+  .cart-link:hover {
+    color: #f39c12; /* Add hover effect if needed */
+  }
+  
+  .cart-link i {
+    margin-left: 5px;
+  }
+ 
+  header.header {
+    background-color: #f3d5bc; /* Pastel Orange */
+  }
+  main {
+    background-color: #f3d5bc; /* Pastel Orange */
+  }

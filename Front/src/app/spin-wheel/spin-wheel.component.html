@@ -1,0 +1,29 @@
+<!-- Spin-the-Wheel Popup -->
+<div class="wheel-popup">
+  <div class="wheel-container">
+    <!-- Pointer is now outside the wheel div -->
+    <div class="pointer"></div>
+
+    <div class="wheel">
+      <div class="spin-wheel-labels">
+        <!-- Loop through the segments and position each label at the correct angle -->
+        <div
+          *ngFor="let segment of segments; let i = index"
+          class="spin-wheel-label"
+          [ngStyle]="getLabelPosition(i)"
+          [style.backgroundColor]="segment.color"
+        >
+          {{ segment.label }}
+        </div>
+      </div>
+    </div>
+    <button class="spin-button" (click)="spinWheel()">Spin</button>
+  </div>
+  <app-rewardmodal
+    [isVisible]="showRewardModal"
+    [rewardMessage]="rewardMessage"
+    (close)="onModalClose()"
+  ></app-rewardmodal>
+</div>
+
+<!-- Add this at the bottom of your spin-wheel.component.html -->

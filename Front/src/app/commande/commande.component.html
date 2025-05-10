@@ -1,0 +1,74 @@
+<div *ngIf="commandes.length > 0" class="order-history-container">
+  <h2 class="section-title">My Orders</h2>
+
+  <div class="order-cards">
+    <div *ngFor="let commande of commandes" class="order-card">
+      <div class="order-header">
+        <div class="order-id">Order #{{ commande.commandeID }}</div>
+
+        <div
+          class="order-status"
+          [ngClass]="{
+            processing: commande.status === 'Processing',
+            shipped: commande.status === 'Shipped',
+            delivered: commande.status === 'Delivered',
+            cancelled: commande.status === 'Cancelled'
+          }"
+        >
+          {{ commande.status }}
+        </div>
+      </div>
+
+      <div class="order-details-grid">
+        <div class="detail-group">
+          <label>Shipping Address</label>
+          <p>{{ commande.shippingAddress }}</p>
+        </div>
+
+        <div class="detail-group">
+          <label>Payment Method</label>
+          <p>{{ commande.paymentMethod }}</p>
+        </div>
+
+        <div class="detail-group">
+          <label>Shipping Method</label>
+          <p>{{ commande.shippingMethod }}</p>
+        </div>
+
+        <div class="detail-group">
+          <label>Shipping Cost</label>
+          <p>{{ commande.shippingCost | currency }}</p>
+        </div>
+
+        <div class="detail-group">
+          <label>Payment Status</label>
+          <p>{{ commande.paymentStatus }}</p>
+        </div>
+      </div>
+
+      <div class="order-footer">
+        <div class="order-total">
+          Total: <strong>{{ commande.total | currency }}</strong>
+        </div>
+        <button
+          *ngIf="
+            commande.status !== 'Cancelled' && commande.status !== 'Delivered'
+          "
+          (click)="cancelCommande(commande.commandeID)"
+          class="cancel-btn"
+        >
+          <i class="fas fa-times"></i> Cancel Order
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="commandes.length === 0" class="empty-orders">
+  <div class="empty-icon">
+    <i class="fas fa-box-open"></i>
+  </div>
+  <h3>No Orders Yet</h3>
+  <p>Your order history will appear here</p>
+  <a routerLink="/products" class="shop-btn">Continue Shopping</a>
+</div>
